@@ -69,7 +69,7 @@ helm-release:
     # Push to GitLab Container Registry
     - |
       CHART_PACKAGE="${CHART_NAME}-$VERSION.tgz"
-    - 'curl --fail-with-body --request POST --user gitlab-ci-token:$CI_JOB_TOKEN --form "chart=@charts/${CHART_PACKAGE}" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/api/<channel>/charts"'
+    - 'curl --fail-with-body --request POST --user gitlab-ci-token:$CI_JOB_TOKEN --form "chart=@charts/${CHART_PACKAGE}" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/api/stable/charts"'
     - helm push "./charts/$CHART_PACKAGE" oci://$CI_REGISTRY/$CI_PROJECT_PATH
   
   artifacts:
