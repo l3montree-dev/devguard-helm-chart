@@ -19,9 +19,9 @@ jobs:
   release:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      packages: write
-      id-token: write
+      contents: write  # Required for creating releases
+      packages: write  # Required for pushing to GHCR
+      id-token: write  # Required for enhanced security
       
     steps:
     - name: Checkout
@@ -76,9 +76,24 @@ jobs:
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
       with:
         files: |
           charts/*.tgz
         generate_release_notes: true
+        body: |
+          DevGuard Helm Chart Release ${{ steps.version.outputs.version }}
+          
+          ## Installation
+          
+          ```bash
+          helm install my-devguard oci://ghcr.io/${{ github.repository_owner }}/${{ env.CHART_NAME }} --version ${{ steps.version.outputs.version }}
+          ```
+          
+          ## Pull Chart
+          
+          ```bash
+          helm pull oci://ghcr.io/${{ github.repository_owner }}/${{ env.CHART_NAME }} --version ${{ steps.version.outputs.version }}
+          ```
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
