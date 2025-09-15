@@ -8,10 +8,35 @@ stages:
 
 # Install Helm template
 .install_helm: &install_helm
-  - curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-  - chmod 700 get_helm.sh
-  - ./get_helm.sh --version v${HELM_VERSION}
-  - helm version
+  - |
+    # Download Helm binary from GitHub releases
+    HELM_ARCH="linux-amd64"
+    HELM_URL="https://get.helm.sh/helm-v3.19.0-linux-amd64.tar.gz"
+    EXPECTED_CHECKSUM="a7f81ce08007091b86d8bd696eb4d86b8d0f2e1b9f6c714be62f82f96a594496"
+    
+    # Download Helm binary
+    curl -fsSL -o helm.tar.gz "$HELM_URL"
+    
+    # Verify checksum
+    ACTUAL_CHECKSUM=$(sha256sum helm.tar.gz | cut -d' ' -f1)
+    if [ "$ACTUAL_CHECKSUM" != "$EXPECTED_CHECKSUM" ]; then
+      echo "ERROR: Checksum verification failed!"
+      echo "Expected: $EXPECTED_CHECKSUM"
+      echo "Actual:   $ACTUAL_CHECKSUM"
+      exit 1
+    fi
+    echo "Checksum verification passed: $ACTUAL_CHECKSUM"
+    
+    # Extract and install
+    tar -xzf helm.tar.gz
+    mv ${HELM_ARCH}/helm /usr/local/bin/helm
+    chmod +x /usr/local/bin/helm
+    
+    # Cleanup
+    rm -rf helm.tar.gz ${HELM_ARCH}
+    
+    # Verify installation
+    helm version
 
 # Helm package and publish job
 helm-release:
