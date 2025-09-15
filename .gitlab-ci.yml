@@ -107,9 +107,9 @@ create-release:
           --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
           --header "Content-Type: application/json" \
           --data '{
-            "name": "Release '"$VERSION"'",
-            "tag_name": "'"$CI_COMMIT_TAG"'",
-            "description": "DevGuard Helm Chart Release '"$VERSION"'\n\n## Installation\n\n### From GitLab Container Registry (OCI)\n```bash\nhelm install my-devguard oci://'"$CI_REGISTRY/$CI_PROJECT_PATH/devguard"' --version '"$VERSION"'\n```\n\n### From GitLab Package Registry\n```bash\nhelm repo add devguard '"$CI_API_V4_URL/projects/$CI_PROJECT_ID/packages/helm/stable"'\nhelm install my-devguard devguard/devguard --version '"$VERSION"'\n```\n\n## Pull Chart\n```bash\nhelm pull oci://'"$CI_REGISTRY/$CI_PROJECT_PATH/devguard"' --version '"$VERSION"'\n```",
+            "name": "Release $VERSION",
+            "tag_name": "$CI_COMMIT_TAG",
+            "description": "DevGuard Helm Chart Release $VERSION\n\n## Installation\n\n### From GitLab Container Registry (OCI)\n```bash\nhelm install my-devguard oci://$CI_REGISTRY/$CI_PROJECT_PATH/devguard --version $VERSION\n```\n\n### From GitLab Package Registry\n```bash\nhelm repo add devguard $CI_API_V4_URL/projects/$CI_PROJECT_ID/packages/helm/stable\nhelm install my-devguard devguard/devguard --version $VERSION\n```\n\n## Pull Chart\n```bash\nhelm pull oci://$CI_REGISTRY/$CI_PROJECT_PATH/devguard --version $VERSION\n```",
             "assets": {
               "links": [
                 {
