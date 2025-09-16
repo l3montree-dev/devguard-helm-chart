@@ -86,13 +86,13 @@ jobs:
           ## Installation
           
           ```bash
-          helm install my-devguard oci://ghcr.io/${{ github.repository }} --version ${{ steps.version.outputs.version }}
+          helm install my-devguard oci://ghcr.io/${{ github.repository }}/devguard --version ${{ steps.version.outputs.version }}
           ```
           
           ## Pull Chart
           
           ```bash
-          helm pull oci://ghcr.io/${{ github.repository }} --version ${{ steps.version.outputs.version }}
+          helm pull oci://ghcr.io/${{ github.repository }}/devguard --version ${{ steps.version.outputs.version }}
           ```
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
