@@ -69,7 +69,7 @@ jobs:
     - name: Push Helm Chart to GitHub Container Registry
       run: |
         VERSION="${{ steps.version.outputs.version }}"
-        CHART_PACKAGE="devguard-helm-chart-$VERSION.tgz"
+        CHART_PACKAGE="devguard-$VERSION.tgz"
         echo "Pushing chart: $CHART_PACKAGE to oci://${{ env.REGISTRY }}/${{ github.repository }}"
         helm push "./charts/$CHART_PACKAGE" oci://${{ env.REGISTRY }}/${{ github.repository }}
 
