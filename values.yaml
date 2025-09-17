@@ -93,7 +93,7 @@ web:
 
   devguardApiUrlPublicInternet: ""
   privacyPolicyLink: ""
-  termsOfServiceLink: ""
+  termsOfUse: ""
   imprintLink: ""
 
   themeJsUrl: ""
