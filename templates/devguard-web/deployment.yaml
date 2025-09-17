@@ -58,8 +58,8 @@ spec:
             value: {{ .Values.web.devguardApiUrlPublicInternet }}
           - name: PRIVACY_POLICY_LINK
             value: {{ .Values.web.privacyPolicyLink | quote }}
-          - name: TERMS_OF_USE
-            value: {{ .Values.web.termsOfUse | quote }}
+          - name: TERMS_OF_USE_LINK
+            value: {{ .Values.web.termsOfUseLink | quote }}
           - name: IMPRINT_LINK
             value: {{ .Values.web.imprintLink | quote }}
           - name: THEME_JS_URL
