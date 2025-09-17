@@ -42,6 +42,8 @@ mail:
   fromName: "DevGuard"
 api:
   replicaCount: 1
+  ciComponentBase: "https://gitlab.com/l3montree/devguard/-/raw/main"
+
   image:
     repository: ghcr.io/l3montree-dev/devguard
     # TODO: As we are curently in ALPHA, we are using the latest tag. 

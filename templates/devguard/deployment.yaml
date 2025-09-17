@@ -77,6 +77,8 @@ spec:
             value: https://opensource.org/api/license/
           - name: POSTGRES_PORT
             value: "5432"
+          - name: DEVGUARD_CI_COMPONENT_BASE
+            value: {{ .Values.api.ciComponentBase | quote }}
           - name: FRONTEND_URL
             value: {{ printf "%s://%s" $protocol $host.host }}
           - name: INSTANCE_DOMAIN
