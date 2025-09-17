@@ -130,3 +130,11 @@ web:
         paths:
           - path: /
             pathType: Prefix
+
+
+postgresql:
+  image:
+    repository: ghcr.io/l3montree-dev/devguard/postgresql
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: v0.17.0

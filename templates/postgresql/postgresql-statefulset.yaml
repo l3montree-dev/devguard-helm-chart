@@ -17,7 +17,7 @@ spec:
     spec:
       automountServiceAccountToken: false
       containers:
-      - image: "{{ .Values.api.image.repository }}/postgresql:{{ .Chart.AppVersion }}"
+      - image: "{{ .Values.api.image.repository }}/postgresql:{{ .Values.postgresql.image.tag | default .Chart.AppVersion }}"
         name: postgresql
         securityContext:
           seccompProfile:
