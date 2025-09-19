@@ -1,3 +1,9 @@
+{{- $protocol := "http" -}}
+{{- if .Values.web.ingress.tls -}}
+{{- $protocol = "https" -}}
+{{- end -}}
+{{- $host := index .Values.web.ingress.hosts 0 -}}
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -56,6 +62,8 @@ spec:
             value: http://devguard-api-service:8080
           - name: DEVGUARD_API_URL_PUBLIC_INTERNET
             value: {{ .Values.web.devguardApiUrlPublicInternet }}
+          - name: FRONTEND_URL
+            value: {{ printf "%s://%s" $protocol $host.host }}
           - name: PRIVACY_POLICY_LINK
             value: {{ .Values.web.privacyPolicyLink | quote }}
           - name: TERMS_OF_USE_LINK
