@@ -74,6 +74,8 @@ spec:
             value: {{ .Values.web.themeJsUrl | quote }}
           - name: THEME_CSS_URL
             value: {{ .Values.web.themeCssUrl | quote }}
+          - name: ACCOUNT_DELETION_MAIL
+            value: {{ .Values.web.accountDeletionMail | quote }}
           {{- if and .Values.oidc.enabled (gt (len .Values.oidc.providers) 0) (not .Values.webauthn.enabled) (not .Values.passkey.enabled) (not .Values.password.enabled) (not .Values.totp.enabled) }}
           - name: OIDC_ONLY
             value: "true"

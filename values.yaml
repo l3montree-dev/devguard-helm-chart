@@ -97,6 +97,7 @@ web:
   privacyPolicyLink: ""
   termsOfUseLink: ""
   imprintLink: ""
+  accountDeletionMail: ""
 
   themeJsUrl: ""
   themeCssUrl: ""
