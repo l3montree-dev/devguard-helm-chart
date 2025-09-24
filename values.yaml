@@ -92,7 +92,7 @@ api:
     existingPrivateKeySecretName: github-app-private-key
 
 web:
-
+  ciComponentBase: "https://gitlab.com/l3montree/devguard/-/raw/main"
   devguardApiUrlPublicInternet: ""
   privacyPolicyLink: ""
   termsOfUseLink: ""
