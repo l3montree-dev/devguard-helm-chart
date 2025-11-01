@@ -152,10 +152,12 @@ spec:
                 key: webhookSecret
                 name: {{ .Values.api.github.existingWebhookSecretSecretName }}
                 optional: true
-          - name: ENVIRONMENT
-            value: {{ .Values.api.errorTracking.environment | quote }}
+        {{- end }}
+        {{- if .Values.api.errorTracking.dsn and .Values.api.errorTracking.environment }}
           - name: ERROR_TRACKING_DSN
             value: {{ .Values.api.errorTracking.dsn | quote }}
+          - name: ENVIRONMENT
+            value: {{ .Values.api.errorTracking.environment | quote }}
         {{- end }}
           ports:
             - name: http

@@ -84,6 +84,10 @@ spec:
           - name: OIDC_ONLY
             value: "true"
           {{- end }}
+          {{- if .Values.web.errorTracking.dsn }}
+          - name: ERROR_TRACKING_DSN
+            value: {{ .Values.web.errorTracking.dsn | quote }}
+          {{- end }}
           ports:
             - name: http
               containerPort: 3000
