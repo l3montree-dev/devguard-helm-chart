@@ -156,7 +156,7 @@ spec:
                 name: {{ .Values.api.github.existingWebhookSecretSecretName }}
                 optional: true
         {{- end }}
-        {{- if and .Values.api.errorTracking .Values.api.errorTracking.dsn .Values.api.errorTracking.environment }}
+        {{- if and .Values.api.errorTracking.dsn .Values.api.errorTracking.environment }}
           - name: ERROR_TRACKING_DSN
             value: {{ .Values.api.errorTracking.dsn | quote }}
           - name: ENVIRONMENT
