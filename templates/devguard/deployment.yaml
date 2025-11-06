@@ -20,7 +20,7 @@ metadata:
     app: devguard-api
 spec:
   {{- if not .Values.api.autoscaling.enabled }}
-  replicas: {{ .Values.api.replicaCount }}
+  replicas: {{ .Values.api.replicaCount | default 1 }}
   {{- end }}
   selector:
     matchLabels:
@@ -43,22 +43,25 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      automountServiceAccountToken: false
       securityContext:
         runAsNonRoot: true
         runAsUser: 53111
         runAsGroup: 3000
         fsGroup: 2000
+        readOnlyRootFilesystem: true
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsUser: 53111
+            runAsNonRoot: true
             capabilities:
                 drop:
                 - ALL
-            seccompProfile:
-                type: RuntimeDefault
-            allowPrivilegeEscalation: false
-            runAsNonRoot: true
-            runAsUser: 53111
           image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.api.image.pullPolicy }}
           env:
@@ -153,7 +156,7 @@ spec:
                 name: {{ .Values.api.github.existingWebhookSecretSecretName }}
                 optional: true
         {{- end }}
-        {{- if .Values.api.errorTracking.dsn and .Values.api.errorTracking.environment }}
+        {{- if and .Values.api.errorTracking .Values.api.errorTracking.dsn .Values.api.errorTracking.environment }}
           - name: ERROR_TRACKING_DSN
             value: {{ .Values.api.errorTracking.dsn | quote }}
           - name: ENVIRONMENT
@@ -187,7 +190,8 @@ spec:
           - mountPath: /intoto-private-key.pem
             name: intoto-private-key
             subPath: privateKey
-
+          - mountPath: /tmp
+            name: tmp-dir
       volumes:
       - name: github-app-private-key
         secret:
@@ -196,6 +200,10 @@ spec:
       - name: intoto-private-key
         secret:
           secretName: {{ .Values.api.intoto.existingPrivateKeySecretName }}
+      # Vulndb updates are downloaded to tmp
+      - name: tmp-dir
+        emptyDir:
+          sizeLimit: 8Gi
       {{- with .Values.api.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
