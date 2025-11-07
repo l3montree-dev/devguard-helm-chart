@@ -13,7 +13,7 @@ metadata:
     app: devguard-web
 spec:
   {{- if not .Values.web.autoscaling.enabled }}
-  replicas: 1
+  replicas: {{ .Values.web.replicaCount | default 1 }}
   {{- end }}
   selector:
     matchLabels:
@@ -42,12 +42,14 @@ spec:
         runAsUser: 53111
         runAsGroup: 3000
         fsGroup: 2000
+        readOnlyRootFilesystem: true
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
             seccompProfile:
               type: RuntimeDefault
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             runAsUser: 53111
             runAsNonRoot: true
             capabilities:
@@ -109,6 +111,18 @@ spec:
             requests:
               cpu: 100m
               memory: 128Mi
+          volumeMounts:
+          - mountPath: /tmp
+            name: tmp-dir
+          - mountPath: /app/.next/cache
+            name: next-cache
+      volumes:
+      - name: tmp-dir
+        emptyDir:
+          sizeLimit: 100Mi
+      - name: next-cache
+        emptyDir:
+          sizeLimit: 500Mi
       {{- with .Values.web.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
