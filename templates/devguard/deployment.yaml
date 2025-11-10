@@ -95,6 +95,17 @@ spec:
             value: 1024MiB
           - name: PDF_GENERATION_API
             value: https://dwt-api.dev-l3montree.cloud/pdf
+          - name: CSAF_OPENPGP_PASSPHRASE
+            valueFrom:
+              secretKeyRef:
+                key: passphrase
+                name: {{ .Values.api.csafPassphraseExistingSecretName }}
+          - name: CSAF_OPENPGP_PRIVATE_KEY_PATH
+            value: /csaf-private-key.asc
+          - name: CSAF_OPENPGP_PUBLIC_KEY_PATH
+            value: /csaf-public-key.asc
+        
+
         {{- range .Values.oidc.providers }}
             {{- if eq .provider "gitlab" }}
           - name: GITLAB_{{ .id | upper }}_APPID
@@ -185,7 +196,12 @@ spec:
           - mountPath: /intoto-private-key.pem
             name: intoto-private-key
             subPath: privateKey
-
+          - mountPath: /csaf-private-key.asc
+            name: csaf-keys
+            subPath: privateKey
+          - mountPath: /csaf-public-key.asc
+            name: csaf-keys
+            subPath: publicKey
       volumes:
       - name: github-app-private-key
         secret:
@@ -194,6 +210,10 @@ spec:
       - name: intoto-private-key
         secret:
           secretName: {{ .Values.api.intoto.existingPrivateKeySecretName }}
+      - name: csaf-keys
+        secret:
+          secretName: {{ .Values.api.existingCsafSecretName }}
+          optional: true
       {{- with .Values.api.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
