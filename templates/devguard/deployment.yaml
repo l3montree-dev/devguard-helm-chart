@@ -102,7 +102,7 @@ spec:
             valueFrom:
               secretKeyRef:
                 key: passphrase
-                name: {{ .Values.api.csafPassphraseExistingSecretName }}
+                name: {{ .Values.api.existingCsafSecretName }}
           - name: CSAF_OPENPGP_PRIVATE_KEY_PATH
             value: /csaf-private-key.asc
           - name: CSAF_OPENPGP_PUBLIC_KEY_PATH
