@@ -1,6 +1,10 @@
 # Default values for devguard.
 # This is a YAML-formatted file.
 # Declare variables to be passed into templates.
+
+########################
+## Authentication Related Settings (Kratos)
+######
 webauthn:
   enabled: false
 passkey:
@@ -39,6 +43,11 @@ mail:
   existingSMTPConnectionUriSecret: ""
   fromAddress: "noreply@devguard.org"
   fromName: "DevGuard"
+
+
+########################
+## DevGuard API Settings
+######
 api:
   replicaCount: 1
   ciComponentBase: "https://gitlab.com/l3montree/devguard/-/raw/main"
@@ -51,30 +60,25 @@ api:
   existingCsafSecretName: ""
   image:
     repository: ghcr.io/l3montree-dev/devguard
-    # TODO: As we are curently in ALPHA, we are using the latest tag. 
-    # This will be changed to a specific tag once we are in BETA.
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     # tag: 0.13.0
   imagePullSecrets: []
-  podAnnotations: {}
-  podLabels: {}
-  autoscaling:
-    enabled: false
-    minReplicas: 1
-    maxReplicas: 100
-    targetCPUUtilizationPercentage: 80
-    # targetMemoryUtilizationPercentage: 80
-
-  nodeSelector: {}
-  tolerations: []
-  affinity: {}
-
   errorTracking:
     # https://<your-error-tracking-dsn>
     dsn: ""
     # can be dev, stage or prod
     environment: "dev"
+  intoto:
+    existingPrivateKeySecretName: ec-private-key
+  # GitHub App Integration Settings
+  github:
+    enabled: true
+    appId: abc
+    # needs to contain "webhookSecret"
+    existingWebhookSecretSecretName: github-app-webhook-secret
+    # needs to contain key "privateKey"
+    existingPrivateKeySecretName: github-app-private-key
 
   ingress:
     enabled: true
@@ -85,39 +89,12 @@ api:
         paths:
           - path: /
             pathType: Prefix
-
-  intoto:
-    existingPrivateKeySecretName: ec-private-key
-  github:
-    enabled: true
-    appId: abc
-    # needs to contain "webhookSecret"
-    existingWebhookSecretSecretName: github-app-webhook-secret
-    # needs to contain key "privateKey"
-    existingPrivateKeySecretName: github-app-private-key
-
-web:
-  ciComponentBase: "https://gitlab.com/l3montree/devguard/-/raw/main"
-  devguardApiUrlPublicInternet: ""
-  privacyPolicyLink: ""
-  termsOfUseLink: ""
-  imprintLink: ""
-  accountDeletionMail: ""
-
-  themeJsUrl: ""
-  themeCssUrl: ""
-
-  image:
-    repository: ghcr.io/l3montree-dev/devguard-web
-    # TODO: As we are curently in ALPHA, we are using the latest tag. 
-    # This will be changed to a specific tag once we are in BETA.
-    pullPolicy: IfNotPresent
-    # Overrides the image tag whose default is the chart appVersion.
-    # tag: 0.13.0
-  imagePullSecrets: []
+  
   podAnnotations: {}
   podLabels: {}
-
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
   autoscaling:
     enabled: false
     minReplicas: 1
@@ -125,9 +102,31 @@ web:
     targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
 
-  nodeSelector: {}
-  tolerations: []
-  affinity: {}
+
+########################
+## DevGuard Web Frontend Settings
+######
+web:
+  replicaCount: 1
+  image:
+    repository: ghcr.io/l3montree-dev/devguard-web
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    # tag: 0.13.0
+  imagePullSecrets: []
+
+  ciComponentBase: "https://gitlab.com/l3montree/devguard/-/raw/main"
+  devguardApiUrlPublicInternet: ""
+  privacyPolicyLink: ""
+  termsOfUseLink: ""
+  imprintLink: ""
+  accountDeletionMail: ""
+  # Custom Theme URLs (leave empty to use default theme)
+  themeJsUrl: ""
+  themeCssUrl: ""
+  errorTracking:
+    # https://<your-error-tracking-dsn>
+    dsn: ""
 
   ingress:
     enabled: true
@@ -139,10 +138,30 @@ web:
           - path: /
             pathType: Prefix
 
+  podAnnotations: {}
+  podLabels: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
 
+
+########################
+## DevGuard PostgreSQL Database Settings
+######
 postgresql:
   image:
+    # Please note: we are using a custom PostgreSQL image that has the required
+    # extensions pre-installed.
     repository: ghcr.io/l3montree-dev/devguard/postgresql
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: v0.17.0
+    # tag: v0.17.0
+  pvc:
+    size: 21Gi
+  podAnnotations: {}
