@@ -103,6 +103,13 @@ spec:
               secretKeyRef:
                 key: passphrase
                 name: {{ .Values.api.existingCsafSecretName }}
+                optional: true
+          - name: CSAF_OPENPGP_FINGERPRINT
+            valueFrom:
+              secretKeyRef:
+                key: fingerprint
+                name: {{ .Values.api.existingCsafSecretName }}
+                optional: true
           - name: CSAF_OPENPGP_PRIVATE_KEY_PATH
             value: /csaf-private-key.asc
           - name: CSAF_OPENPGP_PUBLIC_KEY_PATH
