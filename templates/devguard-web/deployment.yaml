@@ -42,7 +42,6 @@ spec:
         runAsUser: 53111
         runAsGroup: 3000
         fsGroup: 2000
-        readOnlyRootFilesystem: true
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
