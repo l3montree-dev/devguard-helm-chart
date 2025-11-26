@@ -51,6 +51,7 @@ mail:
 api:
   replicaCount: 1
   ciComponentBase: "https://gitlab.com/l3montree/devguard/-/raw/main"
+  ######### CSAF Keys
   # needs to contain keys: "passphrase", "privateKey", "publicKey", "fingerprint"
   # the openGpg keys need to be in pem format.
   # Generate keys: gpg --full-generate-key
@@ -59,7 +60,9 @@ api:
   # Export private key: gpg --armor --export-secret-keys "$KEY_ID" > private.asc
   # Get fingerprint: gpg --fingerprint "$KEY_ID"
   # kubectl create secret generic csaf-key-pair --from-file=privateKey=private.asc --from-file=publicKey=public.asc --from-literal=passphrase="..." --from-literal=fingerprint="1C10 446..." -n devguard
-  existingCsafSecretName: csaf-key-pair
+  ####
+  # If you don't want to use CSAF features, leave this as empty string.
+  existingCsafSecretName: ""
   image:
     repository: ghcr.io/l3montree-dev/devguard
     pullPolicy: IfNotPresent

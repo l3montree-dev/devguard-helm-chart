@@ -97,6 +97,8 @@ spec:
             value: 1024MiB
           - name: PDF_GENERATION_API
             value: https://dwt-api.dev-l3montree.cloud/pdf
+
+        {{- if .Values.api.existingCsafSecretName }}
           - name: CSAF_OPENPGP_PASSPHRASE
             valueFrom:
               secretKeyRef:
@@ -113,7 +115,7 @@ spec:
             value: /csaf-private-key.asc
           - name: CSAF_OPENPGP_PUBLIC_KEY_PATH
             value: /csaf-public-key.asc
-        
+        {{- end }}
 
         {{- range .Values.oidc.providers }}
             {{- if eq .provider "gitlab" }}
@@ -207,12 +209,14 @@ spec:
           - mountPath: /intoto-private-key.pem
             name: intoto-private-key
             subPath: privateKey
+          {{- if .Values.api.existingCsafSecretName }}
           - mountPath: /csaf-private-key.asc
             name: csaf-keys
             subPath: privateKey
           - mountPath: /csaf-public-key.asc
             name: csaf-keys
             subPath: publicKey
+          {{- end }}
           - mountPath: /tmp
             name: tmp-dir
       volumes:
@@ -223,9 +227,11 @@ spec:
       - name: intoto-private-key
         secret:
           secretName: {{ .Values.api.intoto.existingPrivateKeySecretName }}
+      {{- if .Values.api.existingCsafSecretName }}
       - name: csaf-keys
         secret:
           secretName: {{ .Values.api.existingCsafSecretName }}
+      {{- end }}
       # Vulndb updates are downloaded to tmp
       - name: tmp-dir
         emptyDir:
