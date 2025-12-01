@@ -98,24 +98,30 @@ spec:
           - name: PDF_GENERATION_API
             value: https://dwt-api.dev-l3montree.cloud/pdf
 
-        {{- if .Values.api.existingCsafSecretName }}
+        {{- if .Values.api.csaf.existingCsafSecretName }}
           - name: CSAF_OPENPGP_PASSPHRASE
             valueFrom:
               secretKeyRef:
                 key: passphrase
-                name: {{ .Values.api.existingCsafSecretName }}
+                name: {{ .Values.api.csaf.existingCsafSecretName }}
                 optional: true
           - name: CSAF_OPENPGP_FINGERPRINT
             valueFrom:
               secretKeyRef:
                 key: fingerprint
-                name: {{ .Values.api.existingCsafSecretName }}
+                name: {{ .Values.api.csaf.existingCsafSecretName }}
                 optional: true
           - name: CSAF_OPENPGP_PRIVATE_KEY_PATH
             value: /csaf-private-key.asc
           - name: CSAF_OPENPGP_PUBLIC_KEY_PATH
             value: /csaf-public-key.asc
         {{- end }}
+          - name: CSAF_AGGREGATOR_NAME
+            value: {{ .Values.api.csaf.aggregatorName | quote }}
+          - name: CSAF_AGGREGATOR_NAMESPACE
+            value: {{ .Values.api.csaf.aggregatorNamespace | quote }}
+          - name: CSAF_AGGREGATOR_CONTACT_DETAILS
+            value: {{ .Values.api.csaf.aggregatorContactDetails | quote }}
 
         {{- range .Values.oidc.providers }}
             {{- if eq .provider "gitlab" }}
@@ -209,7 +215,7 @@ spec:
           - mountPath: /intoto-private-key.pem
             name: intoto-private-key
             subPath: privateKey
-          {{- if .Values.api.existingCsafSecretName }}
+          {{- if .Values.api.csaf.existingCsafSecretName }}
           - mountPath: /csaf-private-key.asc
             name: csaf-keys
             subPath: privateKey
@@ -227,10 +233,10 @@ spec:
       - name: intoto-private-key
         secret:
           secretName: {{ .Values.api.intoto.existingPrivateKeySecretName }}
-      {{- if .Values.api.existingCsafSecretName }}
+      {{- if .Values.api.csaf.existingCsafSecretName }}
       - name: csaf-keys
         secret:
-          secretName: {{ .Values.api.existingCsafSecretName }}
+          secretName: {{ .Values.api.csaf.existingCsafSecretName }}
       {{- end }}
       # Vulndb updates are downloaded to tmp
       - name: tmp-dir
