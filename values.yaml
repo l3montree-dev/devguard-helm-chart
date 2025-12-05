@@ -51,13 +51,22 @@ mail:
 api:
   replicaCount: 1
   ciComponentBase: "https://gitlab.com/l3montree/devguard/-/raw/main"
-  # needs to contain keys: "passphrase", "privateKey", "publicKey", "fingerprint"
-  # the openGpg keys need to be in pem format.
-  # Generate keys: gpg --full-generate-key
-  # List key ids: gpg --list-secret-keys --keyid-format LONG
-  # Export public key: gpg --armor --export "$KEY_ID" > "$OUTPUT_DIR/${KEY_ID}_public.asc"
-  # Export private key: gpg --armor --export-secret-keys "$KEY_ID" > "$OUTPUT_DIR/${KEY_ID}_private.asc"
-  existingCsafSecretName: ""
+  csaf:
+    ######### CSAF Keys
+    # needs to contain keys: "passphrase", "privateKey", "publicKey", "fingerprint"
+    # the openGpg keys need to be in pem format.
+    # Generate keys: gpg --full-generate-key
+    # List key ids: gpg --list-secret-keys --keyid-format LONG
+    # Export public key: gpg --armor --export "$KEY_ID" > public.asc
+    # Export private key: gpg --armor --export-secret-keys "$KEY_ID" > private.asc
+    # Get fingerprint: gpg --fingerprint "$KEY_ID"
+    # kubectl create secret generic csaf-key-pair --from-file=privateKey=private.asc --from-file=publicKey=public.asc --from-literal=passphrase="..." --from-literal=fingerprint="1C10 446..." -n devguard
+    ####
+    # If you don't want to use CSAF features, leave this as empty string.
+    existingCsafSecretName: ""
+    aggregatorNamespace: "" # e.g. "example.com"
+    aggregatorName: "" # e.g. "Example GmbH"
+    aggregatorContactDetails: "" # e.g. "csaf@example.com"
   image:
     repository: ghcr.io/l3montree-dev/devguard
     pullPolicy: IfNotPresent
