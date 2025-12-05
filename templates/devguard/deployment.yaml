@@ -98,6 +98,12 @@ spec:
             value: 1024MiB
           - name: PDF_GENERATION_API
             value: https://dwt-api.dev-l3montree.cloud/pdf
+          - name: CSAF_AGGREGATOR_CONTACT_DETAILS
+            value: {{ .Values.api.csafContactDetails | quote }}
+          - name: CSAF_AGGREGATOR_NAME
+            value: {{ .Values.api.csafAggregatorName | quote }}
+          - name: CSAF_AGGREGATOR_NAMESPACE
+            value: {{ .Values.api.csafAggregatorNamespace | quote }}
           - name: CSAF_OPENPGP_PASSPHRASE
             valueFrom:
               secretKeyRef:
