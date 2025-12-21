@@ -21,6 +21,7 @@ oidc:
   # - id: github
   #   provider: github
   #   clientId: "sample-client-id"
+  #   disableTicketSync: false
   #   existingClientSecretName: github-client-secret # needs to contain key "secret"
   # - id: gitlab
   #   provider: gitlab

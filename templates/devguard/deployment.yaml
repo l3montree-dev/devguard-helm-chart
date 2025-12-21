@@ -134,6 +134,8 @@ spec:
                 name: {{ .existingClientSecretName | quote }}
           - name: GITLAB_{{ .id | upper }}_BASEURL
             value: {{ .issuerUrl | quote }}
+          - name: GITLAB_{{ .id | upper }}_DISABLETICKETSYNC
+            value: "{{ .disableTicketSync | default false }}"
           - name: GITLAB_{{ .id | upper }}_SCOPES
             value: {{ .scope | join " " | quote }}
             {{- if .existingBotUserSecretName }}
