@@ -193,9 +193,9 @@ spec:
             value: {{ .Values.api.errorTracking.environment | quote }}
         {{- end }}
           ports:
-            - name: http
-              containerPort: 8080
-              protocol: TCP
+          - name: http
+            containerPort: 8080
+            protocol: TCP
           livenessProbe:
             httpGet:
               path: /api/v1/health
@@ -215,7 +215,7 @@ spec:
               memory: 1024Mi
           volumeMounts:
           - mountPath: /dependency-proxy-cache
-                name: dependency-proxy-cache
+            name: dependency-proxy-cache
           - mountPath: /github-app-private-key
             name: github-app-private-key
             subPath: privateKey
