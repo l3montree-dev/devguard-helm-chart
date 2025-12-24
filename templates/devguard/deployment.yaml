@@ -214,8 +214,6 @@ spec:
               cpu: 100m
               memory: 1024Mi
           volumeMounts:
-          - mountPath: /dependency-proxy-cache
-            name: dependency-proxy-cache
           - mountPath: /github-app-private-key
             name: github-app-private-key
             subPath: privateKey
@@ -233,9 +231,6 @@ spec:
           - mountPath: /tmp
             name: tmp-dir
       volumes:
-      - name: dependency-proxy-cache
-        persistentVolumeClaim:
-          claimName: devguard-dependency-proxy-pvc
       - name: github-app-private-key
         secret:
           secretName: {{ .Values.api.github.existingPrivateKeySecretName }}
