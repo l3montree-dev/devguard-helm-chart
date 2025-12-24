@@ -98,9 +98,7 @@ spec:
           - name: PDF_GENERATION_API
             value: https://dwt-api.dev-l3montree.cloud/pdf
           - name: DEPENDENCY_PROXY_CACHE_DIR
-            value: /dependency-proxy-cache/cache
-          - name: MALICIOUS_PACKAGE_DATABASE_PATH
-            value: /dependency-proxy-cache/malicious-packages
+            value: /tmp/dependency-proxy-cache
         {{- if .Values.api.csaf.existingCsafSecretName }}
           - name: CSAF_OPENPGP_PASSPHRASE
             valueFrom:
