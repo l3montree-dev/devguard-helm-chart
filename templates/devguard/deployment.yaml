@@ -49,6 +49,35 @@ spec:
         runAsUser: 53111
         runAsGroup: 3000
         fsGroup: 2000
+      initContainers:
+        - name: "devguard-migrate"
+          securityContext:
+              seccompProfile:
+              type: RuntimeDefault
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              runAsUser: 53111
+              runAsNonRoot: true
+              capabilities:
+                  drop:
+                  - ALL
+          image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.api.image.pullPolicy }}
+          env:
+          - name: POSTGRES_DB
+              value: devguard
+          - name: POSTGRES_PASSWORD
+              valueFrom:
+              secretKeyRef:
+                  key: postgres-password
+                  name: db-secret
+          - name: POSTGRES_USER
+              value: devguard
+          - name: POSTGRES_HOST
+              value: postgresql
+          - name: POSTGRES_PORT
+              value: "5432"
+          command: ["devguard-cli", "migrate"]
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
