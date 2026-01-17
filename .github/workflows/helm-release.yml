@@ -2,6 +2,8 @@ name: Release Helm Chart
 
 on:
   push:
+    branches:
+      - main
     tags:
       - '*'
   workflow_dispatch:
@@ -47,6 +49,8 @@ jobs:
       run: |
         if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
           VERSION="${{ github.event.inputs.version }}"
+        elif [ "${{ github.ref }}" = "refs/heads/main" ]; then
+          VERSION="main"
         else
           VERSION=${GITHUB_REF#refs/tags/}
           # Remove 'v' prefix if present
