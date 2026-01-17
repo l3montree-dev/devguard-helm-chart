@@ -50,7 +50,7 @@ jobs:
         if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
           VERSION="${{ github.event.inputs.version }}"
         elif [ "${{ github.ref }}" = "refs/heads/main" ]; then
-          VERSION="main"
+          VERSION="0.0.0-main"
         else
           VERSION=${GITHUB_REF#refs/tags/}
           # Remove 'v' prefix if present
