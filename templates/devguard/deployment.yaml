@@ -71,6 +71,8 @@ spec:
               secretKeyRef:
                 key: postgres-password
                 name: db-secret
+          - name: FRONTEND_URL
+            value: {{ printf "%s://%s" $protocol $host.host }}
           - name: POSTGRES_USER
             value: devguard
           - name: POSTGRES_HOST
