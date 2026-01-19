@@ -80,6 +80,9 @@ spec:
           - name: POSTGRES_PORT
             value: "5432"
           command: ["devguard-cli", "migrate"]
+          volumeMounts:
+          - mountPath: /tmp
+            name: tmp-dir
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
