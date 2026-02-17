@@ -63,6 +63,8 @@ spec:
             value: http://devguard-api-service:8080
           - name: DEVGUARD_API_URL_PUBLIC_INTERNET
             value: {{ .Values.web.devguardApiUrlPublicInternet }}
+          - name: NEXT_PUBLIC_ORY_SDK_URL
+            value: http://kratos:4433
           - name: FRONTEND_URL
             value: {{ printf "%s://%s" $protocol $host.host }}
           - name: PRIVACY_POLICY_LINK
