@@ -77,7 +77,7 @@ data:
   kratos.yml: |
     serve: 
       public: 
-        base_url: {{ $protocol }}://{{ $publicUrl }}/api/.ory/
+        base_url: {{ $protocol }}://{{ $publicUrl }}
         cors:
           enabled: true
     identity:

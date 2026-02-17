@@ -57,13 +57,11 @@ spec:
           image: "{{ .Values.web.image.repository }}:{{ .Values.web.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.web.image.pullPolicy }}
           env:
-          - name: ORY_KRATOS_URL
-            value: http://kratos:4433
           - name: DEVGUARD_API_URL
             value: http://devguard-api-service:8080
           - name: DEVGUARD_API_URL_PUBLIC_INTERNET
             value: {{ .Values.web.devguardApiUrlPublicInternet }}
-          - name: NEXT_PUBLIC_ORY_SDK_URL
+          - name: ORY_SDK_URL
             value: http://kratos:4433
           - name: FRONTEND_URL
             value: {{ printf "%s://%s" $protocol $host.host }}
@@ -83,10 +81,6 @@ spec:
             value: {{ .Values.web.accountDeletionMail | quote }}
           - name: ENFORCE_THEME
             value: {{ .Values.web.enforceTheme | default "" }}
-          {{- if and .Values.kratos.oidc.enabled (gt (len .Values.kratos.oidc.providers) 0) (not .Values.kratos.webauthn.enabled) (not .Values.kratos.passkey.enabled) (not .Values.kratos.password.enabled) (not .Values.kratos.totp.enabled) }}
-          - name: OIDC_ONLY
-            value: "true"
-          {{- end }}
           {{- if .Values.web.errorTracking.dsn }}
           - name: ERROR_TRACKING_DSN
             value: {{ .Values.web.errorTracking.dsn | quote }}
