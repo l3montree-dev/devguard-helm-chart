@@ -63,6 +63,13 @@ spec:
               - ALL
           image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.api.image.pullPolicy }}
+          resources:
+            limits:
+              cpu: "2"
+              memory: 3048Mi
+            requests:
+              cpu: 100m
+              memory: 1548Mi
           env:
           - name: POSTGRES_DB
             value: devguard
@@ -79,6 +86,8 @@ spec:
             value: postgresql
           - name: POSTGRES_PORT
             value: "5432"
+          - name: GOMEMLIMIT
+            value: 1024MiB
           command: ["devguard-cli", "migrate"]
           volumeMounts:
           - mountPath: /tmp
