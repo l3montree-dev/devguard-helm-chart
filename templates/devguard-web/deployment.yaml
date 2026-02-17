@@ -81,7 +81,7 @@ spec:
             value: {{ .Values.web.accountDeletionMail | quote }}
           - name: ENFORCE_THEME
             value: {{ .Values.web.enforceTheme | default "" }}
-          {{- if and .Values.oidc.enabled (gt (len .Values.oidc.providers) 0) (not .Values.webauthn.enabled) (not .Values.passkey.enabled) (not .Values.password.enabled) (not .Values.totp.enabled) }}
+          {{- if and .Values.kratos.oidc.enabled (gt (len .Values.kratos.oidc.providers) 0) (not .Values.kratos.webauthn.enabled) (not .Values.kratos.passkey.enabled) (not .Values.kratos.password.enabled) (not .Values.kratos.totp.enabled) }}
           - name: OIDC_ONLY
             value: "true"
           {{- end }}

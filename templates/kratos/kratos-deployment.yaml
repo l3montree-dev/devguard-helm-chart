@@ -26,8 +26,8 @@ spec:
     spec:
       initContainers:
       - name: kratos-automigrate
-        image: "oryd/kratos:v25.4.0-distroless@sha256:368667ee3713797f86ddec669c36751f6484c7d675c78fd27c795b2e79271c31"
-        imagePullPolicy: IfNotPresent
+        image: "{{ .Values.kratos.image.repository }}:{{ .Values.kratos.image.tag }}{{ if .Values.kratos.image.digest }}@{{ .Values.kratos.image.digest }}{{ end }}"
+        imagePullPolicy: {{ .Values.kratos.image.pullPolicy }}
         command: ["kratos"]
         args: ["migrate", "sql", "-e", "--yes", "--config", "/etc/config/kratos.yml"]
         volumeMounts:
@@ -42,15 +42,15 @@ spec:
               key: password
         - name: DSN
           value: postgres://kratos:$(DB_PASSWORD)@postgresql:5432/kratos?sslmode=disable
-        {{- if .Values.mail.existingSMTPConnectionUriSecret }}
+        {{- if .Values.kratos.mail.existingSMTPConnectionUriSecret }}
         - name: COURIER_SMTP_CONNECTION_URI
           valueFrom:
             secretKeyRef:
-              name: "{{ .Values.mail.existingSMTPConnectionUriSecret }}"
+              name: "{{ .Values.kratos.mail.existingSMTPConnectionUriSecret }}"
               key: uri
               optional: true
         {{- end }}
-        {{- range $index, $provider := .Values.oidc.providers }}
+        {{- range $index, $provider := .Values.kratos.oidc.providers }}
         - name: "SELFSERVICE_METHODS_OIDC_CONFIG_PROVIDERS_{{ $index }}_CLIENT_SECRET"
           valueFrom:
             secretKeyRef:
@@ -82,8 +82,8 @@ spec:
             path: "identity.schema.json"
       containers:
       - name: kratos
-        image: "oryd/kratos:v25.4.0-distroless@sha256:368667ee3713797f86ddec669c36751f6484c7d675c78fd27c795b2e79271c31"
-        imagePullPolicy: IfNotPresent
+        image: "{{ .Values.kratos.image.repository }}:{{ .Values.kratos.image.tag }}{{ if .Values.kratos.image.digest }}@{{ .Values.kratos.image.digest }}{{ end }}"
+        imagePullPolicy: {{ .Values.kratos.image.pullPolicy }}
         command:
         - kratos
         args:
@@ -119,15 +119,15 @@ spec:
             secretKeyRef:
               name: kratos
               key: secretsCipher
-        {{- if .Values.mail.existingSMTPConnectionUriSecret }}
+        {{- if .Values.kratos.mail.existingSMTPConnectionUriSecret }}
         - name: COURIER_SMTP_CONNECTION_URI
           valueFrom:
             secretKeyRef:
-              name: "{{ .Values.mail.existingSMTPConnectionUriSecret }}"
+              name: "{{ .Values.kratos.mail.existingSMTPConnectionUriSecret }}"
               key: uri
               optional: true
         {{- end }}
-        {{- range $index, $provider := .Values.oidc.providers }}
+        {{- range $index, $provider := .Values.kratos.oidc.providers }}
         - name: "SELFSERVICE_METHODS_OIDC_CONFIG_PROVIDERS_{{ $index }}_CLIENT_SECRET"
           valueFrom:
             secretKeyRef:

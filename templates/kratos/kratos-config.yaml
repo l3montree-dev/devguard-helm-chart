@@ -87,19 +87,19 @@ data:
         url: file:///etc/config/identity.schema.json
     courier:
       smtp:
-        from_address: {{ .Values.mail.fromAddress }}
-        from_name: {{ .Values.mail.fromName }}
+        from_address: {{ .Values.kratos.mail.fromAddress }}
+        from_name: {{ .Values.kratos.mail.fromName }}
     selfservice:
       default_browser_return_url: {{ $protocol }}://{{ $publicUrl }}/
       allowed_return_urls: 
       - {{ $protocol }}://{{ $publicUrl }}/
       methods:
         oidc:
-          enabled: {{ .Values.oidc.enabled }}
+          enabled: {{ .Values.kratos.oidc.enabled }}
           config:
-          {{- if .Values.oidc.enabled }}
+          {{- if .Values.kratos.oidc.enabled }}
             providers:
-            {{- range .Values.oidc.providers }}
+            {{- range .Values.kratos.oidc.providers }}
             - id: {{ .id }}
               provider: {{ .provider }}
               client_id: {{ .clientId }}
@@ -121,7 +121,7 @@ data:
           {{- end }}
             
         webauthn:
-          enabled: {{ .Values.webauthn.enabled }}
+          enabled: {{ .Values.kratos.webauthn.enabled }}
           config:
             # If set to true will use WebAuthn for passwordless flows intead of multi-factor authentication.
             passwordless: true
@@ -142,7 +142,7 @@ data:
               display_name: DevGuard
 
         passkey:
-          enabled: {{ .Values.passkey.enabled }}
+          enabled: {{ .Values.kratos.passkey.enabled }}
           config:
             rp:
               {{- $urlParts := splitList "." $publicUrl }}
@@ -157,11 +157,11 @@ data:
               display_name: DevGuard
 
         password:
-          enabled: {{ .Values.password.enabled }}
+          enabled: {{ .Values.kratos.password.enabled }}
         totp:
           config:
             issuer: devguard
-          enabled: {{ .Values.totp.enabled }}
+          enabled: {{ .Values.kratos.totp.enabled }}
         lookup_secret:
           enabled: false
         link:
@@ -176,11 +176,11 @@ data:
           privileged_session_max_age: 15m
           required_aal: highest_available
         recovery:
-          enabled: {{ .Values.verificationAfterSignUp.enabled }}
+          enabled: {{ .Values.kratos.verificationAfterSignUp.enabled }}
           ui_url: {{ $protocol }}://{{ $publicUrl }}/recovery
           use: code
         verification:
-          enabled: {{ .Values.verificationAfterSignUp.enabled }}
+          enabled: {{ .Values.kratos.verificationAfterSignUp.enabled }}
           ui_url: {{ $protocol }}://{{ $publicUrl }}/verification
           use: code
           after:
