@@ -136,6 +136,8 @@ spec:
             value: http://kratos:4433
           - name: ORY_KRATOS_ADMIN
             value: http://kratos:4434
+          - name: NEXT_PUBLIC_ORY_SDK_URL
+            value: http://kratos:4433
           - name: GOMEMLIMIT
             value: 1024MiB
           - name: PDF_GENERATION_API
