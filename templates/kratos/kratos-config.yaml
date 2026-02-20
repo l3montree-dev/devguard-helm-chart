@@ -78,8 +78,8 @@ data:
         url: file:///etc/config/identity.schema.json
     courier:
       smtp:
-        from_address: {{ .Values.kratos.mail.fromAddress }}
-        from_name: {{ .Values.kratos.mail.fromName }}
+        from_address: {{ .Values.mail.fromAddress }}
+        from_name: {{ .Values.mail.fromName }}
     selfservice:
       default_browser_return_url: {{ $protocol }}://{{ $publicUrl }}/
       allowed_return_urls: 
