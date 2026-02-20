@@ -50,17 +50,8 @@ data:
                         }
                     },
                     "name": {
-                        "type": "object",
-                        "properties": {
-                            "first": {
-                                "title": "First Name",
-                                "type": "string"
-                            },
-                            "last": {
-                                "title": "Last Name",
-                                "type": "string"
-                            }
-                        }
+                        "type": "string",
+                        "title": "Username"
                     },
                     "confirmedTerms": {
                         "type": "boolean",
@@ -107,7 +98,7 @@ data:
               {{- if .issuerUrl }}
               issuer_url: {{ .issuerUrl | default "" | quote }}
               {{- end }}
-              mapper_url: "base64://bG9jYWwgY2xhaW1zID0gewogIGVtYWlsX3ZlcmlmaWVkOiBmYWxzZSwKfSArIHN0ZC5leHRWYXIoJ2NsYWltcycpOwoKbG9jYWwgc3BsaXROYW1lKGZ1bGxOYW1lKSA9IAogIGxvY2FsIHBhcnRzID0gc3RkLnNwbGl0KGZ1bGxOYW1lLCAnICcpOwogIGlmIHN0ZC5sZW5ndGgocGFydHMpID4gMSB0aGVuCiAgICB7CiAgICAgIGZpcnN0OiBwYXJ0c1swXSwKICAgICAgbGFzdDogc3RkLmpvaW4oJyAnLCBwYXJ0c1sxOl0pCiAgICB9CiAgZWxzZQogICAgewogICAgICBmaXJzdDogZnVsbE5hbWUsCiAgICAgIGxhc3Q6ICcnCiAgICB9OwoKewogIGlkZW50aXR5OiB7CiAgICB0cmFpdHM6IHsKICAgICAgLy8gQWxsb3dpbmcgdW52ZXJpZmllZCBlbWFpbCBhZGRyZXNzZXMgZW5hYmxlcyBhY2NvdW50CiAgICAgIC8vIGVudW1lcmF0aW9uIGF0dGFja3MsIGVzcGVjaWFsbHkgaWYgdGhlIHZhbHVlIGlzIHVzZWQgZm9yCiAgICAgIC8vIGUuZy4gdmVyaWZpY2F0aW9uIG9yIGFzIGEgcGFzc3dvcmQgbG9naW4gaWRlbnRpZmllci4KICAgICAgLy8KICAgICAgLy8gVGhlcmVmb3JlIHdlIG9ubHkgcmV0dXJuIHRoZSBlbWFpbCBpZiBpdCAoYSkgZXhpc3RzIGFuZCAoYikgaXMgbWFya2VkIHZlcmlmaWVkCiAgICAgIC8vIGJ5IEdpdEh1Yi4KICAgICAgW2lmICdlbWFpbCcgaW4gY2xhaW1zICYmIGNsYWltcy5lbWFpbF92ZXJpZmllZCB0aGVuICdlbWFpbCcgZWxzZSBudWxsXTogY2xhaW1zLmVtYWlsLAogICAgICBuYW1lOiBzcGxpdE5hbWUoY2xhaW1zLm5hbWUpLAogICAgICBjb25maXJtZWRUZXJtczogdHJ1ZSwKICAgIH0sCiAgfSwKfQ=="
+              mapper_url: "base64://bG9jYWwgY2xhaW1zID0gewogIGVtYWlsX3ZlcmlmaWVkOiBmYWxzZSwKfSArIHN0ZC5leHRWYXIoJ2NsYWltcycpOwoKewogIGlkZW50aXR5OiB7CiAgICB0cmFpdHM6IHsKICAgICAgLy8gQWxsb3dpbmcgdW52ZXJpZmllZCBlbWFpbCBhZGRyZXNzZXMgZW5hYmxlcyBhY2NvdW50CiAgICAgIC8vIGVudW1lcmF0aW9uIGF0dGFja3MsIGVzcGVjaWFsbHkgaWYgdGhlIHZhbHVlIGlzIHVzZWQgZm9yCiAgICAgIC8vIGUuZy4gdmVyaWZpY2F0aW9uIG9yIGFzIGEgcGFzc3dvcmQgbG9naW4gaWRlbnRpZmllci4KICAgICAgLy8KICAgICAgLy8gVGhlcmVmb3JlIHdlIG9ubHkgcmV0dXJuIHRoZSBlbWFpbCBpZiBpdCAoYSkgZXhpc3RzIGFuZCAoYikgaXMgbWFya2VkIHZlcmlmaWVkCiAgICAgIC8vIGJ5IEdpdEh1Yi4KICAgICAgW2lmICdlbWFpbCcgaW4gY2xhaW1zICYmIGNsYWltcy5lbWFpbF92ZXJpZmllZCB0aGVuICdlbWFpbCcgZWxzZSBudWxsXTogY2xhaW1zLmVtYWlsLAogICAgICBuYW1lOiBjbGFpbXMubmFtZSwKICAgICAgY29uZmlybWVkVGVybXM6IHRydWUsCiAgICB9LAogIH0sCn0="
             {{- if .scope }}
               scope:
               {{- range .scope }}
