@@ -40,18 +40,16 @@ kratos:
     #     - openid
     #     - profile
     #     - email
-
-  networkPolicy:
-    enabled: true
     #ingressNamespaceSelectorKey: "role"
     #ingressNamespaceSelectorValue: "ingress"
-  mail:
-    # needs to contain key: "uri". Format should be like: smtps://<user>@<your-domain.com>:<secret>@<mail-server.de>:465/?skip_ssl_verify=false
-    existingSMTPConnectionUriSecret: ""
-    fromAddress: "noreply@devguard.org"
-    fromName: "DevGuard"
+mail:
+  # needs to contain key: "uri". Format should be like: smtps://<user>@<your-domain.com>:<secret>@<mail-server.de>:465/?skip_ssl_verify=false
+  existingSMTPConnectionUriSecret: ""
+  fromAddress: "noreply@devguard.org"
+  fromName: "DevGuard"
 
-
+networkPolicy:
+  enabled: true
 ########################
 ## DevGuard API Settings
 ######
@@ -123,6 +121,8 @@ api:
 ## DevGuard Web Frontend Settings
 ######
 web:
+  # needs to match the setting in the kratos.yaml
+  registrationEnabled: true
   replicaCount: 1
   image:
     repository: ghcr.io/l3montree-dev/devguard-web
