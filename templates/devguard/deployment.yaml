@@ -233,6 +233,8 @@ spec:
           - name: ENVIRONMENT
             value: {{ .Values.api.errorTracking.environment | quote }}
         {{- end }}
+          - name: TRACES_SAMPLE_RATE
+            value: {{ .Values.api.tracesSampleRate | quote }}
           ports:
           - name: http
             containerPort: 8080

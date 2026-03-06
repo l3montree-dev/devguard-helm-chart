@@ -83,6 +83,8 @@ api:
     dsn: ""
     # can be dev, stage or prod
     environment: "dev"
+  # Fraction of requests to sample for distributed tracing (0.0 - 1.0)
+  tracesSampleRate: "0.1"
   intoto:
     existingPrivateKeySecretName: ec-private-key
   # GitHub App Integration Settings
