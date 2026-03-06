@@ -181,3 +181,36 @@ postgresql:
   pvc:
     size: 21Gi
   podAnnotations: {}
+
+########################
+## Observability Settings
+######
+observability:
+  serviceMonitor:
+    # Set to true if you have the Prometheus Operator installed
+    enabled: false
+    # Labels added to every ServiceMonitor (used by Prometheus Operator to discover monitors)
+    additionalLabels: {}
+    # Namespace where Prometheus is running — used to open NetworkPolicy egress
+    prometheusNamespace: monitoring
+    # Namespace selector key/value used in NetworkPolicy to allow Prometheus scraping
+    prometheusNamespaceSelectorKey: "kubernetes.io/metadata.name"
+    interval: 30s
+    scrapeTimeout: 10s
+  api:
+    metrics:
+      # Path of the metrics endpoint exposed by the DevGuard API
+      path: /api/v1/metrics
+  postgresql:
+    exporter:
+      image:
+        repository: prometheuscommunity/postgres-exporter
+        tag: v0.19.1
+        pullPolicy: IfNotPresent
+      resources:
+        limits:
+          cpu: 100m
+          memory: 128Mi
+        requests:
+          cpu: 10m
+          memory: 32Mi

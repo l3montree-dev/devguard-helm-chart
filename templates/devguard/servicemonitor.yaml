@@ -1,0 +1,20 @@
+{{- if .Values.observability.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: devguard-api
+  labels:
+    {{- include "devguard.labels" . | nindent 4 }}
+    {{- with .Values.observability.serviceMonitor.additionalLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    matchLabels:
+      app: devguard-api
+  endpoints:
+  - port: http
+    path: {{ .Values.observability.api.metrics.path }}
+    interval: {{ .Values.observability.serviceMonitor.interval }}
+    scrapeTimeout: {{ .Values.observability.serviceMonitor.scrapeTimeout }}
+{{- end }}

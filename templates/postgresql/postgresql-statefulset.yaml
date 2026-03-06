@@ -60,6 +60,32 @@ spec:
           requests:
             cpu: 1000m
             memory: 2056Mi
+      {{- if .Values.observability.serviceMonitor.enabled }}
+      - name: postgres-exporter
+        image: "{{ .Values.observability.postgresql.exporter.image.repository }}:{{ .Values.observability.postgresql.exporter.image.tag }}"
+        imagePullPolicy: {{ .Values.observability.postgresql.exporter.image.pullPolicy }}
+        securityContext:
+          seccompProfile:
+            type: RuntimeDefault
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 65534
+          capabilities:
+            drop:
+            - ALL
+        ports:
+        - name: metrics
+          containerPort: 9187
+          protocol: TCP
+        env:
+        - name: DATA_SOURCE_NAME
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: postgres-exporter-dsn
+        resources:
+          {{- toYaml .Values.observability.postgresql.exporter.resources | nindent 10 }}
+      {{- end }}
       restartPolicy: Always
       volumes:
       - name: postgresql-pv
