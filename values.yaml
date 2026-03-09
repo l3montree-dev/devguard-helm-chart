@@ -84,16 +84,16 @@ api:
     # can be dev, stage or prod
     environment: "dev"
   tracing:
+    enabled: false
     # Fraction of requests to sample for distributed tracing (0.0 - 1.0)
     sampleRate: "0.1"
-    # OTLP endpoint the sidecar collector forwards traces to, e.g. grpc://tempo:4317
+    # OTLP endpoint the sidecar collector forwards traces to, e.g. https://jaeger:4318
     otlpEndpoint: ""
     # Existing secret with basic auth credentials for the OTLP exporter (keys: username, password)
     existingSecretName: ""
     spanMetrics:
-      # When enabled, an OTel Collector sidecar is injected next to the API.
-      # The API sends traces to localhost:4317; the sidecar generates span metrics
-      # (exposed on port 8889 for Prometheus) and forwards traces to otlpEndpoint.
+      # OTel Collector sidecar image — receives traces from the API on localhost:4317,
+      # generates span metrics (port 8889) and forwards traces to otlpEndpoint.
       image:
         repository: otel/opentelemetry-collector-contrib
         tag: "0.147.0"

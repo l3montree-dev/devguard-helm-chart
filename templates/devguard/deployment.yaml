@@ -235,7 +235,7 @@ spec:
         {{- end }}
           - name: TRACES_SAMPLE_RATE
             value: {{ .Values.api.tracing.sampleRate | quote }}
-        {{- if .Values.api.tracing.spanMetrics.enabled }}
+        {{- if .Values.api.tracing.enabled }}
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: "grpc://localhost:4317"
         {{- end }}
@@ -277,7 +277,7 @@ spec:
           {{- end }}
           - mountPath: /tmp
             name: tmp-dir
-        {{- if .Values.api.tracing.spanMetrics.enabled }}
+        {{- if .Values.api.tracing.enabled }}
         - name: otel-collector
           image: "{{ .Values.api.tracing.spanMetrics.image.repository }}:{{ .Values.api.tracing.spanMetrics.image.tag }}"
           args:
@@ -333,7 +333,7 @@ spec:
       - name: tmp-dir
         emptyDir:
           sizeLimit: 8Gi
-      {{- if .Values.api.tracing.spanMetrics.enabled }}
+      {{- if .Values.api.tracing.enabled }}
       - name: otel-collector-config
         configMap:
           name: otel-collector-sidecar-config
