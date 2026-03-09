@@ -235,21 +235,9 @@ spec:
         {{- end }}
           - name: TRACES_SAMPLE_RATE
             value: {{ .Values.api.tracing.sampleRate | quote }}
-        {{- if .Values.api.tracing.otlpEndpoint }}
+        {{- if .Values.api.tracing.spanMetrics.enabled }}
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
-            value: {{ .Values.api.tracing.otlpEndpoint | quote }}
-        {{- end }}
-        {{- if .Values.api.tracing.existingSecretName }}
-          - name: OTEL_EXPORTER_BASIC_AUTH_USERNAME
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Values.api.tracing.existingSecretName }}
-                key: username
-          - name: OTEL_EXPORTER_BASIC_AUTH_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Values.api.tracing.existingSecretName }}
-                key: password
+            value: "grpc://localhost:4317"
         {{- end }}
           ports:
           - name: http
@@ -289,6 +277,45 @@ spec:
           {{- end }}
           - mountPath: /tmp
             name: tmp-dir
+        {{- if .Values.api.tracing.spanMetrics.enabled }}
+        - name: otel-collector
+          image: "{{ .Values.api.tracing.spanMetrics.image.repository }}:{{ .Values.api.tracing.spanMetrics.image.tag }}"
+          args:
+            - "--config=/etc/otel/config.yaml"
+          ports:
+            - name: otlp-grpc
+              containerPort: 4317
+            - name: otlp-http
+              containerPort: 4318
+            - name: span-metrics
+              containerPort: 8889
+          {{- if .Values.api.tracing.existingSecretName }}
+          env:
+            - name: OTEL_EXPORTER_BASIC_AUTH_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.api.tracing.existingSecretName }}
+                  key: username
+            - name: OTEL_EXPORTER_BASIC_AUTH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.api.tracing.existingSecretName }}
+                  key: password
+          {{- end }}
+          volumeMounts:
+            - name: otel-collector-config
+              mountPath: /etc/otel/config.yaml
+              subPath: config.yaml
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            {{- toYaml .Values.api.tracing.spanMetrics.resources | nindent 12 }}
+        {{- end }}
       volumes:
       - name: github-app-private-key
         secret:
@@ -306,6 +333,11 @@ spec:
       - name: tmp-dir
         emptyDir:
           sizeLimit: 8Gi
+      {{- if .Values.api.tracing.spanMetrics.enabled }}
+      - name: otel-collector-config
+        configMap:
+          name: otel-collector-sidecar-config
+      {{- end }}
       {{- with .Values.api.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

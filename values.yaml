@@ -86,11 +86,30 @@ api:
   tracing:
     # Fraction of requests to sample for distributed tracing (0.0 - 1.0)
     sampleRate: "0.1"
-    # OTLP exporter endpoint, e.g. grpc://localhost:4317
+    # OTLP endpoint the sidecar collector forwards traces to, e.g. grpc://tempo:4317
     otlpEndpoint: ""
-    # Existing secret containing basic auth credentials for the OTLP exporter.
-    # Must have keys: username, password
+    # Existing secret with basic auth credentials for the OTLP exporter (keys: username, password)
     existingSecretName: ""
+    spanMetrics:
+      # When enabled, an OTel Collector sidecar is injected next to the API.
+      # The API sends traces to localhost:4317; the sidecar generates span metrics
+      # (exposed on port 8889 for Prometheus) and forwards traces to otlpEndpoint.
+      image:
+        repository: otel/opentelemetry-collector-contrib
+        tag: "0.147.0"
+      histogram:
+        buckets: [100us, 1ms, 2ms, 6ms, 10ms, 100ms, 250ms]
+      dimensions:
+        - name: http.method
+        - name: http.status_code
+        - name: http.route
+      resources:
+        limits:
+          cpu: 200m
+          memory: 256Mi
+        requests:
+          cpu: 50m
+          memory: 64Mi
   intoto:
     existingPrivateKeySecretName: ec-private-key
   # GitHub App Integration Settings

@@ -99,6 +99,9 @@ spec:
   - ports:
     - port: 8080
     - port: 9187
+    {{- if .Values.api.tracing.spanMetrics.enabled }}
+    - port: 8889
+    {{- end }}
     from:
     - namespaceSelector:
         matchLabels:
