@@ -22,8 +22,6 @@ spec:
           - resources:
               kinds:
                 - Pod
-              namespaces:
-                - {{ .Release.Namespace }}
       verifyImages:
         - imageReferences:
             - "ghcr.io/l3montree-dev/devguard*"
@@ -43,8 +41,6 @@ spec:
           - resources:
               kinds:
                 - Pod
-              namespaces:
-                - {{ .Release.Namespace }}
       verifyImages:
         - imageReferences:
             - "index.docker.io/oryd/kratos*"
@@ -66,8 +62,6 @@ spec:
           - resources:
               kinds:
                 - Pod
-              namespaces:
-                - {{ .Release.Namespace }}
       verifyImages:
         - imageReferences:
             - "index.docker.io/otel/opentelemetry-collector-contrib*"
