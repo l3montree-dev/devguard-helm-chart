@@ -1,0 +1,83 @@
+{{- if .Values.kyvernoPolicy.enabled }}
+apiVersion: kyverno.io/v1
+kind: Policy
+metadata:
+  name: verify-image-signatures
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    policies.kyverno.io/title: Verify Image Signatures
+    policies.kyverno.io/category: Software Supply Chain Security
+    policies.kyverno.io/severity: high
+    policies.kyverno.io/subject: Pod
+    policies.kyverno.io/description: >-
+      Verifies that all container images in this namespace are signed with the
+      expected cosign keys before they are admitted.
+spec:
+  validationFailureAction: {{ .Values.kyvernoPolicy.validationFailureAction }}
+  background: false
+  rules:
+    - name: verify-devguard-images
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              namespaces:
+                - {{ .Release.Namespace }}
+      verifyImages:
+        - imageReferences:
+            - "ghcr.io/l3montree-dev/devguard*"
+          attestors:
+            - entries:
+                - keys:
+                    publicKeys: |-
+                      -----BEGIN PUBLIC KEY-----
+                      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEicBpp8o3W6m993d4Z49WKtwsAOrp
+                      DBobQ3+l2FTWqPqYpnjVtV3w9si91eR3ygYGP7mDoM01sdAmc2TvbOVygA==
+                      -----END PUBLIC KEY-----
+                    rekor:
+                      ignoreTlog: true
+    - name: verify-kratos-image
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              namespaces:
+                - {{ .Release.Namespace }}
+      verifyImages:
+        - imageReferences:
+            - "index.docker.io/oryd/kratos*"
+            - "oryd/kratos*"
+          attestors:
+            - entries:
+                - keys:
+                    # Source: https://raw.githubusercontent.com/ory/xgoreleaser/master/cosign.pub
+                    publicKeys: |-
+                      -----BEGIN PUBLIC KEY-----
+                      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEqE7EXHa8LTyCCEl6uI3hnKxetuTg
+                      XkoOJ4EUUeQfdJp+7n5uojArbs8KwnZNZp4T4jXdcH6R5mQfPMXemfLrEg==
+                      -----END PUBLIC KEY-----
+                    rekor:
+                      ignoreTlog: true
+    - name: verify-otel-collector-image
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              namespaces:
+                - {{ .Release.Namespace }}
+      verifyImages:
+        - imageReferences:
+            - "index.docker.io/otel/opentelemetry-collector-contrib*"
+            - "otel/opentelemetry-collector-contrib*"
+          attestors:
+            - entries:
+                - keyless:
+                    # Signed via GitHub Actions OIDC (Sigstore keyless)
+                    issuer: "https://token.actions.githubusercontent.com"
+                    subject: "https://github.com/open-telemetry/opentelemetry-collector-releases/.github/workflows/base-release.yaml@refs/tags/*"
+                    rekor:
+                      url: https://rekor.sigstore.dev
+{{- end }}
