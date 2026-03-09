@@ -11,5 +11,11 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
+    {{- if .Values.api.tracing.enabled }}
+    - port: 8889
+      targetPort: span-metrics
+      protocol: TCP
+      name: span-metrics
+    {{- end }}
   selector:
     app: devguard-api

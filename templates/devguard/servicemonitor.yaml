@@ -1,4 +1,4 @@
-{{- if .Values.observability.serviceMonitor.enabled }}
+{{- if and .Values.observability.serviceMonitor.enabled .Values.api.tracing.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
@@ -13,8 +13,10 @@ spec:
     matchLabels:
       app: devguard-api
   endpoints:
-  - port: http
-    path: {{ .Values.observability.api.metrics.path }}
+  {{- if .Values.api.tracing.enabled }}
+  - port: span-metrics
+    path: /metrics
     interval: {{ .Values.observability.serviceMonitor.interval }}
     scrapeTimeout: {{ .Values.observability.serviceMonitor.scrapeTimeout }}
+  {{- end }}
 {{- end }}
