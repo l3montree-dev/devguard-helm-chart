@@ -234,7 +234,23 @@ spec:
             value: {{ .Values.api.errorTracking.environment | quote }}
         {{- end }}
           - name: TRACES_SAMPLE_RATE
-            value: {{ .Values.api.tracesSampleRate | quote }}
+            value: {{ .Values.api.tracing.sampleRate | quote }}
+        {{- if .Values.api.tracing.otlpEndpoint }}
+          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            value: {{ .Values.api.tracing.otlpEndpoint | quote }}
+        {{- end }}
+        {{- if .Values.api.tracing.existingSecretName }}
+          - name: OTEL_EXPORTER_BASIC_AUTH_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.api.tracing.existingSecretName }}
+                key: username
+          - name: OTEL_EXPORTER_BASIC_AUTH_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.api.tracing.existingSecretName }}
+                key: password
+        {{- end }}
           ports:
           - name: http
             containerPort: 8080

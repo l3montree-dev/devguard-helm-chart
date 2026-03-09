@@ -83,8 +83,14 @@ api:
     dsn: ""
     # can be dev, stage or prod
     environment: "dev"
-  # Fraction of requests to sample for distributed tracing (0.0 - 1.0)
-  tracesSampleRate: "0.1"
+  tracing:
+    # Fraction of requests to sample for distributed tracing (0.0 - 1.0)
+    sampleRate: "0.1"
+    # OTLP exporter endpoint, e.g. grpc://localhost:4317
+    otlpEndpoint: ""
+    # Existing secret containing basic auth credentials for the OTLP exporter.
+    # Must have keys: username, password
+    existingSecretName: ""
   intoto:
     existingPrivateKeySecretName: ec-private-key
   # GitHub App Integration Settings
