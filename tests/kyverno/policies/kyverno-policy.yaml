@@ -1,9 +1,8 @@
-{{- if .Values.kyvernoPolicy.enabled }}
 apiVersion: kyverno.io/v1
 kind: Policy
 metadata:
   name: verify-image-signatures
-  namespace: {{ .Release.Namespace }}
+  namespace: default
   annotations:
     policies.kyverno.io/title: Verify Image Signatures
     policies.kyverno.io/category: Software Supply Chain Security
@@ -13,7 +12,7 @@ metadata:
       Verifies that all container images in this namespace are signed with the
       expected cosign keys before they are admitted.
 spec:
-  validationFailureAction: {{ .Values.kyvernoPolicy.validationFailureAction }}
+  validationFailureAction: Audit
   background: false
   rules:
     - name: verify-devguard-images
@@ -50,16 +49,16 @@ spec:
                           ignoreTlog: true
               conditions:
                 - all:
-                    - key: "{{ `{{ predicate.runDetails.builder.id }}` }}"
+                    - key: "{{ predicate.runDetails.builder.id }}"
                       operator: Equals
                       value: "devguard.org"
-                    - key: "{{ `{{ contains(predicate.buildDefinition.externalParameters.remotes, 'https://github.com/l3montree-dev/devguard') }}` }}"
+                    - key: "{{ contains(predicate.buildDefinition.externalParameters.remotes, 'https://github.com/l3montree-dev/devguard') }}"
                       operator: Equals
                       value: true
                     # personal email addresses from maintainers - those are
                     # hardcoded because we don't want to allow any other maintainers to sign the images
                     # numeric GitHub user IDs in noreply emails are permanent even if username changes
-                    - key: "{{ `{{ predicate.buildDefinition.externalParameters.authoremail }}` }}"
+                    - key: "{{ predicate.buildDefinition.externalParameters.authoremail }}"
                       operator: AnyIn
                       value:
                         - "bastin.tim@gmail.com"
@@ -107,4 +106,3 @@ spec:
                     subject: "https://github.com/open-telemetry/opentelemetry-collector-releases/.github/workflows/base-release.yaml@refs/tags/*"
                     rekor:
                       url: https://rekor.sigstore.dev
-{{- end }}
