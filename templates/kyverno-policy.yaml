@@ -26,7 +26,7 @@ spec:
         - imageReferences:
             - "ghcr.io/l3montree-dev/devguard:*"
             - "ghcr.io/l3montree-dev/devguard-web:*"
-          mutateDigest: true
+          mutateDigest: {{ eq .Values.kyvernoPolicy.validationFailureAction "Enforce" }}
           attestors:
             - entries:
                 - keys:
@@ -76,7 +76,7 @@ spec:
       verifyImages:
         - imageReferences:
             - "ghcr.io/l3montree-dev/devguard/postgresql:*"
-          mutateDigest: true
+          mutateDigest: {{ eq .Values.kyvernoPolicy.validationFailureAction "Enforce" }}
           attestors:
             - entries:
                 - keys:
@@ -97,7 +97,7 @@ spec:
         - imageReferences:
             - "index.docker.io/oryd/kratos*"
             - "oryd/kratos*"
-          mutateDigest: true
+          mutateDigest: {{ eq .Values.kyvernoPolicy.validationFailureAction "Enforce" }}
           attestors:
             - entries:
                 - keys:
@@ -119,7 +119,7 @@ spec:
         - imageReferences:
             - "index.docker.io/otel/opentelemetry-collector-contrib*"
             - "otel/opentelemetry-collector-contrib*"
-          mutateDigest: true
+          mutateDigest: {{ eq .Values.kyvernoPolicy.validationFailureAction "Enforce" }}
           attestors:
             - entries:
                 - keyless:
