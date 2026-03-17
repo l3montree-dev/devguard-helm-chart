@@ -6,10 +6,17 @@ policies:
   - policies/kyverno-policy.yaml
 resources:
   - resources/pod-devguard.yaml
+  - resources/pod-devguard-web.yaml
 results:
   - policy: verify-image-signatures
     rule: verify-devguard-images
     resources:
       - devguard-test
+    kind: Pod
+    result: pass
+  - policy: verify-image-signatures
+    rule: verify-devguard-images
+    resources:
+      - devguard-web-test
     kind: Pod
     result: pass

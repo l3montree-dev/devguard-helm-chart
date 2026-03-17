@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: devguard-web-test
+  namespace: default
+spec:
+  containers:
+    - name: devguard-web
+      image: ghcr.io/l3montree-dev/devguard-web:main-01c6e761-1773761560@sha256:bf2a9efcd36b158011775126a57a1a2e814286858690918289e974baa50ea7c3
