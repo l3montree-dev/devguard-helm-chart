@@ -52,7 +52,7 @@ networkPolicy:
   enabled: true
 
 kyvernoPolicy:
-  enabled: true
+  enabled: false
   # Enforce blocks non-compliant pods; Audit only logs violations
   validationFailureAction: Audit
 ########################
