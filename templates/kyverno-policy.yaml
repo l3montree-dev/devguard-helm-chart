@@ -24,7 +24,8 @@ spec:
                 - Pod
       verifyImages:
         - imageReferences:
-            - "ghcr.io/l3montree-dev/devguard*"
+            - "ghcr.io/l3montree-dev/devguard:*"
+            - "ghcr.io/l3montree-dev/devguard-web:*"
           mutateDigest: true
           attestors:
             - entries:
@@ -66,6 +67,26 @@ spec:
                         - "38261809+timbastin@users.noreply.github.com"
                         - "66557440+seb-kw@users.noreply.github.com"
                         - "sebastian.kawelke@l3montree.com"
+    - name: verify-devguard-postgresql-image
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      verifyImages:
+        - imageReferences:
+            - "ghcr.io/l3montree-dev/devguard/postgresql:*"
+          mutateDigest: true
+          attestors:
+            - entries:
+                - keys:
+                    publicKeys: |-
+                      -----BEGIN PUBLIC KEY-----
+                      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEicBpp8o3W6m993d4Z49WKtwsAOrp
+                      DBobQ3+l2FTWqPqYpnjVtV3w9si91eR3ygYGP7mDoM01sdAmc2TvbOVygA==
+                      -----END PUBLIC KEY-----
+                    rekor:
+                      ignoreTlog: true
     - name: verify-kratos-image
       match:
         any:
