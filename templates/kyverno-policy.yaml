@@ -25,7 +25,7 @@ spec:
       verifyImages:
         - imageReferences:
             - "ghcr.io/l3montree-dev/devguard*"
-          mutateDigest: false
+          mutateDigest: true
           attestors:
             - entries:
                 - keys:
@@ -76,7 +76,7 @@ spec:
         - imageReferences:
             - "index.docker.io/oryd/kratos*"
             - "oryd/kratos*"
-          mutateDigest: false
+          mutateDigest: true
           attestors:
             - entries:
                 - keys:
@@ -98,7 +98,7 @@ spec:
         - imageReferences:
             - "index.docker.io/otel/opentelemetry-collector-contrib*"
             - "otel/opentelemetry-collector-contrib*"
-          mutateDigest: false
+          mutateDigest: true
           attestors:
             - entries:
                 - keyless:
