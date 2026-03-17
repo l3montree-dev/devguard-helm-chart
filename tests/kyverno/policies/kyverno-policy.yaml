@@ -2,7 +2,7 @@ apiVersion: kyverno.io/v1
 kind: Policy
 metadata:
   name: verify-image-signatures
-  namespace: devguard
+  namespace: default
   annotations:
     policies.kyverno.io/title: Verify Image Signatures
     policies.kyverno.io/category: Software Supply Chain Security
@@ -54,9 +54,11 @@ spec:
                     - key: "{{ predicate.runDetails.builder.id }}"
                       operator: Equals
                       value: "devguard.org"
-                    - key: "{{ contains(predicate.buildDefinition.externalParameters.remotes, 'https://github.com/l3montree-dev/devguard') }}"
-                      operator: Equals
-                      value: true
+                    - key: "{{ predicate.buildDefinition.externalParameters.remotes }}"
+                      operator: AnyIn
+                      value:
+                        - "https://github.com/l3montree-dev/devguard"
+                        - "https://github.com/l3montree-dev/devguard-web"
                     # personal email addresses from maintainers - those are
                     # hardcoded because we don't want to allow any other maintainers to sign the images
                     # numeric GitHub user IDs in noreply emails are permanent even if username changes
