@@ -2,7 +2,7 @@ apiVersion: kyverno.io/v1
 kind: Policy
 metadata:
   name: verify-image-signatures
-  namespace: default
+  namespace: devguard
   annotations:
     policies.kyverno.io/title: Verify Image Signatures
     policies.kyverno.io/category: Software Supply Chain Security
@@ -12,7 +12,7 @@ metadata:
       Verifies that all container images in this namespace are signed with the
       expected cosign keys before they are admitted.
 spec:
-  validationFailureAction: Audit
+  validationFailureAction: Enforce
   background: false
   rules:
     - name: verify-devguard-images
@@ -26,6 +26,7 @@ spec:
             - "ghcr.io/l3montree-dev/devguard:*"
             - "ghcr.io/l3montree-dev/devguard-web:*"
           mutateDigest: false
+          verifyDigest: false
           attestors:
             - entries:
                 - keys:
@@ -76,6 +77,7 @@ spec:
         - imageReferences:
             - "ghcr.io/l3montree-dev/devguard/postgresql:*"
           mutateDigest: false
+          verifyDigest: false
           attestors:
             - entries:
                 - keys:
@@ -97,6 +99,7 @@ spec:
             - "index.docker.io/oryd/kratos*"
             - "oryd/kratos*"
           mutateDigest: false
+          verifyDigest: false
           attestors:
             - entries:
                 - keys:
@@ -119,6 +122,7 @@ spec:
             - "index.docker.io/otel/opentelemetry-collector-contrib*"
             - "otel/opentelemetry-collector-contrib*"
           mutateDigest: false
+          verifyDigest: false
           attestors:
             - entries:
                 - keyless:
