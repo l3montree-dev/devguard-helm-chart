@@ -7,7 +7,6 @@ metadata:
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade,pre-rollback
     "helm.sh/hook-weight": "-5"
-    "helm.sh/hook-delete-policy": before-hook-creation
     policies.kyverno.io/title: Verify Image Signatures
     policies.kyverno.io/category: Software Supply Chain Security
     policies.kyverno.io/severity: high
