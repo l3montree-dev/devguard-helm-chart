@@ -229,6 +229,10 @@ observability:
     prometheusNamespaceSelectorKey: "kubernetes.io/metadata.name"
     interval: 30s
     scrapeTimeout: 10s
+  grafanaDashboard:
+    # Set to true to deploy a Grafana dashboard ConfigMap for span metrics
+    # Requires the Grafana sidecar to watch for ConfigMaps with label grafana_dashboard=1
+    enabled: false
   api:
     metrics:
       # Path of the metrics endpoint exposed by the DevGuard API
