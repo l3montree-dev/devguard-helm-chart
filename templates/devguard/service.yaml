@@ -3,6 +3,7 @@ kind: Service
 metadata:
   name: devguard-api-service
   labels:
+    app: devguard-api
     {{- include "devguard.labels" . | nindent 4 }}
 spec:
   type: ClusterIP
