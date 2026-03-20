@@ -213,6 +213,46 @@ postgresql:
   pvc:
     size: 21Gi
   podAnnotations: {}
+  config:
+    # Max number of concurrent connections. (change requires restart)
+    maxConnections: "100"
+    # Recommended: 25% of total RAM. (change requires restart)
+    sharedBuffers: "1GB"
+    # Hint to the query planner: shared_buffers + OS page cache. Rule of thumb: 75% of total RAM.
+    # Does not allocate memory — only affects query planning decisions.
+    effectiveCacheSize: "3GB"
+    # Memory for VACUUM, CREATE INDEX, ALTER TABLE. Recommended: 5–10% of total RAM.
+    maintenanceWorkMem: "256MB"
+    # Per-sort / per-hash memory. Each query can use this multiple times.
+    # Formula: (RAM - sharedBuffers) / (maxConnections * 3) for worst-case safety.
+    # For web workloads with low actual concurrency, 32–64MB is a good balance.
+    workMem: "32MB"
+    # WAL write buffer. -1 = auto (1/32 of sharedBuffers). Only change if you see WAL write bottlenecks.
+    walBuffers: "-1"
+    # Concurrent I/O requests for bitmap heap scans. SSD: 200, HDD: 2–4.
+    # Note: for network-attached volumes (EBS, GCP PD) the optimal value varies — tune if needed.
+    effectiveIoConcurrency: "200"
+    # Planner cost for random page access relative to sequential. SSD: 1.1, HDD: 4.0 (default).
+    randomPageCost: "1.1"
+    # Lower bound on WAL disk space retained. Prevents constant WAL recycling under write load.
+    minWalSize: "1GB"
+    # Max WAL size before forcing a checkpoint. Higher = fewer checkpoints, more I/O smoothing.
+    maxWalSize: "4GB"
+    # Total background worker processes. Should not exceed CPU count. (change requires restart)
+    maxWorkerProcesses: "4"
+    # Max parallel workers across all parallel operations. Should not exceed CPU count.
+    maxParallelWorkers: "4"
+  # Shared memory size for /dev/shm. Should be at least as large as sharedBuffers.
+  # Kubernetes caps /dev/shm at 64Mi by default — this overrides that limit.
+  shm:
+    sizeLimit: 2Gi
+  resources:
+    limits:
+      cpu: 4000m
+      memory: 8024Mi
+    requests:
+      cpu: 1000m
+      memory: 2056Mi
 
 ########################
 ## Observability Settings

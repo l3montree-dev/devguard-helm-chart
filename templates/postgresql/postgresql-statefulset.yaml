@@ -38,6 +38,11 @@ spec:
         - mountPath: /docker-entrypoint-initdb.d/initdb.sh
           name: postgresql-initdb
           subPath: initdb.sh
+        - mountPath: /var/lib/postgresql/data/postgresql.conf
+          name: postgresql-config
+          subPath: postgresql.conf
+        - mountPath: /dev/shm
+          name: dshm
         env:
         - name: POSTGRES_DB
           value: devguard
@@ -54,12 +59,7 @@ spec:
               key: password
               name: kratos-db-secret
         resources:
-          limits:
-            cpu: 4000m
-            memory: 8024Mi
-          requests:
-            cpu: 1000m
-            memory: 2056Mi
+          {{- toYaml .Values.postgresql.resources | nindent 10 }}
       {{- if .Values.observability.serviceMonitor.enabled }}
       - name: postgres-exporter
         image: "{{ .Values.observability.postgresql.exporter.image.repository }}:{{ .Values.observability.postgresql.exporter.image.tag }}"
@@ -94,3 +94,10 @@ spec:
       - name: postgresql-initdb
         configMap:
           name: postgresql-initdb
+      - name: postgresql-config
+        configMap:
+          name: postgresql-config
+      - name: dshm
+        emptyDir:
+          medium: Memory
+          sizeLimit: {{ .Values.postgresql.shm.sizeLimit }}
