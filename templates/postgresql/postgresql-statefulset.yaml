@@ -24,6 +24,7 @@ spec:
       containers:
       - image: "{{ .Values.api.image.repository }}/postgresql:{{ .Values.postgresql.image.tag | default .Chart.AppVersion }}"
         name: postgresql
+        args: ["-c", "config_file=/etc/postgresql/postgresql.conf"]
         securityContext:
           seccompProfile:
             type: RuntimeDefault
@@ -38,7 +39,7 @@ spec:
         - mountPath: /docker-entrypoint-initdb.d/initdb.sh
           name: postgresql-initdb
           subPath: initdb.sh
-        - mountPath: /var/lib/postgresql/data/postgresql.conf
+        - mountPath: /etc/postgresql/postgresql.conf
           name: postgresql-config
           subPath: postgresql.conf
         - mountPath: /dev/shm
