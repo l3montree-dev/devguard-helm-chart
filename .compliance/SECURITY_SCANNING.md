@@ -1,8 +1,16 @@
 ---
-# All scanning evidence is attested on container images via cosign.
-# Machine check: cosign verify-attestation <ref> --key <cosign_public_key_url> --type <predicate_type>
-# For SARIF: assert no findings with level: error.
-# For VEX: assert all listed vulnerabilities have an explicit exploitability statement.
+# All scanning evidence entries.
+# Protocols:
+#   https:// → HTTP GET → assert 200
+#   oci://   → cosign verify-attestation --key <cosign_public_key_url> --type <predicate_type> <ref>
+# predicate_type determines what is checked:
+#   https://www.schemastore.org/schemas/json/sarif-2.1.0.json
+#     → parse as SARIF, assert no findings with level: error
+#   https://cyclonedx.org/vex
+#     → parse as CycloneDX VEX, assert all vulnerabilities have an exploitability statement
+# Optional fields:
+#   cosign_public_key_url  — required for oci:// entries
+#   predicate_type         — required for oci:// entries
 evidences:
   # SAST — SARIF attested on each container image
   - url: oci://ghcr.io/l3montree-dev/devguard:latest
@@ -28,25 +36,52 @@ evidences:
 
 # Security Scanning
 
-DevGuard scans itself using its own CI pipeline — dogfooding the same workflows it provides to other projects.
+## Annex I, Part I(2)(a) — No Known Exploitable Vulnerabilities at Release
 
-## SAST
+> (a) be made available on the market without known exploitable vulnerabilities;
 
-Static analysis is performed by **semgrep** on every push via the `devguard-action` reusable workflow. Findings are uploaded to GitHub Code Scanning. The pipeline blocks merges when high-severity findings are present (`fail-on-risk: high`).
+**Question: What scanning tools are used to detect known vulnerabilities in dependencies (SCA) and source code (SAST) before release?** `[maintainer]`
 
-Go code is additionally linted with **golangci-lint** on every push, which catches common security anti-patterns (e.g. `gosec` rules).
+DevGuard uses its own scanning capabilities via the `devguard-action` reusable GitHub Actions workflow, which orchestrates the `devguard-scanner` CLI:
 
-## Dependency Scanning (SCA)
+- **SAST**: `devguard-scanner sast` executes semgrep against Go and TypeScript code, producing SARIF output. Triggered on every push.
+- **SCA**: `devguard-scanner sca` uses Trivy to scan Go modules and Node.js packages to create a SBOM and scan it with DevGuard for CVEs. Triggered on every push.
+- **Secret detection**: `devguard-scanner secret-scanning` executes gitleaks, producing SARIF output. A baseline file (`leaks-baseline.json`) exists for false positive suppression.
+- **Container scanning**: Built container images are scanned with Trivy to create a SBOM and scan it with DevGuard for CVEs.
+- **Linting**: `golangci-lint` with `staticcheck` and `unused` rules runs as a dedicated CI job on every push.
 
-Software Composition Analysis runs on every push via the `devguard-action` SCA workflow. It scans all Go modules and Node.js packages for known CVEs. The pipeline fails on high-severity CVEs.
+**Question: Is scanning integrated into the CI/CD pipeline so that every build is checked before release?** `[maintainer]`
 
-Results are visible at the DevGuard security dashboard:
-https://main.devguard.org/l3montree-cybersecurity/projects/devguard/assets/devguard
+Yes. All scanning runs automatically on every push via the `devguard-action` workflows. Results are uploaded to DevGuard at https://main.devguard.org/l3montree-cybersecurity/projects/devguard/assets/devguard.
 
-## Secret Detection
 
-Gitleaks runs on every push as part of the `devguard-action` secret-scanning workflow. A baseline file (`leaks-baseline.json`) suppresses known false positives.
+**Question: What is the policy for blocking a release when vulnerabilities are found?** `[maintainer]`
 
-## Container Scanning
+The pipeline is configured with two blocking thresholds: `fail-on-risk: high` and `fail-on-cvss: high` (CVSS >= 7.0).
 
-Container images are scanned for known CVEs after every build via the `devguard-action` container-scanning workflow. The pipeline fails on high CVSS score findings.
+**Question: How are false positives documented and justified? (Link to VEX document in the evidence field above)** `[maintainer]`
+
+False positives and accepted risks are managed through DevGuard's vulnerability lifecycle management:
+
+- Findings can be marked as "false positive" with a mandatory justification text and user attribution, recorded as `VulnEvent` audit records
+- VEX (Vulnerability Exploitability eXchange) documents are generated in CycloneDX format and attested as OCI referrers on container images (see evidence entries above)
+- Gitleaks false positives are suppressed via a checked-in `leaks-baseline.json` baseline file
+- Automated VEX rules can be configured to apply recurring decisions across releases
+
+---
+
+## Annex I, Part II(3) — Regular Security Testing and Reviews
+
+> (3) apply effective and regular tests and reviews of the security of the product with digital elements;
+
+**Question: How frequently is security scanning performed? (e.g., on every commit, nightly, per release)** `[maintainer]`
+
+Scanning runs on every push to any branch via the `devguard-action` workflows.
+
+**Question: Beyond automated scanning, are manual security reviews or penetration tests conducted? If so, at what cadence?** `[maintainer]`
+
+All code changes require a reviewed pull request with at least one approving review before merge. No systematic penetration testing is conducted at a defined cadence.
+
+**Question: What is the process for acting on findings from security reviews or penetration tests?** `[maintainer]`
+
+Findings from automated scanning are triaged through DevGuard's vulnerability lifecycle: each finding is assessed, classified (accepted, false positive, mitigated, or fixed), and tracked with user attribution and justification. Findings rated high or above block the pipeline and must be resolved before merge. Findings from code review are addressed in the PR before approval. Results for the DevGuard project itself are visible at https://main.devguard.org/l3montree-cybersecurity/projects/devguard/assets/devguard.
