@@ -5,7 +5,7 @@
 #               - world-readable secrets, overly permissive RBAC roles
 #               - missing authentication on exposed endpoints
 #   https:// → HTTP GET → assert 200 (links to auth architecture docs, OIDC config)
-evidences: []
+evidences:
   - url: https://docs.devguard.org/explanations/architecture/security-model
   - url: https://docs.devguard.org/explanations/architecture/authentication-flow
 ---
