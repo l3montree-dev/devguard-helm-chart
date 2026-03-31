@@ -164,7 +164,7 @@ web:
   imagePullSecrets: []
 
   ciComponentBase: "https://gitlab.com/l3montree/devguard/-/raw/main"
-  devguardApiUrl: ""
+  devguardApiUrl: "http://devguard-api-service:8080"
   devguardApiUrlPublicInternet: ""
   privacyPolicyLink: ""
   termsOfUseLink: ""
