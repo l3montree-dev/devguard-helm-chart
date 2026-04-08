@@ -60,7 +60,7 @@ spec:
           imagePullPolicy: {{ $webImagePullPolicy }}
           env:
           - name: DEVGUARD_API_URL
-            value: http://devguard-api-service:8080
+            value: {{ .Values.web.devguardApiUrl | default "http://devguard-api-service:8080" | quote }}
           - name: REGISTRATION_ENABLED
             value: {{ .Values.web.registrationEnabled | default "true" | quote }}
           - name: DEVGUARD_API_URL_PUBLIC_INTERNET
