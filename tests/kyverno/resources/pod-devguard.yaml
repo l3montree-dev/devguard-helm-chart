@@ -6,4 +6,4 @@ metadata:
 spec:
   containers:
     - name: devguard
-      image: ghcr.io/l3montree-dev/devguard:main-latest
+      image: ghcr.io/l3montree-dev/devguard:main-amd64

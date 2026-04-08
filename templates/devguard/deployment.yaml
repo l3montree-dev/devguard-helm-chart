@@ -10,6 +10,8 @@
 {{- $apiProtocol = "https" -}}
 {{- end -}}
 {{- $apiHost := index .Values.api.ingress.hosts 0 -}}
+{{- $apiImage := include "devguard.image" (dict "image" .Values.api.image "defaultTag" .Chart.AppVersion) -}}
+{{- $apiImagePullPolicy := include "devguard.imagePullPolicy" (dict "image" .Values.api.image) -}}
 
 apiVersion: apps/v1
 kind: Deployment
@@ -61,8 +63,8 @@ spec:
             capabilities:
               drop:
               - ALL
-          image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.api.image.pullPolicy }}
+          image: {{ $apiImage | quote }}
+          imagePullPolicy: {{ $apiImagePullPolicy }}
           resources:
             limits:
               cpu: "2"
@@ -104,8 +106,8 @@ spec:
             capabilities:
                 drop:
                 - ALL
-          image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.api.image.pullPolicy }}
+          image: {{ $apiImage | quote }}
+          imagePullPolicy: {{ $apiImagePullPolicy }}
           env:
           - name: POSTGRES_DB
             value: devguard

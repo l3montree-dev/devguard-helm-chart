@@ -78,6 +78,8 @@ api:
     aggregatorName: "" # e.g. "Example GmbH"
     aggregatorContactDetails: "" # e.g. "csaf@example.com"
   image:
+    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard:0.13.0)
+    # or an object with repository/tag/digest/pullPolicy.
     repository: ghcr.io/l3montree-dev/devguard
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
@@ -157,6 +159,8 @@ web:
   registrationEnabled: true
   replicaCount: 1
   image:
+    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard-web:0.13.0)
+    # or an object with repository/tag/digest/pullPolicy.
     repository: ghcr.io/l3montree-dev/devguard-web
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
@@ -204,6 +208,8 @@ web:
 ######
 postgresql:
   image:
+    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard/postgresql:v0.17.0)
+    # or an object with repository/tag/digest/pullPolicy.
     # Please note: we are using a custom PostgreSQL image that has the required
     # extensions pre-installed.
     repository: ghcr.io/l3montree-dev/devguard/postgresql

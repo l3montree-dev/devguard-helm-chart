@@ -3,6 +3,8 @@
 {{- $protocol = "https" -}}
 {{- end -}}
 {{- $host := index .Values.web.ingress.hosts 0 -}}
+{{- $webImage := include "devguard.image" (dict "image" .Values.web.image "defaultTag" .Chart.AppVersion) -}}
+{{- $webImagePullPolicy := include "devguard.imagePullPolicy" (dict "image" .Values.web.image) -}}
 
 apiVersion: apps/v1
 kind: Deployment
@@ -54,8 +56,8 @@ spec:
             capabilities:
                 drop:
                 - ALL
-          image: "{{ .Values.web.image.repository }}:{{ .Values.web.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.web.image.pullPolicy }}
+          image: {{ $webImage | quote }}
+          imagePullPolicy: {{ $webImagePullPolicy }}
           env:
           - name: DEVGUARD_API_URL
             value: http://devguard-api-service:8080

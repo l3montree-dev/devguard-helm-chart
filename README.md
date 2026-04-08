@@ -6,6 +6,15 @@ Get started by following the installation instructions in the [DevGuard document
 
 You can find the default configuration values in the `values.yaml` file. Customize these values as needed for your deployment.
 
+## Image Configuration
+
+For `api.image`, `web.image`, and `postgresql.image`, the chart supports both:
+
+- Full image string (for example `ghcr.io/l3montree-dev/devguard:0.13.0` or `ghcr.io/l3montree-dev/devguard@sha256:...`)
+- Object format with `repository`, `tag`, optional `digest`, and `pullPolicy`
+
+When `digest` is set in object format, it is preferred over `tag` and rendered as `repository@digest`.
+
 ## Kyverno Policy
 
 The chart includes an optional [Kyverno](https://kyverno.io) policy for supply chain security. Enable it with:
