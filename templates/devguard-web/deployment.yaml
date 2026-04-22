@@ -79,8 +79,16 @@ spec:
             value: {{ .Values.web.imprintLink | quote }}
           - name: THEME_JS_URL
             value: {{ .Values.web.themeJsUrl | quote }}
+          - name: THEME_JS_INTEGRITY
+            value: {{ .Values.web.themeJsIntegrity | quote }}
           - name: THEME_CSS_URL
             value: {{ .Values.web.themeCssUrl | quote }}
+          - name: ANALYTICS_SCRIPT_URL
+            value: {{ .Values.web.analyticsScriptUrl | quote }}
+          - name: ANALYTICS_WEBSITE_ID
+            value: {{ .Values.web.analyticsWebsiteId | quote }}
+          - name: ANALYTICS_SCRIPT_INTEGRITY
+            value: {{ .Values.web.analyticsScriptIntegrity | quote }}
           - name: DEVGUARD_CI_COMPONENT_BASE
             value: {{ .Values.web.ciComponentBase | quote }}
           - name: ACCOUNT_DELETION_MAIL
