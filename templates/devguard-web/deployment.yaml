@@ -62,7 +62,7 @@ spec:
           - name: DEVGUARD_API_URL
             value: {{ .Values.web.devguardApiUrl | default "http://devguard-api-service:8080" | quote }}
           - name: REGISTRATION_ENABLED
-            value: {{ .Values.web.registrationEnabled | default "true" | quote }}
+            value: {{ .Values.web.registrationEnabled | quote }}
           - name: DEVGUARD_API_URL_PUBLIC_INTERNET
             value: {{ .Values.web.devguardApiUrlPublicInternet }}
           - name: ORY_SDK_URL
