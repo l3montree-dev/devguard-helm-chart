@@ -46,6 +46,8 @@ spec:
           subPath: postgresql.conf
         - mountPath: /dev/shm
           name: dshm
+        - mountPath: /run/postgresql
+          name: postgresql-run
         env:
         - name: POSTGRES_DB
           value: devguard
@@ -104,3 +106,5 @@ spec:
         emptyDir:
           medium: Memory
           sizeLimit: {{ .Values.postgresql.shm.sizeLimit }}
+      - name: postgresql-run
+        emptyDir: {}

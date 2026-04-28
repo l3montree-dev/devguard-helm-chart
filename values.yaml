@@ -288,7 +288,7 @@ observability:
     exporter:
       image:
         repository: prometheuscommunity/postgres-exporter
-        tag: v1.3.0
+        tag: v0.19.1
         pullPolicy: IfNotPresent
       resources:
         limits:
