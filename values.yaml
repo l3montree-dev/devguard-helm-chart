@@ -83,7 +83,7 @@ api:
     repository: ghcr.io/l3montree-dev/devguard
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: v1.3.0
+    tag: v1.3.1
   imagePullSecrets: []
   errorTracking:
     # https://<your-error-tracking-dsn>
