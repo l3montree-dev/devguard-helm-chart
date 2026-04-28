@@ -60,7 +60,7 @@ kyvernoPolicy:
 ######
 api:
   replicaCount: 1
-  ciComponentBase: "https://gitlab.com/l3montree/devguard/-/raw/main"
+  ciComponentBase: "https://gitlab.com/l3montree/devguard/-/raw/v1.3.0"
   csaf:
     ######### CSAF Keys
     # needs to contain keys: "passphrase", "privateKey", "publicKey", "fingerprint"
@@ -83,7 +83,7 @@ api:
     repository: ghcr.io/l3montree-dev/devguard
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: v1.2.3
+    tag: v1.3.0
   imagePullSecrets: []
   errorTracking:
     # https://<your-error-tracking-dsn>
@@ -164,10 +164,10 @@ web:
     repository: ghcr.io/l3montree-dev/devguard-web
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: v1.2.0
+    tag: v1.3.0
   imagePullSecrets: []
 
-  ciComponentBase: "https://gitlab.com/l3montree/devguard/-/raw/main"
+  ciComponentBase: "https://gitlab.com/l3montree/devguard/-/raw/v1.3.0"
   devguardApiUrl: "http://devguard-api-service:8080"
   devguardApiUrlPublicInternet: ""
   privacyPolicyLink: ""
@@ -216,7 +216,7 @@ postgresql:
     repository: ghcr.io/l3montree-dev/devguard/postgresql
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    # tag: v0.17.0
+    tag: v1.3.0
   pvc:
     size: 21Gi
   podAnnotations: {}
@@ -288,7 +288,7 @@ observability:
     exporter:
       image:
         repository: prometheuscommunity/postgres-exporter
-        tag: v0.19.1
+        tag: v1.3.0
         pullPolicy: IfNotPresent
       resources:
         limits:
