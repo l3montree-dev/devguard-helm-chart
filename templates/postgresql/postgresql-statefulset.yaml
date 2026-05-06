@@ -38,11 +38,6 @@ spec:
           allowPrivilegeEscalation: false
           seccompProfile:
             type: RuntimeDefault
-          capabilities:
-            drop:
-            - ALL
-            add:
-            - CHOWN
         command:
         - sh
         - -c
