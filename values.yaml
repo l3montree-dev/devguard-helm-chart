@@ -110,7 +110,7 @@ api:
         repository: otel/opentelemetry-collector-contrib
         tag: "0.147.0"
       histogram:
-        buckets: [ 100us, 1ms, 2ms, 6ms, 10ms, 100ms, 250ms ]
+        buckets: [100us, 1ms, 2ms, 6ms, 10ms, 100ms, 250ms]
       dimensions:
         - name: http.method
         - name: http.status_code
@@ -156,9 +156,9 @@ api:
     # targetMemoryUtilizationPercentage: 80
 
 
-    ########################
-    ## DevGuard Web Frontend Settings
-    ######
+########################
+## DevGuard Web Frontend Settings
+######
 web:
   # needs to match the setting in the kratos.yaml
   registrationEnabled: true
@@ -209,9 +209,9 @@ web:
     # targetMemoryUtilizationPercentage: 80
 
 
-    ########################
-    ## DevGuard PostgreSQL Database Settings
-    ######
+########################
+## DevGuard PostgreSQL Database Settings
+######
 postgresql:
   image:
     # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard/postgresql:v0.17.0)
