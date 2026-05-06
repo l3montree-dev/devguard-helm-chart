@@ -170,6 +170,7 @@ data:
           enabled: {{ .Values.kratos.verificationAfterSignUp.enabled }}
           ui_url: {{ $protocol }}://{{ $publicUrl }}/recovery
           use: code
+          lifespan: 30m
         verification:
           enabled: {{ .Values.kratos.verificationAfterSignUp.enabled }}
           ui_url: {{ $protocol }}://{{ $publicUrl }}/verification
