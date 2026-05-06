@@ -72,11 +72,10 @@ jobs:
     - name: Install Helm chart
       run: |
         helm install devguard-test . \
+          -f values.yaml \
           --namespace devguard-test \
           --wait \
           --timeout=10m \
-          --set postgresql.enabled=true \
-          --set kratos.enabled=true \
           --set api.image.tag=main-latest \
           --set web.image.tag=main-latest
 

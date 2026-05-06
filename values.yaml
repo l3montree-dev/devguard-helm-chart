@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into templates.
 
-########################
+################################################################################################################################################
 ## Authentication Related Settings (Kratos)
 ######
 kratos:
@@ -53,6 +53,10 @@ mail:
   fromAddress: "noreply@devguard.org"
   fromName: "DevGuard"
 
+
+################################################################################################################################################
+## Miscellaneous Settings
+######
 networkPolicy:
   enabled: true
 
@@ -60,7 +64,9 @@ kyvernoPolicy:
   enabled: false
   # Enforce blocks non-compliant pods; Audit only logs violations
   validationFailureAction: Audit
-########################
+
+
+################################################################################################################################################
 ## DevGuard API Settings
 ######
 api:
@@ -156,7 +162,7 @@ api:
     # targetMemoryUtilizationPercentage: 80
 
 
-########################
+################################################################################################################################################
 ## DevGuard Web Frontend Settings
 ######
 web:
@@ -209,7 +215,7 @@ web:
     # targetMemoryUtilizationPercentage: 80
 
 
-########################
+################################################################################################################################################
 ## DevGuard PostgreSQL Database Settings
 ######
 postgresql:
@@ -258,6 +264,42 @@ postgresql:
   # Kubernetes caps /dev/shm at 64Mi by default — this overrides that limit.
   shm:
     sizeLimit: 2Gi
+  # An init container that chowns the data directory to UID/GID 999 before
+  # postgres starts. Required because the chart's postgresql image ships with
+  # USER 999 baked in, which prevents the upstream entrypoint from chowning
+  # the volume itself. On storage classes that mount volumes as root (e.g.
+  # Azure Disk on AKS, hostpath on minikube), this init container is what
+  # makes the data dir writable by the postgres user.
+  volumePermissions:
+    enabled: true
+    image:
+      repository: busybox
+      tag: "1.37.0@sha256:1487d0af5f52b4ba31c7e465126ee2123fe3f2305d638e7827681e7cf6c83d5e"
+      pullPolicy: IfNotPresent
+    resources:
+      limits:
+        cpu: 100m
+        memory: 64Mi
+      requests:
+        cpu: 10m
+        memory: 16Mi
+  # Pod-level security context. fsGroup is left unset by default — the init
+  # container above handles ownership. Set fsGroup if you need it for other
+  # reasons (e.g. shared sidecar access to the data volume).
+  podSecurityContext: {}
+  # Container-level security context for the postgresql container. Runs as
+  # UID 999 (matches the image's USER directive); the volume has already
+  # been chowned by the init container.
+  containerSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    runAsUser: 999
+    runAsGroup: 999
+    capabilities:
+      drop:
+      - ALL
   resources:
     limits:
       cpu: 4000m
@@ -266,7 +308,8 @@ postgresql:
       cpu: 1000m
       memory: 2056Mi
 
-########################
+
+################################################################################################################################################
 ## Observability Settings
 ######
 observability:
@@ -295,6 +338,16 @@ observability:
         repository: prometheuscommunity/postgres-exporter
         tag: v0.19.1
         pullPolicy: IfNotPresent
+      # Container-level security context for the postgres-exporter sidecar.
+      containerSecurityContext:
+        seccompProfile:
+            type: RuntimeDefault
+        allowPrivilegeEscalation: false
+        runAsNonRoot: true
+        runAsUser: 65534
+        capabilities:
+          drop:
+            - ALL
       resources:
         limits:
           cpu: 100m

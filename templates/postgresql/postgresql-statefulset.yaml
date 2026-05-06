@@ -23,14 +23,45 @@ spec:
       {{- end }}
     spec:
       automountServiceAccountToken: false
+      {{- with .Values.postgresql.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.postgresql.volumePermissions.enabled }}
+      initContainers:
+      - name: init-chown-data
+        image: "{{ .Values.postgresql.volumePermissions.image.repository }}:{{ .Values.postgresql.volumePermissions.image.tag }}"
+        imagePullPolicy: {{ .Values.postgresql.volumePermissions.image.pullPolicy }}
+        securityContext:
+          runAsUser: 0
+          runAsNonRoot: false
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop:
+            - ALL
+            add:
+            - CHOWN
+        command:
+        - sh
+        - -c
+        - chown -R 999:999 /var/lib/postgresql/data
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: postgresql-pv
+          subPath: postgresql
+        resources:
+          {{- toYaml .Values.postgresql.volumePermissions.resources | nindent 10 }}
+      {{- end }}
       containers:
       - image: {{ $postgresqlImage | quote }}
         name: postgresql
         args: ["-c", "config_file=/etc/postgresql/postgresql.conf"]
+        {{- with .Values.postgresql.containerSecurityContext }}
         securityContext:
-          seccompProfile:
-            type: RuntimeDefault
-          allowPrivilegeEscalation: false
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         ports:
         - containerPort: 5432
           protocol: TCP
@@ -69,15 +100,10 @@ spec:
       - name: postgres-exporter
         image: "{{ .Values.observability.postgresql.exporter.image.repository }}:{{ .Values.observability.postgresql.exporter.image.tag }}"
         imagePullPolicy: {{ .Values.observability.postgresql.exporter.image.pullPolicy }}
+        {{- with .Values.observability.postgresql.exporter.containerSecurityContext }}
         securityContext:
-          seccompProfile:
-            type: RuntimeDefault
-          allowPrivilegeEscalation: false
-          runAsNonRoot: true
-          runAsUser: 65534
-          capabilities:
-            drop:
-            - ALL
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         ports:
         - name: metrics
           containerPort: 9187
