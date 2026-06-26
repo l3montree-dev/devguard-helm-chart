@@ -157,6 +157,13 @@ api:
           cpu: 50m
           memory: 64Mi
   intoto:
+    # When true, the chart generates the EC (prime256v1) private key used for
+    # signing In-Toto attestations and stores it in the secret named below.
+    # The key is generated once and preserved across upgrades.
+    # Set to false to bring your own secret (must contain key "privateKey"):
+    # openssl ecparam -name prime256v1 -genkey -noout -out private.ec.key
+    # kubectl create secret generic ec-private-key --from-file=privateKey=private.ec.key -n devguard"
+    generate: true
     existingPrivateKeySecretName: ec-private-key
   # GitHub App Integration Settings
   github:

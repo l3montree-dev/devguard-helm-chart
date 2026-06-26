@@ -306,7 +306,12 @@ export const schema = {
           },
         },
       },
-      intoto: { existingPrivateKeySecretName: "ec-private-key" },
+      intoto: {
+        generate: f(true, {
+          comment: `When true, the chart generates the EC (prime256v1) private key used for\nsigning In-Toto attestations and stores it in the secret named below.\nThe key is generated once and preserved across upgrades.\nSet to false to bring your own secret (must contain key "privateKey"):\nopenssl ecparam -name prime256v1 -genkey -noout -out private.ec.key\nkubectl create secret generic ec-private-key \--from-file=privateKey=private.ec.key -n devguard"`
+        }),
+        existingPrivateKeySecretName: "ec-private-key"
+      },
       github: f(
         {
           enabled: true,
