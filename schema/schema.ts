@@ -62,7 +62,7 @@ const G_API = "API (required for web and API access)";
 const G_WEB = "Web (required for web access)";
 const G_AUTH = "Authentication";
 const G_MAIL = "Mail (required for account verification)";
-const G_CSAF = "Common Security Advisory Framework (CSAF) (optional) - Follow instructions here: https://docs.devguard.org/how-to-guides/administration/deploy-with-helm/#optional-csaf-support";
+const G_CSAF = "Common Security Advisory Framework (CSAF) support (optional)";
 
 // Reusable question fragments ------------------------------------------------
 
@@ -217,7 +217,7 @@ export const schema = {
             type: "string",
             required: false,
             default: "csaf-key-pair",
-            description: "The name of the Kubernetes secret that contains the CSAF key pair and passphrase.",
+            description: "Follow instructions here: https://docs.devguard.org/how-to-guides/administration/deploy-with-helm/#optional-csaf-support\nThe name of the Kubernetes secret that contains the CSAF key pair and passphrase.",
           },
         }),
         aggregatorNamespace: f("", {
