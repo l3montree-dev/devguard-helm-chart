@@ -31,3 +31,7 @@ After that you might have to delete the repo inside Rancher and re-add it for th
 ## Testing in a local Rancher
 
 To test and validate the charts end-to-end, run a local Rancher instance — see [Rancher-Setup.md](Rancher-Setup.md) for how to set it up.
+
+## Automated e2e test (CI and local)
+
+The full Rancher flow (start Rancher → add the partner-charts repo as a ClusterRepo → install DevGuard via the catalog API → health checks) is automated in [`e2e/`](e2e/) and runs in GitHub Actions via the manual `Rancher catalog test` workflow. The same scripts run locally in a Linux VM — see [e2e/README.md](e2e/README.md).

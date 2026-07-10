@@ -1,0 +1,19 @@
+{
+  "api": {
+    "ingress": {
+      "className": "nginx",
+      "host": "api.devguard.local.test"
+    }
+  },
+  "web": {
+    "ingress": {
+      "className": "nginx",
+      "host": "devguard.local.test"
+    }
+  },
+  "postgresql": {
+    "pvc": {
+      "storageClassName": "local-path"
+    }
+  }
+}

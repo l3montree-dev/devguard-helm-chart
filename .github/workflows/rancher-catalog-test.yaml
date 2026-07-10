@@ -1,0 +1,42 @@
+name: Rancher catalog test
+
+# Full end-to-end test of the DevGuard chart through Rancher: starts
+# rancher/rancher in Docker on the runner, registers the partner-charts repo
+# as a ClusterRepo, installs the chart via Rancher's catalog API (the same
+# code path the UI uses) and health-checks the deployment. All logic lives in
+# rancher/e2e/ so the identical scripts can be run locally — see
+# rancher/e2e/README.md.
+
+on:
+  workflow_dispatch:
+    inputs:
+      chart_version:
+        description: Chart version to install (empty = latest in the repo index)
+        required: false
+        default: ''
+      repo_branch:
+        description: partner-charts branch for the ClusterRepo
+        required: false
+        default: main-source
+
+jobs:
+  rancher-catalog-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: azure/setup-kubectl@v4
+        with:
+          # Match the k3s version embedded in rancher v2.14.
+          version: v1.35.0
+
+      - name: Run Rancher catalog e2e test
+        env:
+          CHART_VERSION: ${{ inputs.chart_version }}
+          CHART_REPO_BRANCH: ${{ inputs.repo_branch }}
+        run: bash rancher/e2e/run-all.sh
+
+      - name: Teardown
+        if: always()
+        run: bash rancher/e2e/99-down.sh

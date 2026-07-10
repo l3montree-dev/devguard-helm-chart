@@ -27,38 +27,27 @@ orb -m rancher-vm bash -c '
 '
 ```
 
-### 3. Deploy Rancher on the VM's native filesystem
+### 3. Bring Rancher up
 
-Keep the data on the VM's ext4 filesystem — **not** the mounted Mac path
-(`/Users/...` is virtiofs and reintroduces mount problems for the k3s data).
+The e2e scripts already automate bring-up correctly. For interactive dev, run just phases 01–04:
 
 ```bash
-orb -m rancher-vm bash -c '
-  mkdir -p ~/rancher
-  cp /Users/'"$USER"'/projects/l3montree/rancher/compose.yml ~/rancher/compose.yml
-  cd ~/rancher && docker compose up -d
-'
+cd ~/projects/devguard-helm-chart
+orb -m rancher-vm bash ./rancher/e2e/01-up.sh              # compose up on native fs
+orb -m rancher-vm bash ./rancher/e2e/02-wait-rancher.sh    # wait for /healthz
+orb -m rancher-vm bash ./rancher/e2e/03-bootstrap.sh       # admin password + kubeconfig
+orb -m rancher-vm bash ./rancher/e2e/04-cluster-prereqs.sh # local-path + ingress-nginx
 ```
 
-### 4. Access Rancher
+Open `https://rancher-vm.orb.local/` in the browser (accept the self-signed
+cert) and log in as `admin` / `devguard-ci-admin-pw` (overridable via
+`RANCHER_ADMIN_PASSWORD`; see `rancher/e2e/env.sh`).
+
+### Resetting
 
 ```bash
-orb list   # find the VM IP (e.g. 192.168.139.54)
-
-# bootstrap password
-orb -m rancher-vm docker logs rancher-rancher-1 2>&1 | grep "Bootstrap Password:"
-```
-
-Open `https://rancher-vm.orb.local/` in the browser and accept the self-signed cert.
-
-### Managing / resetting the VM
-
-```bash
-orb -m rancher-vm bash -c 'cd ~/rancher && docker compose logs -f'   # follow logs
-orb -m rancher-vm bash -c 'cd ~/rancher && docker compose down'      # stop
-orb -m rancher-vm bash -c 'cd ~/rancher && docker compose rm -v'     # delete incl. anon volumes
-orb -m rancher-vm bash -c 'rm -rf ~/rancher/data'                    # wipe state for a clean start
-orb delete rancher-vm                                                # delete whole VM
+orb -m rancher-vm bash ./rancher/e2e/99-down.sh   # tear down container + state
+orb delete rancher-vm                             # delete the whole VM
 ```
 
 ## Setup DevGuard
@@ -74,11 +63,10 @@ orb delete rancher-vm                                                # delete wh
 - Setup Reverse-Proxy
   - `brew install caddy`
   - `caddy run --config Caddyfile`
-- Install the [local path provisioner](https://github.com/rancher/local-path-provisioner):
-  - Click ☰ > Cluster Management.
-  - Go to the cluster you want to access with kubectl and click Explore.
-  - In the top navigation menu, click the Kubectl Shell button. Use the window that opens to interact with your Kubernetes cluster.
-  - `kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.36/deploy/local-path-storage.yaml`
+  - > Caddy runs on the Mac and fronts the `kubectl port-forward`s below,
+    > terminating TLS with the real `*.rancher-local.de` hostnames (the frontend
+    > and ORY need proper hostnames). This is only used for manually testing the setup.
+    > The e2e tests work differently (using ingress-nginx - see `04-cluster-prereqs.sh`)
 - Add Test-Repo
   - Login to Rancher -> Apps -> Repositories -> Create: https://rancher-vm.orb.local/dashboard/c/local/apps/catalog.cattle.io.clusterrepo/create
   - Select `Git Repository` and enter URL: https://github.com/l3montree-dev/rancher-partner-charts.git (Branch: main-source)
