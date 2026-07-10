@@ -3,3 +3,4 @@ private.ec.key
 
 .env
 values.local.yaml
+rancher/e2e/.work/
