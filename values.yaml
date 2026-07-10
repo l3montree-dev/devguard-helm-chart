@@ -77,7 +77,7 @@ api:
   debug:
     profile: false # set to "true" to enable pprof profiling endpoints on /debug/pprof
   replicaCount: 1
-  ciComponentBase: https://gitlab.com/l3montree/devguard/-/raw/v1.6.0
+  ciComponentBase: https://gitlab.com/l3montree/devguard/-/raw/v1.8.0
   resources:
     limits:
       cpu: "2"
@@ -115,7 +115,7 @@ api:
     repository: ghcr.io/l3montree-dev/devguard
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: v1.7.0
+    tag: v1.8.0
   imagePullSecrets: []
   errorTracking:
     # https://<your-error-tracking-dsn>
@@ -223,10 +223,10 @@ web:
     repository: ghcr.io/l3montree-dev/devguard-web
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: v1.7.0
+    tag: v1.8.0
   imagePullSecrets: []
 
-  ciComponentBase: https://gitlab.com/l3montree/devguard/-/raw/v1.6.0
+  ciComponentBase: https://gitlab.com/l3montree/devguard/-/raw/v1.8.0
   devguardApiUrl: http://devguard-api-service:8080
   devguardApiUrlPublicInternet: ""
   privacyPolicyLink: ""
@@ -281,7 +281,7 @@ postgresql:
     repository: ghcr.io/l3montree-dev/devguard/postgresql
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: v1.7.0
+    tag: v1.8.0
   pvc:
     size: 21Gi
     # StorageClass for the PostgreSQL data volume.

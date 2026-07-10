@@ -13,6 +13,22 @@ For API and web frontend changes see the [main DevGuard CHANGELOG](https://githu
 
 ---
 
+## [v1.8.0] — 2026-07-06
+
+First release under the shared [versioning policy](https://github.com/l3montree-dev/devguard/blob/main/versioning.md): major/minor versions are now synchronized across devguard, devguard-web, the Helm chart, and CI components.
+
+### Added
+
+- Chart metadata: maintainers, keywords, icon, and source links (`Chart.yaml`)
+- Configurable Grafana dashboard sidecar label (`observability.grafanaDashboard.labelName` / `labelValue`)
+
+### Changed
+
+- Improved GitHub Actions release workflow to use the job token for release creation
+- Minor GitLab CI pipeline cleanup
+
+---
+
 ## [v1.7.0] — 2026-06-19
 
 ### Added
