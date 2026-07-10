@@ -356,7 +356,7 @@ export const schema = {
         annotations: {},
         host: f("api.devguard.example.com", {
           comment:
-            "The chart supports a single ingress host, served at path / (pathType Prefix),\nbecause the Rancher install form cannot address list entries like hosts[0]\nand the services do not support path prefixes.\nIf you need multiple hosts or a path prefix, please open a ticket describing\nyour use case: https://github.com/l3montree-dev/devguard-helm-chart/issues",
+            "The chart supports a single ingress host, served at path / (pathType Prefix),\nbecause the Rancher install form cannot address list entries like hosts[0]\nand the services do not support path prefixes.\nIf you need multiple hosts or a path prefix, please open a ticket describing\nyour use case: https://github.com/l3montree-dev/devguard-helm-chart/issues\n\nDEPRECATED: the old `hosts` list form (`hosts: [{host, paths}]`) is still\nrendered for backwards compatibility, but is deprecated and will be removed in\nthe next major version. Migrate to the single `host` scalar above.",
           question: {
             label: "API Ingress Host",
             group: G_API,
@@ -369,7 +369,7 @@ export const schema = {
         }),
         tls: f(false, {
           comment:
-            "Set to true to serve the API ingress over TLS for the host above.\nThe certificate is read from the secret named by tlsSecretName.",
+            "Set to true to serve the API ingress over TLS for the host above.\nThe certificate is read from the secret named by tlsSecretName.\n\nDEPRECATED: the old `tls` list form (`tls: [{hosts, secretName}]`) is still\nrendered for backwards compatibility, but is deprecated and will be removed in\nthe next major version. Migrate to the boolean above plus tlsSecretName.",
           question: {
             label: "API Ingress TLS Enabled",
             group: G_API,
@@ -464,7 +464,7 @@ export const schema = {
         annotations: {},
         host: f("devguard.example.com", {
           comment:
-            "The chart supports a single ingress host, served at path / (pathType Prefix),\nbecause the Rancher install form cannot address list entries like hosts[0]\nand the services do not support path prefixes.\nIf you need multiple hosts or a path prefix, please open a ticket describing\nyour use case: https://github.com/l3montree-dev/devguard-helm-chart/issues",
+            "The chart supports a single ingress host, served at path / (pathType Prefix),\nbecause the Rancher install form cannot address list entries like hosts[0]\nand the services do not support path prefixes.\nIf you need multiple hosts or a path prefix, please open a ticket describing\nyour use case: https://github.com/l3montree-dev/devguard-helm-chart/issues\n\nDEPRECATED: the old `hosts` list form (`hosts: [{host, paths}]`) is still\nrendered for backwards compatibility, but is deprecated and will be removed in\nthe next major version. Migrate to the single `host` scalar above.",
           question: {
             label: "Web Ingress Host",
             group: G_WEB,
@@ -477,7 +477,7 @@ export const schema = {
         }),
         tls: f(false, {
           comment:
-            "Set to true to serve the web ingress over TLS for the host above.\nThe certificate is read from the secret named by tlsSecretName.",
+            "Set to true to serve the web ingress over TLS for the host above.\nThe certificate is read from the secret named by tlsSecretName.\n\nDEPRECATED: the old `tls` list form (`tls: [{hosts, secretName}]`) is still\nrendered for backwards compatibility, but is deprecated and will be removed in\nthe next major version. Migrate to the boolean above plus tlsSecretName.",
           question: {
             label: "Web Ingress TLS Enabled",
             group: G_WEB,
