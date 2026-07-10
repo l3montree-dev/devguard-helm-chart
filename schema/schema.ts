@@ -10,14 +10,14 @@
 import { f, banner, type Question } from "./builder";
 
 
-export const devguardVersion = "1.7.0";
+export const devguardVersion = "1.8.0";
 
 const dependencies = {
   kratos: {
     repo: "oryd/kratos",
-    tag: "v25.4.0-distroless",
+    tag: "v26.2.0-distroless",
     digest:
-      "sha256:368667ee3713797f86ddec669c36751f6484c7d675c78fd27c795b2e79271c31",
+      "sha256:481bfc3022e5427ffb94570eef84480b99c9f8158388378c57df8c1a4a104b3d",
   },
   api: {
     repo: "ghcr.io/l3montree-dev/devguard",
@@ -40,7 +40,7 @@ const dependencies = {
     tag: "v0.19.1",
   },
   ciComponents: {
-    version: "v1.6.0",
+    version: "v1.8.0",
   }
 }
 
@@ -75,6 +75,18 @@ const ingressQuestion = (kind: "API" | "Web", group: string): Question => ({
   default: true,
   showSubquestionIf: true,
 });
+
+// `additionalEnvs` lets operators inject extra env vars into a component's pod.
+// Values are run through Helm's `tpl`, so they can reference other chart values.
+const additionalEnvsComment = (target: string) =>
+  `Allows to set additional environment variables on the ${target}\n` +
+  `Expects "key: value" definitions.\n` +
+  "The value is parsed through the `tpl` function, so it allows to reference other values\n" +
+  "\n" +
+  "Example:\n" +
+  "additionalEnvs:\n" +
+  '  TEST_CHART_VERSION: "{{ .Chart.Version }}"\n' +
+  '  MY_ENV_VAR: "my-value"';
 
 export const schema = {
   kratos: f(
@@ -130,6 +142,15 @@ export const schema = {
         },
         { comment: "Cleans up expired flows" },
       ),
+      useExistingSecret: f(false, {
+        blankBefore: true,
+        comment:
+          'If set to "true", the user will be responsible to provide a secret for kratos.\nThis is useful for situations where the helm "lookup" function cannot be used (e.g. ArgoCD)\nRequirements for that secret:\n- the secret name must match "kratos"\n- a data entry named "secretsDefault" with the corresponding secret used for session signing as value\n- a data entry named "secretsCookie" with the corresponding secret used for cookie encryption as value\n- a data entry named "secretsCipher" with the corresponding secret used for cipher as value',
+      }),
+      additionalEnvs: f([], {
+        blankBefore: true,
+        comment: additionalEnvsComment("kratos deployment"),
+      }),
     },
     {
       comment:
@@ -375,6 +396,20 @@ export const schema = {
           inline: "targetMemoryUtilizationPercentage: 80",
         }),
       },
+      useExistingEncryptionKeySecret: f(false, {
+        blankBefore: true,
+        comment:
+          'If set to "true", the user will be responsible to provide a secret for the Encryption Key.\nThis is useful for situations where the helm "lookup" function cannot be used (e.g. ArgoCD)\nRequirements for that secret:\n- the secret name must match "devguard-encryption-key"\n- a data entry named "key" with the corresponding encryption key as value',
+      }),
+      useExistingPprofPasswordSecret: f(false, {
+        blankBefore: true,
+        comment:
+          'If set to "true", the user will be responsible to provide a secret for the pprof password\nThis is useful for situations where the helm "lookup" function cannot be used (e.g. ArgoCD)\nRequirements for that secret:\n- the secret name must match "devguard-pprof-password"\n- a data entry named "password" with the corresponding pprof password as value',
+      }),
+      additionalEnvs: f([], {
+        blankBefore: true,
+        comment: additionalEnvsComment("api deployment"),
+      }),
     },
     { blankBefore: true, comment: banner("DevGuard API Settings") },
   ),
@@ -417,6 +452,10 @@ export const schema = {
       errorTracking: {
         dsn: f("", { comment: "https://<your-error-tracking-dsn>" }),
       },
+      additionalEnvs: f([], {
+        blankBefore: true,
+        comment: additionalEnvsComment("web deployment"),
+      }),
       ingress: f({
         enabled: f(true, {
           question: ingressQuestion("Web", G_WEB),
@@ -597,6 +636,20 @@ export const schema = {
         limits: { cpu: "4000m", memory: "8024Mi" },
         requests: { cpu: "1000m", memory: "2056Mi" },
       },
+      useExistingSecret: f(false, {
+        blankBefore: true,
+        comment:
+          'If set to "true", the user will be responsible to provide a secret for the database.\nThis is useful for situations where the helm "lookup" function cannot be used (e.g. ArgoCD)\nRequirements for that secret:\n- the secret name must match "db-secret"\n- a data entry named "postgres-password" with the corresponding password for the "devguard" database user as value\n- a data entry named "password" with the corresponding password for the "postgres" admin user as value\n- a data entry named "replication-password" with the corresponding password for the replication user as value\n- a data entry named "postgres-exporter-dsn" with the value "postgresql://devguard:[POSTGRES-PASSWORD]@localhost:5432/devguard?sslmode=disable", where "[POSTGRES-PASSWORD]" matches the value from the "postgres-password" key',
+      }),
+      useExistingKratosDatabaseSecret: f(false, {
+        blankBefore: true,
+        comment:
+          'If set to "true", the user will be responsible to provide a secret for the kratos database.\nThis is useful for situations where the helm "lookup" function cannot be used (e.g. ArgoCD)\nRequirements for that secret:\n- the secret name must match "kratos-db-secret"\n- a data entry named "password" with the corresponding password for the "kratos" database user as value',
+      }),
+      additionalEnvs: f([], {
+        blankBefore: true,
+        comment: additionalEnvsComment("postgresql statefulset"),
+      }),
     },
     { blankBefore: true, comment: banner("DevGuard PostgreSQL Database Settings") },
   ),
