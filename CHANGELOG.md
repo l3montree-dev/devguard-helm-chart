@@ -4,6 +4,24 @@ All notable changes to the DevGuard Helm chart are documented here.
 
 For API and web frontend changes see the [main DevGuard CHANGELOG](https://github.com/l3montree-dev/devguard/blob/main/CHANGELOG.md).
 
+## [v1.9.0] — 2026-07-14
+
+### Added
+
+- Support for specifying additional environment variables for all services (DevGuard, DevGuard web, Kratos, PostgreSQL) (thanks to [@skuethe](https://github.com/skuethe))
+- Support for using existing secrets without relying on the Helm `lookup` function, for the DB, Kratos DB, Kratos, encryption, and pprof secrets (thanks to [@skuethe](https://github.com/skuethe))
+
+### Changed
+
+- Bumped default Kratos image version to v26.2.0
+- Extended access control documentation for database secrets (thanks to [@skuethe](https://github.com/skuethe))
+
+### Fixed
+
+- Corrected YAML indentation on secret templates (thanks to [@skuethe](https://github.com/skuethe))
+
+---
+
 ## [v1.8.0] — 2026-07-06
 
 First release under the shared [versioning policy](https://github.com/l3montree-dev/devguard/blob/main/versioning.md): major/minor versions are now synchronized across devguard, devguard-web, the Helm chart, and CI components.
