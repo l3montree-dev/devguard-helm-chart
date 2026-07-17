@@ -3,13 +3,13 @@
 {{- if .Values.web.ingress.tls -}}
 {{- $protocol = "https" -}}
 {{- end -}}
-{{- $host := .Values.web.ingress.host -}}
+{{- $host := include "devguard.webHost" . -}}
 
 {{- $apiProtocol := "http" -}}
 {{- if .Values.api.ingress.tls -}}
 {{- $apiProtocol = "https" -}}
 {{- end -}}
-{{- $apiHost := .Values.api.ingress.host -}}
+{{- $apiHost := include "devguard.apiHost" . -}}
 {{- $apiImage := include "devguard.image" (dict "image" .Values.api.image "defaultTag" .Chart.AppVersion) -}}
 {{- $apiImagePullPolicy := include "devguard.imagePullPolicy" (dict "image" .Values.api.image) -}}
 

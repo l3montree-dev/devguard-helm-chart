@@ -40,7 +40,7 @@ spec:
   {{- else if .Values.web.ingress.tls }}
   tls:
     - hosts:
-        - {{ .Values.web.ingress.host | quote }}
+        - {{ include "devguard.webHost" . | quote }}
       secretName: {{ .Values.web.ingress.tlsSecretName | default "devguard-web-tls" }}
   {{- end }}
   rules:
@@ -70,7 +70,7 @@ spec:
           {{- end }}
     {{- end }}
     {{- else }}
-    - host: {{ .Values.web.ingress.host | quote }}
+    - host: {{ include "devguard.webHost" . | quote }}
       http:
         paths:
           - path: /

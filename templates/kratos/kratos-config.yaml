@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: kratos-config
 data:  
-  {{- $publicUrl := .Values.web.ingress.host }}
+  {{- $publicUrl := include "devguard.webHost" . }}
   {{- $protocol := "http" }}
   {{- if .Values.web.ingress.tls }}
   {{- $protocol = "https" }}

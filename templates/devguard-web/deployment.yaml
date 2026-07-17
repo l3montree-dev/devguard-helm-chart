@@ -2,7 +2,7 @@
 {{- if .Values.web.ingress.tls -}}
 {{- $protocol = "https" -}}
 {{- end -}}
-{{- $host := .Values.web.ingress.host -}}
+{{- $host := include "devguard.webHost" . -}}
 {{- $webImage := include "devguard.image" (dict "image" .Values.web.image "defaultTag" .Chart.AppVersion) -}}
 {{- $webImagePullPolicy := include "devguard.imagePullPolicy" (dict "image" .Values.web.image) -}}
 

@@ -36,6 +36,40 @@ Supported object keys: repository, tag, digest.
 {{- end }}
 
 {{/*
+Resolve the web ingress hostname. Prefers the single-host scalar
+(web.ingress.host); falls back to the legacy list shape
+(web.ingress.hosts[0].host), kept for backwards compatibility with values
+files written before the single-host migration.
+Usage: include "devguard.webHost" .
+*/}}
+{{- define "devguard.webHost" -}}
+{{- if .Values.web.ingress.host -}}
+{{- .Values.web.ingress.host -}}
+{{- else if .Values.web.ingress.hosts -}}
+{{- (index .Values.web.ingress.hosts 0).host -}}
+{{- else -}}
+{{- fail "web.ingress.host must be set" -}}
+{{- end -}}
+{{- end }}
+
+{{/*
+Resolve the API ingress hostname. Prefers the single-host scalar
+(api.ingress.host); falls back to the legacy list shape
+(api.ingress.hosts[0].host), kept for backwards compatibility with values
+files written before the single-host migration.
+Usage: include "devguard.apiHost" .
+*/}}
+{{- define "devguard.apiHost" -}}
+{{- if .Values.api.ingress.host -}}
+{{- .Values.api.ingress.host -}}
+{{- else if .Values.api.ingress.hosts -}}
+{{- (index .Values.api.ingress.hosts 0).host -}}
+{{- else -}}
+{{- fail "api.ingress.host must be set" -}}
+{{- end -}}
+{{- end }}
+
+{{/*
 Resolve image pull policy for both image input styles.
 */}}
 {{- define "devguard.imagePullPolicy" -}}

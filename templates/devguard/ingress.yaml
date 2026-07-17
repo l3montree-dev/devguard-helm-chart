@@ -39,7 +39,7 @@ spec:
   {{- else if .Values.api.ingress.tls }}
   tls:
     - hosts:
-        - {{ .Values.api.ingress.host | quote }}
+        - {{ include "devguard.apiHost" . | quote }}
       secretName: {{ .Values.api.ingress.tlsSecretName | default "devguard-api-tls" }}
   {{- end }}
   rules:
@@ -69,7 +69,7 @@ spec:
           {{- end }}
     {{- end }}
     {{- else }}
-    - host: {{ .Values.api.ingress.host | quote }}
+    - host: {{ include "devguard.apiHost" . | quote }}
       http:
         paths:
           - path: /
