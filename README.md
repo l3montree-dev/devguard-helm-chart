@@ -12,8 +12,8 @@ DevGuard is tested on Rancher-supported Kubernetes distributions and is supporte
 
 | DevGuard Chart | Distribution          | Distribution   | Kubernetes | Status |
 | -------------- | --------------------- | -------------- | ---------- | ------ |
-| 1.8.x          | Rancher (>= 2.14)     | K3s (>= v1.35) | >= v1.35   | Tested |
-| 1.8.x          | Talos Linux (>= 1.11) | K8s (>= 1.33)  | >= v1.33   | Tested |
+| > 1.9.x        | Rancher (>= 2.14)     | K3s (>= v1.35) | >= v1.35   | Tested |
+| > 1.9.x        | Talos Linux (>= 1.11) | K8s (>= 1.33)  | >= v1.33   | Tested |
 
 The chart declares `kubeVersion: >=1.21-0` and is expected to work on other Rancher-supported distributions (e.g. RKE2, EKS) and recent Kubernetes versions, but the configurations listed above are the ones we have validated and actively support.
 
