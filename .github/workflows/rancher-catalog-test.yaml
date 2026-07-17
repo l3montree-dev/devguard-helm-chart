@@ -19,6 +19,9 @@ on:
         required: false
         default: main-source
 
+permissions:
+  contents: read
+
 jobs:
   rancher-catalog-test:
     runs-on: ubuntu-latest

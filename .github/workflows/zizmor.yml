@@ -1,0 +1,26 @@
+name: Workflow security analysis
+
+# Static analysis of the GitHub Actions workflows with zizmor
+# (https://zizmor.sh/) — catches unpinned actions, template injection,
+# credential persistence and similar CI security issues.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions: {}
+
+jobs:
+  zizmor:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write # needed to upload SARIF results to code scanning
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5 - https://github.com/actions/checkout/releases/tag/v5.0.0
+        with:
+          persist-credentials: false
+
+      - name: Run zizmor
+        uses: zizmorcore/zizmor-action@6599ee8b7a49aef6a770f63d261d214911a7ce02 # v0.6.0 - https://github.com/zizmorcore/zizmor-action/releases/tag/v0.6.0
