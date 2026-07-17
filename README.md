@@ -60,3 +60,7 @@ For DevGuard images, the policy additionally verifies the SLSA provenance attest
 ### Testing
 
 See [`tests/kyverno/README.md`](tests/kyverno/README.md) for instructions on running the policy tests locally.
+
+### Architecture / Docs
+
+- [Architecture](ARCHITECTURE.md)

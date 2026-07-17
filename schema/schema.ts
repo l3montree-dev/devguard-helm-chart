@@ -10,7 +10,7 @@
 import { f, banner, type Question } from "./builder";
 
 
-export const devguardVersion = "1.8.0";
+export const devguardVersion = "1.9.0";
 
 const dependencies = {
   kratos: {
@@ -40,7 +40,7 @@ const dependencies = {
     tag: "v0.19.1",
   },
   ciComponents: {
-    version: "v1.8.0",
+    version: "v1.9.0",
   }
 }
 
