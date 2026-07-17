@@ -24,7 +24,10 @@ spec:
   {{- if and .Values.api.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
   ingressClassName: {{ .Values.api.ingress.className }}
   {{- end }}
-  {{- if .Values.api.ingress.tls }}
+  {{- if kindIs "slice" .Values.api.ingress.tls }}
+  {{- /* Legacy shape: tls is a list of {hosts, secretName} entries. Kept for
+         backwards compatibility with values files written before the
+         single-host migration. New installs should set tls=true. */}}
   tls:
     {{- range .Values.api.ingress.tls }}
     - hosts:
@@ -33,8 +36,17 @@ spec:
         {{- end }}
       secretName: {{ .secretName }}
     {{- end }}
+  {{- else if .Values.api.ingress.tls }}
+  tls:
+    - hosts:
+        - {{ include "devguard.apiHost" . | quote }}
+      secretName: {{ .Values.api.ingress.tlsSecretName | default "devguard-api-tls" }}
   {{- end }}
   rules:
+    {{- if .Values.api.ingress.hosts }}
+    {{- /* Legacy shape: hosts is a list of {host, paths[]} entries. Kept for
+           backwards compatibility with values files written before the
+           single-host migration. New installs should use api.ingress.host. */}}
     {{- range .Values.api.ingress.hosts }}
     - host: {{ .host | quote }}
       http:
@@ -55,5 +67,24 @@ spec:
               servicePort: 8080
               {{- end }}
           {{- end }}
+    {{- end }}
+    {{- else }}
+    - host: {{ include "devguard.apiHost" . | quote }}
+      http:
+        paths:
+          - path: /
+            {{- if semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion }}
+            pathType: Prefix
+            {{- end }}
+            backend:
+              {{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion }}
+              service:
+                name: devguard-api-service
+                port:
+                  number: 8080
+              {{- else }}
+              serviceName: devguard-api-service
+              servicePort: 8080
+              {{- end }}
     {{- end }}
 {{- end }}

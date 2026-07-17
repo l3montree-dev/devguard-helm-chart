@@ -1,0 +1,19 @@
+# https://hub.docker.com/r/rancher/rancher/tags
+# https://github.com/rancher/rancher/releases
+
+services:
+  rancher:
+    image: rancher/rancher:v2.14.2@sha256:5d312a1b520fafb0f4650bc06ac9896158f65f41f4f2780a7af723e523987143
+    privileged: true
+    restart: unless-stopped
+    environment:
+      # Pre-seed the admin bootstrap password (>= 12 chars) so it never has to
+      # be scraped from the logs — used by the e2e scripts in e2e/. Leave
+      # unset to have Rancher generate one (printed once in the logs).
+      - CATTLE_BOOTSTRAP_PASSWORD=${CATTLE_BOOTSTRAP_PASSWORD:-}
+    volumes:
+      - ./data/auditlog:/var/log/auditlog
+      - ./data/rancher:/var/lib/rancher
+      # - ./data/rancher-data:/var/lib/rancher-data
+    ports:
+      - "8443:443"

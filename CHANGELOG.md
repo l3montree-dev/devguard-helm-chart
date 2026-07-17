@@ -4,6 +4,23 @@ All notable changes to the DevGuard Helm chart are documented here.
 
 For API and web frontend changes see the [main DevGuard CHANGELOG](https://github.com/l3montree-dev/devguard/blob/main/CHANGELOG.md).
 
+## [Unreleased]
+
+### Added
+
+- `api.ingress.tls` / `web.ingress.tls` now also accept a **boolean**. Set it to `true` to serve the ingress over TLS for the single configured host; the certificate is read from `api.ingress.tlsSecretName` / `web.ingress.tlsSecretName` (new values, defaulting to `devguard-api-tls` / `devguard-web-tls` when empty). The old list shape (`tls: [{hosts, secretName}]`) is still fully supported as a fallback.
+- `api.ingress.host` / `web.ingress.host` — single-host **scalars** the Rancher install form can populate (the form cannot write list entries like `hosts[0].host`). Each serves one host at path `/` (pathType `Prefix`). The old `api.ingress.hosts` / `web.ingress.hosts` list is still fully supported as a fallback for multi-host / custom-path setups.
+
+### Changed
+
+- The single-host `host` scalar and boolean `tls` are now the documented default in `values.yaml`. **These changes are backwards compatible:** existing values files using the `hosts` and `tls` list shapes continue to render unchanged — no migration required.
+
+### Deprecated
+
+- The list shapes `api.ingress.hosts` / `web.ingress.hosts` (`[{host, paths}]`) and `api.ingress.tls` / `web.ingress.tls` (`[{hosts, secretName}]`) are **deprecated and will be removed in the next major version.** Helm prints a deprecation warning on install/upgrade when they are detected. Migrate to the single-host `host` scalar and the boolean `tls` + `tlsSecretName`. If you rely on multiple hosts or a custom path prefix, please open a ticket: https://github.com/l3montree-dev/devguard-helm-chart/issues
+
+---
+
 ## [v1.9.0] — 2026-07-14
 
 ### Added
