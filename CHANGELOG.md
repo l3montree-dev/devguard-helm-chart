@@ -4,7 +4,7 @@ All notable changes to the DevGuard Helm chart are documented here.
 
 For API and web frontend changes see the [main DevGuard CHANGELOG](https://github.com/l3montree-dev/devguard/blob/main/CHANGELOG.md).
 
-## [Unreleased]
+## [v1.9.1] — 2026-07-17
 
 ### Added
 
