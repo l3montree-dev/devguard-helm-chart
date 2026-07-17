@@ -51,8 +51,13 @@ orb -m rancher-vm bash ./rancher/e2e/run-all.sh
 # keep the app running for inspection instead of uninstalling:
 orb -m rancher-vm env SKIP_UNINSTALL=1 bash ./rancher/e2e/run-all.sh
 
-# tear down
-orb -m rancher-vm bash ./rancher/e2e/99-down.sh
+# tear down (stop docker container / rancher)
+orb -m rancher-vm bash -c '
+bash ./rancher/e2e/99-down.sh
+'
+
+# remove virtual machine
+orb delete rancher-vm # delete the whole VM
 ```
 
 Alternatively run only `01-up.sh` in the VM and everything else from macOS
