@@ -197,16 +197,22 @@ api:
     enabled: true
     className: ""
     annotations: {}
-    # The chart supports a single ingress host, served at path / (pathType Prefix),
-    # because the Rancher install form cannot address list entries like hosts[0]
-    # and the services do not support path prefixes.
-    # If you need multiple hosts or a path prefix, please open a ticket describing
-    # your use case: https://github.com/l3montree-dev/devguard-helm-chart/issues
+    # The API ingress host, served at path / (pathType Prefix).
+    # Example: api.devguard.example.com
+    # The chart supports a single ingress host because the Rancher install form
+    # cannot address list entries like hosts[0] and the services do not support
+    # path prefixes. If you need multiple hosts or a path prefix, please open a
+    # ticket describing your use case:
+    # https://github.com/l3montree-dev/devguard-helm-chart/issues
+
+    # Left empty by default on purpose: this lets the deprecated `hosts` list
+    # (below) still take effect for values files written before the single-host
+    # migration. A non-empty default here would silently override those hosts.
 
     # DEPRECATED: the old `hosts` list form (`hosts: [{host, paths}]`) is still
     # rendered for backwards compatibility, but is deprecated and will be removed in
     # the next major version. Migrate to the single `host` scalar above.
-    host: api.devguard.example.com
+    host: ""
     # Set to true to serve the API ingress over TLS for the host above.
     # The certificate is read from the secret named by tlsSecretName.
 
@@ -305,16 +311,24 @@ web:
     enabled: true
     className: ""
     annotations: {}
-    # The chart supports a single ingress host, served at path / (pathType Prefix),
-    # because the Rancher install form cannot address list entries like hosts[0]
-    # and the services do not support path prefixes.
-    # If you need multiple hosts or a path prefix, please open a ticket describing
-    # your use case: https://github.com/l3montree-dev/devguard-helm-chart/issues
+    # The web ingress host, served at path / (pathType Prefix).
+    # Example: devguard.example.com
+    # This host also drives the app's FRONTEND_URL (login/OAuth redirect target).
+    # The chart supports a single ingress host because the Rancher install form
+    # cannot address list entries like hosts[0] and the services do not support
+    # path prefixes. If you need multiple hosts or a path prefix, please open a
+    # ticket describing your use case:
+    # https://github.com/l3montree-dev/devguard-helm-chart/issues
+
+    # Left empty by default on purpose: this lets the deprecated `hosts` list
+    # (below) still take effect for values files written before the single-host
+    # migration. A non-empty default here would silently override those hosts and
+    # redirect users to the placeholder domain.
 
     # DEPRECATED: the old `hosts` list form (`hosts: [{host, paths}]`) is still
     # rendered for backwards compatibility, but is deprecated and will be removed in
     # the next major version. Migrate to the single `host` scalar above.
-    host: devguard.example.com
+    host: ""
     # Set to true to serve the web ingress over TLS for the host above.
     # The certificate is read from the secret named by tlsSecretName.
 
