@@ -18,21 +18,13 @@ supports nested containers. This tutorial assumes that you are using OrbStack on
 orb create ubuntu rancher-vm
 ```
 
-### 2. Install Docker in the VM
-
-```bash
-orb -m rancher-vm bash -c '
-  curl -fsSL https://get.docker.com | sudo sh
-  sudo usermod -aG docker $(whoami)
-'
-```
-
-### 3. Bring Rancher up
+### 2. Bring Rancher up
 
 The e2e scripts already automate bring-up correctly. For interactive dev, run just phases 01–04:
 
 ```bash
 cd ~/projects/devguard-helm-chart
+orb -m rancher-vm bash ./rancher/e2e/00-install-deps.sh    # install docker, jq and kubectl in VM
 orb -m rancher-vm bash ./rancher/e2e/01-up.sh              # compose up on native fs
 orb -m rancher-vm bash ./rancher/e2e/02-wait-rancher.sh    # wait for /healthz
 orb -m rancher-vm bash ./rancher/e2e/03-bootstrap.sh       # admin password + kubeconfig
@@ -43,7 +35,7 @@ Open `https://rancher-vm.orb.local/` in the browser (accept the self-signed
 cert) and log in as `admin` / `devguard-ci-admin-pw` (overridable via
 `RANCHER_ADMIN_PASSWORD`; see `rancher/e2e/env.sh`).
 
-### Resetting
+### 3. Resetting
 
 ```bash
 orb -m rancher-vm bash ./rancher/e2e/99-down.sh   # tear down container + state

@@ -16,6 +16,7 @@ manual `workflow_dispatch`) is a thin wrapper around these scripts.
 
 | Script                  | What it does                                                                                                                         |
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `00-install-deps.sh`    | install Docker + jq + kubectl in a fresh VM (local only; idempotent). CI gets these from the runner + azure/setup-kubectl instead    |
 | `01-up.sh`              | copy compose.yml to `$RANCHER_STATE_DIR` (native fs) and `docker compose up -d` with `CATTLE_BOOTSTRAP_PASSWORD` pre-seeded          |
 | `02-wait-rancher.sh`    | wait for `/healthz`                                                                                                                  |
 | `03-bootstrap.sh`       | login, set admin password + `server-url`, generate kubeconfig for the `local` cluster, wait for cluster + rancher-webhook            |
@@ -40,9 +41,10 @@ OrbStack VM:
 ```bash
 orb create ubuntu rancher-vm
 
-# TODO! install docker in the VM (see Rancher-Setup.md)
-
 cd ~/projects/devguard-helm-chart # navigate to the project/repo root
+
+# install Docker + jq + kubectl in the fresh VM
+orb -m rancher-vm bash ./rancher/e2e/00-install-deps.sh
 
 # run the full suite inside the VM (repo is reachable via the /Users mount;
 # Rancher's data is placed on the VM's native fs automatically)
@@ -64,7 +66,7 @@ Alternatively run only `01-up.sh` in the VM and everything else from macOS
 with `RANCHER_URL=https://<vm-ip>:8443` (find the IP with `orb list`).
 
 `jq`, `curl`, `kubectl` and docker compose v2 must be available wherever the
-scripts run.
+scripts run — `00-install-deps.sh` sets these up in a fresh VM.
 
 > **Why not `act`?** Running the GitHub workflow locally with
 > [nektos/act](https://github.com/nektos/act) does not work on macOS: the
