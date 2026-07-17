@@ -35,6 +35,8 @@ Open `https://rancher-vm.orb.local/` in the browser (accept the self-signed
 cert) and log in as `admin` / `devguard-ci-admin-pw` (overridable via
 `RANCHER_ADMIN_PASSWORD`; see `rancher/e2e/env.sh`).
 
+Follow details in [Setup Devguard](#setup-devguard) section below.
+
 ### 3. Resetting
 
 ```bash
@@ -45,7 +47,7 @@ orb delete rancher-vm                             # delete the whole VM
 ## Setup DevGuard
 
 - Setup custom DNS
-  - Add the following entries to the `/etc/hosts` file
+  - Add the following entries to the `/etc/hosts` file on your Host Machine
   - ```bash
       # sudo nano /etc/hosts
       127.0.0.1 api.devguard.rancher-local.de
