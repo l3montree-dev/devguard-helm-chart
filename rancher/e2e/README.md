@@ -38,7 +38,9 @@ the nested containers inside `rancher/rancher` (see
 OrbStack VM:
 
 ```bash
-orb create ubuntu rancher-vm   # once; then install docker in the VM (see Rancher-Setup.md)
+orb create ubuntu rancher-vm
+
+# TODO! install docker in the VM (see Rancher-Setup.md)
 
 cd ~/projects/devguard-helm-chart # navigate to the project/repo root
 
