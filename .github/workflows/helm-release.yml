@@ -94,14 +94,11 @@ jobs:
         echo "minor=${MINOR}" >> $GITHUB_OUTPUT
 
     - name: Create GitHub Release
-      uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844 # v1 - https://github.com/softprops/action-gh-release/releases/tag/v1
       if: startsWith(github.ref, 'refs/tags/')
-      with:
-        files: |
-          charts/*.tgz
-        generate_release_notes: true
-        prerelease: ${{ contains(github.ref_name, '-rc') || contains(github.ref_name, '-alpha') || contains(github.ref_name, '-beta') }}
-        body: |
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        TAG: ${{ github.ref_name }}
+        RELEASE_BODY: |
           # DevGuard Helm Chart ${{ steps.version.outputs.version }}
 
           Official Helm chart for deploying the DevGuard platform on Kubernetes.
@@ -132,5 +129,16 @@ jobs:
 
           🐛 Report Issues: https://github.com/l3montree-dev/devguard/issues
           💬 Community: https://github.com/l3montree-dev/devguard/discussions
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        printf '%s' "$RELEASE_BODY" > "$RUNNER_TEMP/release-notes.md"
+
+        PRERELEASE=""
+        case "$TAG" in
+          *-rc*|*-alpha*|*-beta*) PRERELEASE="--prerelease" ;;
+        esac
+
+        gh release create "$TAG" charts/*.tgz \
+          --title "$TAG" \
+          --notes-file "$RUNNER_TEMP/release-notes.md" \
+          --generate-notes \
+          $PRERELEASE
