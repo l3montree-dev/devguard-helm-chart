@@ -354,9 +354,9 @@ export const schema = {
         }),
         className: "",
         annotations: {},
-        host: f("api.devguard.example.com", {
+        host: f("", {
           comment:
-            "The chart supports a single ingress host, served at path / (pathType Prefix),\nbecause the Rancher install form cannot address list entries like hosts[0]\nand the services do not support path prefixes.\nIf you need multiple hosts or a path prefix, please open a ticket describing\nyour use case: https://github.com/l3montree-dev/devguard-helm-chart/issues\n\nDEPRECATED: the old `hosts` list form (`hosts: [{host, paths}]`) is still\nrendered for backwards compatibility, but is deprecated and will be removed in\nthe next major version. Migrate to the single `host` scalar above.",
+            "The API ingress host, served at path / (pathType Prefix).\nExample: api.devguard.example.com\nThe chart supports a single ingress host because the Rancher install form\ncannot address list entries like hosts[0] and the services do not support\npath prefixes. If you need multiple hosts or a path prefix, please open a\nticket describing your use case:\nhttps://github.com/l3montree-dev/devguard-helm-chart/issues\n\nLeft empty by default on purpose: this lets the deprecated `hosts` list\n(below) still take effect for values files written before the single-host\nmigration. A non-empty default here would silently override those hosts.\n\nDEPRECATED: the old `hosts` list form (`hosts: [{host, paths}]`) is still\nrendered for backwards compatibility, but is deprecated and will be removed in\nthe next major version. Migrate to the single `host` scalar above.",
           question: {
             label: "API Ingress Host",
             group: G_API,
@@ -462,9 +462,9 @@ export const schema = {
         }),
         className: "",
         annotations: {},
-        host: f("devguard.example.com", {
+        host: f("", {
           comment:
-            "The chart supports a single ingress host, served at path / (pathType Prefix),\nbecause the Rancher install form cannot address list entries like hosts[0]\nand the services do not support path prefixes.\nIf you need multiple hosts or a path prefix, please open a ticket describing\nyour use case: https://github.com/l3montree-dev/devguard-helm-chart/issues\n\nDEPRECATED: the old `hosts` list form (`hosts: [{host, paths}]`) is still\nrendered for backwards compatibility, but is deprecated and will be removed in\nthe next major version. Migrate to the single `host` scalar above.",
+            "The web ingress host, served at path / (pathType Prefix).\nExample: devguard.example.com\nThis host also drives the app's FRONTEND_URL (login/OAuth redirect target).\nThe chart supports a single ingress host because the Rancher install form\ncannot address list entries like hosts[0] and the services do not support\npath prefixes. If you need multiple hosts or a path prefix, please open a\nticket describing your use case:\nhttps://github.com/l3montree-dev/devguard-helm-chart/issues\n\nLeft empty by default on purpose: this lets the deprecated `hosts` list\n(below) still take effect for values files written before the single-host\nmigration. A non-empty default here would silently override those hosts and\nredirect users to the placeholder domain.\n\nDEPRECATED: the old `hosts` list form (`hosts: [{host, paths}]`) is still\nrendered for backwards compatibility, but is deprecated and will be removed in\nthe next major version. Migrate to the single `host` scalar above.",
           question: {
             label: "Web Ingress Host",
             group: G_WEB,
