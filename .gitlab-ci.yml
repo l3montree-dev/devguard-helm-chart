@@ -57,12 +57,7 @@ helm-release:
         VERSION=$(grep '^version:' Chart.yaml | cut -d' ' -f2)
       fi
       echo "Releasing version: $VERSION"
-    
-    # Update Chart.yaml with the version
-    - |
-      sed -i "s/^version:.*/version: $VERSION/" Chart.yaml
-      sed -i "s/^appVersion:.*/appVersion: \"$VERSION\"/" Chart.yaml
-    
+
     # Package the chart
     - helm dependency update
     - mkdir -p charts

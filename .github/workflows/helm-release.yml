@@ -64,13 +64,6 @@ jobs:
         echo "version=$VERSION" >> $GITHUB_OUTPUT
         echo "Releasing version: $VERSION"
 
-    - name: Update Chart version
-      env:
-        VERSION: ${{ steps.version.outputs.version }}
-      run: |
-        sed -i "s/^version:.*/version: $VERSION/" Chart.yaml
-        sed -i "s/^appVersion:.*/appVersion: \"v$VERSION\"/" Chart.yaml
-
     - name: Package Helm Chart
       run: |
         helm dependency update
