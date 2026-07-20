@@ -14,7 +14,7 @@
 import { resolve, dirname } from "node:path";
 import { existsSync } from "node:fs";
 import { generateValues, generateQuestions } from "./builder";
-import { schema, GROUP_ORDER, devguardVersion } from "./schema";
+import { schema, GROUP_ORDER, chartVersion, apiVersion } from "./schema";
 
 const HEADER =
   "# DO NOT EDIT — generated from schema/schema.ts. Run `bun run generate` in schema/.\n";
@@ -41,8 +41,8 @@ const chartPath = resolve(repoRoot, "Chart.yaml");
 function patchChart(src: string): string {
   let patched = 0;
   const out = src
-    .replace(/^version:.*$/m, () => (patched++, `version: ${devguardVersion}`))
-    .replace(/^appVersion:.*$/m, () => (patched++, `appVersion: "v${devguardVersion}"`));
+    .replace(/^version:.*$/m, () => (patched++, `version: ${chartVersion}`))
+    .replace(/^appVersion:.*$/m, () => (patched++, `appVersion: "v${apiVersion}"`));
   if (patched !== 2) {
     throw new Error(
       `Chart.yaml: expected to patch 'version' and 'appVersion' but matched ${patched} line(s)`,

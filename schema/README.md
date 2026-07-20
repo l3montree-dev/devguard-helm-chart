@@ -9,9 +9,16 @@ edit it, never the generated files.
 ```bash
 cd schema
 bun install
-bun run generate     # write values.yaml + questions.yaml
-bun run check        # CI: exit 1 if the generated files are stale
+API_VERSION=1.9.0 WEB_VERSION=1.9.0 CHART_VERSION=1.9.0 CI_COMPONENTS_VERSION=1.9.0 \
+  bun run generate   # write values.yaml + questions.yaml
+bun run check        # CI: exit 1 if the generated files are stale (also needs the env vars)
 ```
+
+`API_VERSION`, `WEB_VERSION`, `CHART_VERSION`, and `CI_COMPONENTS_VERSION` are
+required — there are no defaults. They can diverge: the devguard api, the
+devguard-web frontend, this chart, and devguard-ci-components are each tagged
+and released independently. `devguard-maint`'s `release helm-chart` command
+sets all four automatically.
 
 Outputs:
 
@@ -21,9 +28,11 @@ Outputs:
 | `Chart.yaml`     | chart root                                                           | `version` + `appVersion` patched from `devguardVersion`; rest untouched |
 | `questions.yaml` | `../rancher-partner-charts/packages/devguard/overlay/questions.yaml` | fully generated                                                         |
 
-`devguardVersion` in `schema.ts` (plain semver, e.g. `1.7.0`) is the single
-version knob: it sets the api/web/postgresql image tags (`v`-prefixed), and
-`Chart.yaml`'s `version` (as-is) and `appVersion` (`v`-prefixed, quoted).
+- `API_VERSION` sets the api and postgresql image tags, and `Chart.yaml`'s
+  `appVersion` (all `v`-prefixed).
+- `WEB_VERSION` sets the devguard-web image tag (`v`-prefixed).
+- `CHART_VERSION` sets `Chart.yaml`'s `version` (as-is, no `v` prefix).
+- `CI_COMPONENTS_VERSION` sets `ciComponentBase`'s tag (`v`-prefixed).
 
 The partner-charts path assumes that repo sits next to this one. Override it:
 

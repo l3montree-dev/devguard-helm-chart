@@ -10,7 +10,28 @@
 import { f, banner, type Question } from "./builder";
 
 
-export const devguardVersion = "1.9.0";
+/** Read a required env var or throw — these version knobs have no default. */
+function requiredEnv(name: string): string {
+  const v = process.env[name];
+  if (!v) {
+    throw new Error(
+      `${name} is required (e.g. ${name}=1.9.0). Set API_VERSION, WEB_VERSION, CHART_VERSION and CI_COMPONENTS_VERSION before running generate.`,
+    );
+  }
+  return v;
+}
+
+// Independent version knobs (used by devguard-maint's `release helm-chart`
+// command, which can release the api, web, chart, and ci-components at
+// different versions/cadences). No defaults — all must be set explicitly.
+export const apiVersion = requiredEnv("API_VERSION");
+export const webVersion = requiredEnv("WEB_VERSION");
+// The Helm chart's own version/appVersion.
+export const chartVersion = requiredEnv("CHART_VERSION");
+// devguard-ci-components is tagged and released independently (see
+// devguard-maint's `release ci-components` command) — its version does not
+// track the chart's own version.
+export const ciComponentsVersion = requiredEnv("CI_COMPONENTS_VERSION");
 
 const dependencies = {
   kratos: {
@@ -21,15 +42,15 @@ const dependencies = {
   },
   api: {
     repo: "ghcr.io/l3montree-dev/devguard",
-    tag: `v${devguardVersion}`,
+    tag: `v${apiVersion}`,
   },
   web: {
     repo: "ghcr.io/l3montree-dev/devguard-web",
-    tag: `v${devguardVersion}`,
+    tag: `v${webVersion}`,
   },
   postgresql: {
     repo: "ghcr.io/l3montree-dev/devguard/postgresql",
-    tag: `v${devguardVersion}`,
+    tag: `v${apiVersion}`,
   },
   postgresVolumePermissionImage: {
     repo: "busybox",
@@ -40,7 +61,7 @@ const dependencies = {
     tag: "v0.19.1",
   },
   ciComponents: {
-    version: "v1.9.0",
+    version: `v${ciComponentsVersion}`,
   }
 }
 
