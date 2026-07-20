@@ -129,12 +129,12 @@ api:
     aggregatorName: "" # e.g. "Example GmbH"
     aggregatorContactDetails: "" # e.g. "csaf@example.com"
   image:
-    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard:v1.10.0)
+    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard:v1.10.2)
     # or an object with repository/tag/digest/pullPolicy.
     repository: ghcr.io/l3montree-dev/devguard
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: v1.10.0
+    tag: v1.10.2
   imagePullSecrets: []
   errorTracking:
     # https://<your-error-tracking-dsn>
@@ -176,14 +176,17 @@ api:
           cpu: 50m
           memory: 64Mi
   intoto:
-    # When true, the chart generates the EC (prime256v1) private key used for
-    # signing In-Toto attestations and stores it in the secret named below.
-    # The key is generated once and preserved across upgrades.
-    # Set to false to bring your own secret (must contain key "privateKey"):
+    # Name of the secret holding the EC (prime256v1) private key (data key
+    # "privateKey") used to sign In-Toto attestations.
+    # Leave empty (default) to have the chart generate and manage the key in a
+    # secret named "ec-private-key"; the generated key is preserved across upgrades.
+    # Set it to the name of a secret you created yourself to bring your own key — the
+    # chart then only references that secret and generates nothing. This is also how
+    # to run the chart where the helm "lookup" function is unavailable (e.g. ArgoCD).
+    # That secret must contain a data key "privateKey"; create one with:
     # openssl ecparam -name prime256v1 -genkey -noout -out private.ec.key
-    # kubectl create secret generic ec-private-key --from-file=privateKey=private.ec.key -n devguard"
-    generate: true
-    existingPrivateKeySecretName: ec-private-key
+    # kubectl create secret generic ec-private-key --from-file=privateKey=private.ec.key -n devguard
+    existingPrivateKeySecretName: ""
   # GitHub App Integration Settings
   github:
     enabled: true
@@ -275,12 +278,12 @@ web:
       cpu: 100m
       memory: 128Mi
   image:
-    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard-web:v1.10.0)
+    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard-web:v1.10.1)
     # or an object with repository/tag/digest/pullPolicy.
     repository: ghcr.io/l3montree-dev/devguard-web
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: v1.10.0
+    tag: v1.10.1
   imagePullSecrets: []
 
   ciComponentBase: https://gitlab.com/l3montree/devguard/-/raw/v1.10.0
@@ -357,14 +360,14 @@ web:
 ######
 postgresql:
   image:
-    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard/postgresql:v1.10.0)
+    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard/postgresql:v1.10.2)
     # or an object with repository/tag/digest/pullPolicy.
     # Please note: we are using a custom PostgreSQL image that has the required
     # extensions pre-installed.
     repository: ghcr.io/l3montree-dev/devguard/postgresql
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: v1.10.0
+    tag: v1.10.2
   pvc:
     size: 21Gi
     # StorageClass for the PostgreSQL data volume.

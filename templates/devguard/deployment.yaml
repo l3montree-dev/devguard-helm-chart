@@ -379,7 +379,7 @@ spec:
           optional: true
       - name: intoto-private-key
         secret:
-          secretName: {{ .Values.api.intoto.existingPrivateKeySecretName }}
+          secretName: {{ .Values.api.intoto.existingPrivateKeySecretName | default "ec-private-key" }}
       {{- if .Values.api.csaf.existingCsafSecretName }}
       - name: csaf-keys
         secret:
