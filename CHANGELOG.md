@@ -4,6 +4,26 @@ All notable changes to the DevGuard Helm chart are documented here.
 
 For API and web frontend changes see the [main DevGuard CHANGELOG](https://github.com/l3montree-dev/devguard/blob/main/CHANGELOG.md).
 
+## [v1.10.2] — 2026-07-20
+
+### Fixed
+
+- **In-Toto signing key: `helm upgrade` no longer fails with a Helm ownership error.** When the `ec-private-key` secret had been created manually (as the deploy-with-Helm guide instructed), the upgrade aborted with `invalid ownership metadata … missing key "app.kubernetes.io/managed-by"` because the chart tried to adopt a secret it did not create. The chart now only generates its own secret when no existing one is named, and otherwise just references yours — it never adopts a foreign secret.
+
+### Changed
+
+- Bumped default image versions: `devguard` / `postgresql` to `v1.10.2`, `devguard-web` to `v1.10.1`.
+- **In-Toto key configuration is no longer self-contradictory.** The `api.intoto.generate` boolean is removed and `api.intoto.existingPrivateKeySecretName` now drives both modes on its own:
+  - **Empty (new default):** the chart generates and manages the key in a secret named `ec-private-key`, preserving it across upgrades.
+  - **Set to a secret name:** the chart only references that secret (data key `privateKey`) and generates nothing — also the way to run under ArgoCD, where the Helm `lookup` function is unavailable.
+
+### Migration
+
+- **If you created the `ec-private-key` secret yourself** (per the deploy-with-Helm guide), set `api.intoto.existingPrivateKeySecretName: ec-private-key` so the chart references it instead of trying to adopt it. If your values file already carried that key from the old default, the fix is automatic — the removed `api.intoto.generate` value is simply ignored.
+- **If you relied on the chart generating the key**, leave `api.intoto.existingPrivateKeySecretName` empty; generation and cross-upgrade preservation are unchanged.
+
+---
+
 ## [v1.10.1] — 2026-07-20
 
 ### Changed

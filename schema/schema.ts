@@ -351,10 +351,10 @@ export const schema = {
         },
       },
       intoto: {
-        generate: f(true, {
-          comment: `When true, the chart generates the EC (prime256v1) private key used for\nsigning In-Toto attestations and stores it in the secret named below.\nThe key is generated once and preserved across upgrades.\nSet to false to bring your own secret (must contain key "privateKey"):\nopenssl ecparam -name prime256v1 -genkey -noout -out private.ec.key\nkubectl create secret generic ec-private-key \--from-file=privateKey=private.ec.key -n devguard"`
+        existingPrivateKeySecretName: f("", {
+          comment:
+            'Name of the secret holding the EC (prime256v1) private key (data key\n"privateKey") used to sign In-Toto attestations.\nLeave empty (default) to have the chart generate and manage the key in a\nsecret named "ec-private-key"; the generated key is preserved across upgrades.\nSet it to the name of a secret you created yourself to bring your own key — the\nchart then only references that secret and generates nothing. This is also how\nto run the chart where the helm "lookup" function is unavailable (e.g. ArgoCD).\nThat secret must contain a data key "privateKey"; create one with:\nopenssl ecparam -name prime256v1 -genkey -noout -out private.ec.key\nkubectl create secret generic ec-private-key --from-file=privateKey=private.ec.key -n devguard',
         }),
-        existingPrivateKeySecretName: "ec-private-key"
       },
       github: f(
         {
