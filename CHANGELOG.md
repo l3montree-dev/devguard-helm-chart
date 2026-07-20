@@ -4,6 +4,15 @@ All notable changes to the DevGuard Helm chart are documented here.
 
 For API and web frontend changes see the [main DevGuard CHANGELOG](https://github.com/l3montree-dev/devguard/blob/main/CHANGELOG.md).
 
+## [v1.10.1] — 2026-07-20
+
+### Changed
+
+- CI release workflows (GitHub Actions and GitLab CI) no longer auto-rewrite `Chart.yaml`'s `version` / `appVersion` at release time; the chart version is now expected to be committed ahead of tagging
+- Removed the GitLab CI `schema-check` job that validated `values.yaml` / `questions.yaml` against `schema/schema.ts`
+
+---
+
 ## [v1.10.0] — 2026-07-20
 
 ### Changed
