@@ -129,7 +129,7 @@ api:
     aggregatorName: "" # e.g. "Example GmbH"
     aggregatorContactDetails: "" # e.g. "csaf@example.com"
   image:
-    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard:v1.10.2)
+    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard:v1.10.3)
     # or an object with repository/tag/digest/pullPolicy.
     repository: ghcr.io/l3montree-dev/devguard
     pullPolicy: IfNotPresent
@@ -360,7 +360,7 @@ web:
 ######
 postgresql:
   image:
-    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard/postgresql:v1.10.2)
+    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard/postgresql:v1.10.3)
     # or an object with repository/tag/digest/pullPolicy.
     # Please note: we are using a custom PostgreSQL image that has the required
     # extensions pre-installed.
