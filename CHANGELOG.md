@@ -12,7 +12,7 @@ For API and web frontend changes see the [main DevGuard CHANGELOG](https://githu
 
 ### Changed
 
-- Bumped default image versions: `devguard` / `postgresql` to `v1.10.2`, `devguard-web` to `v1.10.1`.
+- Bumped default image versions: `devguard` / `postgresql` to `v1.10.3`, `devguard-web` to `v1.10.1`.
 - **In-Toto key configuration is no longer self-contradictory.** The `api.intoto.generate` boolean is removed and `api.intoto.existingPrivateKeySecretName` now drives both modes on its own:
   - **Empty (new default):** the chart generates and manages the key in a secret named `ec-private-key`, preserving it across upgrades.
   - **Set to a secret name:** the chart only references that secret (data key `privateKey`) and generates nothing — also the way to run under ArgoCD, where the Helm `lookup` function is unavailable.

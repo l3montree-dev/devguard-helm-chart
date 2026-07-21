@@ -134,7 +134,7 @@ api:
     repository: ghcr.io/l3montree-dev/devguard
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: v1.10.2
+    tag: v1.10.3
   imagePullSecrets: []
   errorTracking:
     # https://<your-error-tracking-dsn>
@@ -367,7 +367,7 @@ postgresql:
     repository: ghcr.io/l3montree-dev/devguard/postgresql
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: v1.10.2
+    tag: v1.10.3
   pvc:
     size: 21Gi
     # StorageClass for the PostgreSQL data volume.
