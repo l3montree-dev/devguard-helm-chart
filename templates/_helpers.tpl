@@ -70,6 +70,23 @@ Usage: include "devguard.apiHost" .
 {{- end }}
 
 {{/*
+Parse the otel-collector sidecar memory limit (e.g. "768Mi", "1Gi") into an
+integer number of MiB. Used to derive the memory_limiter processor limits and
+GOMEMLIMIT so the collector stays below its Kubernetes memory limit.
+Usage: include "devguard.otelMemLimitMib" .
+*/}}
+{{- define "devguard.otelMemLimitMib" -}}
+{{- $mem := .Values.api.tracing.spanMetrics.resources.limits.memory | toString -}}
+{{- if hasSuffix "Gi" $mem -}}
+{{- mul (trimSuffix "Gi" $mem | int) 1024 -}}
+{{- else if hasSuffix "Mi" $mem -}}
+{{- trimSuffix "Mi" $mem | int -}}
+{{- else -}}
+{{- fail "api.tracing.spanMetrics.resources.limits.memory must use a Mi or Gi suffix" -}}
+{{- end -}}
+{{- end }}
+
+{{/*
 Resolve image pull policy for both image input styles.
 */}}
 {{- define "devguard.imagePullPolicy" -}}
