@@ -345,8 +345,8 @@ export const schema = {
             { name: "http.route" },
           ],
           resources: {
-            limits: { cpu: "200m", memory: "256Mi" },
-            requests: { cpu: "50m", memory: "64Mi" },
+            limits: { cpu: "200m", memory: "768Mi" },
+            requests: { cpu: "50m", memory: "256Mi" },
           },
         },
       },

@@ -345,8 +345,10 @@ spec:
               containerPort: 4318
             - name: span-metrics
               containerPort: 8889
-          {{- if .Values.api.tracing.existingSecretName }}
           env:
+            - name: GOMEMLIMIT
+              value: {{ printf "%dMiB" (div (mul (include "devguard.otelMemLimitMib" . | int) 80) 100) }}
+          {{- if .Values.api.tracing.existingSecretName }}
             - name: OTEL_EXPORTER_BASIC_AUTH_USERNAME
               valueFrom:
                 secretKeyRef:

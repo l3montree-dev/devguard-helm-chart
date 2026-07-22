@@ -171,10 +171,10 @@ api:
       resources:
         limits:
           cpu: 200m
-          memory: 256Mi
+          memory: 768Mi
         requests:
           cpu: 50m
-          memory: 64Mi
+          memory: 256Mi
   intoto:
     # Name of the secret holding the EC (prime256v1) private key (data key
     # "privateKey") used to sign In-Toto attestations.
