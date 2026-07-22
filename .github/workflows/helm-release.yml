@@ -65,9 +65,11 @@ jobs:
         echo "Releasing version: $VERSION"
 
     - name: Package Helm Chart
+      env:
+        VERSION: ${{ steps.version.outputs.version }}
       run: |
         helm dependency update
-        helm package . --destination ./charts/
+        helm package . --version "$VERSION" --destination ./charts/
 
     - name: Push Helm Chart to GitHub Container Registry
       env:
