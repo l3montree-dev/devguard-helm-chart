@@ -22,6 +22,7 @@ maintainers:
   - name: L3montree GmbH
     email: info@l3montree.com
     url: https://l3montree.com
+artifacthub.io/category: security
 
 # A chart can be either an 'application' or a 'library' chart.
 #
