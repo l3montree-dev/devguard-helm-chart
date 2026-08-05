@@ -4,6 +4,14 @@ All notable changes to the DevGuard Helm chart are documented here.
 
 For API and web frontend changes see the [main DevGuard CHANGELOG](https://github.com/l3montree-dev/devguard/blob/main/CHANGELOG.md).
 
+## [v1.12.1] — 2026-08-05
+
+### Changed
+
+- Bumped default DevGuard image versions: `devguard` / `postgresql` to `v1.12.3`, `devguard-web` to `v1.12.2`, `devguard-ci-components` to `v1.12.0`
+
+---
+
 ## [v1.12.0] — 2026-08-02
 
 ### Changed
