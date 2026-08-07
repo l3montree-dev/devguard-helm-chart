@@ -27,6 +27,16 @@ on:
 
 permissions: {}
 
+env:
+  # Lowest chart version to publish in the index. Older releases stay available
+  # on their GitHub release page and in the OCI registry, they are just not part
+  # of the HTTP Helm repository.
+  MIN_VERSION: '1.0.0'
+  # Whether to publish pre-release versions (`-rc.1`, `-test.2`, …). Helm hides
+  # them from `helm install`/`helm search` unless `--devel` is passed, but they
+  # do show up on Artifact Hub.
+  INCLUDE_PRERELEASES: 'false'
+
 # Never let two deployments race for the single Pages environment.
 concurrency:
   group: github-pages
@@ -67,13 +77,43 @@ jobs:
             exit 1
           fi
 
+          SKIPPED=0
           while IFS= read -r TAG; do
+            VERSION=${TAG#v}
+
+            # Ignore tags that are not a semantic version (docs tags, branches, …).
+            if ! printf '%s' "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
+              echo "Skipping $TAG — not a semantic version"
+              SKIPPED=$((SKIPPED + 1))
+              continue
+            fi
+
+            # Version without the pre-release suffix, so `1.0.0-rc.1` is compared
+            # as `1.0.0` — sort -V only orders plain dotted numbers reliably.
+            BASE=${VERSION%%-*}
+
+            if [ "$BASE" != "$VERSION" ] && [ "$INCLUDE_PRERELEASES" != 'true' ]; then
+              echo "Skipping $TAG — pre-release"
+              SKIPPED=$((SKIPPED + 1))
+              continue
+            fi
+
+            LOWEST=$(printf '%s\n%s\n' "$BASE" "$MIN_VERSION" | sort -V | head -n1)
+            if [ "$BASE" != "$MIN_VERSION" ] && [ "$LOWEST" = "$BASE" ]; then
+              echo "Skipping $TAG — older than $MIN_VERSION"
+              SKIPPED=$((SKIPPED + 1))
+              continue
+            fi
+
             if gh release download "$TAG" --pattern '*.tgz' --dir site --skip-existing; then
               echo "Downloaded chart package(s) for $TAG"
             else
               echo "::notice::Release $TAG has no chart package attached — skipping"
+              SKIPPED=$((SKIPPED + 1))
             fi
           done <<< "$TAGS"
+
+          echo "Skipped $SKIPPED release(s)"
 
           COUNT=$(find site -maxdepth 1 -name '*.tgz' | wc -l | tr -d ' ')
           echo "Collected $COUNT chart package(s)"
