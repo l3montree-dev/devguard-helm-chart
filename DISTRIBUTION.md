@@ -15,8 +15,8 @@ The GitHub Actions workflow (`.github/workflows/helm-release.yml`) automatically
 
 1. **Automatic release** (recommended):
    ```bash
-   git tag v0.15.4
-   git push origin v0.15.4
+   git tag -s v1.9.1
+   git push origin v1.9.1
    ```
 
 2. **Manual release**:
