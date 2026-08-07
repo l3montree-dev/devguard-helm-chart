@@ -1,0 +1,127 @@
+name: Publish Helm Repository
+
+# Publishes a classic (HTTP) Helm repository to GitHub Pages.
+#
+# The site is rebuilt from scratch on every run: all `*.tgz` chart packages
+# attached to the GitHub releases are downloaded, `helm repo index` generates
+# the `index.yaml`, and `artifacthub-repo.yml` is copied next to it so
+# artifacthub.io can pick up the repository metadata (ownership claim /
+# verified publisher).
+#
+# Requires Pages to be enabled with "GitHub Actions" as the build source
+# (Settings → Pages → Build and deployment → Source: GitHub Actions).
+
+on:
+  # Called by helm-release.yml once the release and its chart package exist,
+  # so the fresh version is part of the index.
+  workflow_call:
+  # Manual re-index (e.g. after editing artifacthub-repo.yml).
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'artifacthub-repo.yml'
+      - '.github/pages/**'
+      - '.github/workflows/helm-pages.yml'
+
+permissions: {}
+
+# Never let two deployments race for the single Pages environment.
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # required to list and download release assets
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5 - https://github.com/actions/checkout/releases/tag/v5.0.0
+        with:
+          persist-credentials: false
+
+      - name: Install Helm
+        uses: azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4.3.1
+        with:
+          version: '3.19.0'
+
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0 - https://github.com/actions/configure-pages/releases/tag/v6.0.0
+
+      - name: Download chart packages from all releases
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          mkdir -p site
+
+          TAGS=$(gh release list --limit 500 --exclude-drafts --json tagName --jq '.[].tagName')
+          if [ -z "$TAGS" ]; then
+            echo "::error::No releases found — nothing to index."
+            exit 1
+          fi
+
+          while IFS= read -r TAG; do
+            if gh release download "$TAG" --pattern '*.tgz' --dir site --skip-existing; then
+              echo "Downloaded chart package(s) for $TAG"
+            else
+              echo "::notice::Release $TAG has no chart package attached — skipping"
+            fi
+          done <<< "$TAGS"
+
+          COUNT=$(find site -maxdepth 1 -name '*.tgz' | wc -l | tr -d ' ')
+          echo "Collected $COUNT chart package(s)"
+          if [ "$COUNT" -eq 0 ]; then
+            echo "::error::No chart packages found in any release — refusing to publish an empty repository."
+            exit 1
+          fi
+
+      - name: Generate Helm repository index
+        env:
+          BASE_URL: ${{ steps.pages.outputs.base_url }}
+        run: |
+          set -euo pipefail
+          helm repo index site --url "$BASE_URL"
+          echo "--- index.yaml ---"
+          cat site/index.yaml
+
+      - name: Add Artifact Hub repository metadata
+        run: |
+          set -euo pipefail
+          # Must live next to index.yaml — Artifact Hub fetches it from the
+          # repository URL root.
+          test -f artifacthub-repo.yml
+          cp artifacthub-repo.yml site/artifacthub-repo.yml
+
+      - name: Add landing page
+        env:
+          BASE_URL: ${{ steps.pages.outputs.base_url }}
+        run: |
+          set -euo pipefail
+          sed "s|__BASE_URL__|$BASE_URL|g" .github/pages/index.html > site/index.html
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0 - https://github.com/actions/upload-pages-artifact/releases/tag/v5.0.0
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write # required to deploy to Pages
+      id-token: write # required for the Pages deployment OIDC token
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0 - https://github.com/actions/deploy-pages/releases/tag/v5.0.0
