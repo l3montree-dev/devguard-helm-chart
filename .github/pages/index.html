@@ -41,8 +41,18 @@
 <pre><code>helm repo add devguard __BASE_URL__
 helm repo update
 helm install devguard devguard/devguard</code></pre>
+    <h2>Verifying a chart</h2>
+    <p>
+      Chart packages are signed with OpenPGP; every package is published
+      alongside a <code>.prov</code> provenance file.
+    </p>
+<pre><code>curl -sLO __BASE_URL__/signing-key.asc
+gpg --dearmor &lt; signing-key.asc &gt; signing-key.gpg
+helm pull devguard/devguard --prov
+helm verify devguard-*.tgz --keyring ./signing-key.gpg</code></pre>
     <p>
       <a href="__BASE_URL__/index.yaml">index.yaml</a> ·
+      <a href="__BASE_URL__/signing-key.asc">signing key</a> ·
       <a href="https://github.com/l3montree-dev/devguard-helm-chart">Source</a> ·
       <a href="https://docs.devguard.org">Documentation</a>
     </p>
