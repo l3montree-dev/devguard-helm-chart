@@ -23,13 +23,6 @@ maintainers:
     email: info@l3montree.com
     url: https://l3montree.com
 
-# Artifact Hub reads these from the `annotations` map. Helm drops unknown
-# top-level keys when it parses Chart.yaml, so an `artifacthub.io/*` key placed
-# outside this block never reaches Artifact Hub.
-#
-# `artifacthub.io/signKey` is injected at package time by
-# .github/workflows/helm-release.yml, derived from the key the release is
-# actually signed with — see DISTRIBUTION.md → "Chart signing".
 annotations:
   artifacthub.io/category: security
 
