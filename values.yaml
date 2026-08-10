@@ -278,12 +278,12 @@ web:
       cpu: 100m
       memory: 128Mi
   image:
-    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard-web:v1.12.2)
+    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard-web:v1.12.3)
     # or an object with repository/tag/digest/pullPolicy.
     repository: ghcr.io/l3montree-dev/devguard-web
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: v1.12.2
+    tag: v1.12.3
   imagePullSecrets: []
 
   ciComponentBase: https://gitlab.com/l3montree/devguard/-/raw/v1.12.0
