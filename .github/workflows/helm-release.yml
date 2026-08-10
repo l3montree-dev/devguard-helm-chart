@@ -37,7 +37,7 @@ jobs:
         git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
     - name: Install Helm
-      uses: azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 #v4.3.1
+      uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1 - https://github.com/Azure/setup-helm/releases/tag/v5.0.1
       with:
         version: '3.19.0'
 
@@ -137,3 +137,14 @@ jobs:
           --notes-file "$RUNNER_TEMP/release-notes.md" \
           --generate-notes \
           $PRERELEASE
+
+  # Rebuild the HTTP Helm repository on GitHub Pages so `helm repo add` users
+  # and Artifact Hub see the new version.
+  pages:
+    needs: release
+    if: startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: read # list and download release assets
+      pages: write # deploy to GitHub Pages
+      id-token: write # Pages deployment OIDC token
+    uses: ./.github/workflows/helm-pages.yml

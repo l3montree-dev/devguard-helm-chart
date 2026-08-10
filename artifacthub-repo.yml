@@ -9,7 +9,7 @@
 # when the hash of the last commit in the branch you set up changes. This does
 # NOT apply to ownership claim operations, which are processed immediately.
 #
-#repositoryID: The ID of the Artifact Hub repository where the packages will be published to (optional, but it enables verified publisher)
+repositoryID: d522ec54-a7d7-4bff-8bf2-149cac869e4f
 owners:
   - name: L3montree GmbH
     email: info@l3montree.com

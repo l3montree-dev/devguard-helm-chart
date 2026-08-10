@@ -4,6 +4,14 @@ This repository contains the Helm chart for deploying DevGuard, a security and v
 
 Get started by following the installation instructions in the [DevGuard documentation](https://devguard.org/how-to-guides/administration/deploy-with-helm).
 
+```bash
+helm repo add devguard https://l3montree-dev.github.io/devguard-helm-chart
+helm repo update
+helm install devguard devguard/devguard
+```
+
+The chart is also available as an OCI artifact: `oci://ghcr.io/l3montree-dev/devguard-helm-chart/devguard`. See [DISTRIBUTION.md](DISTRIBUTION.md) for details.
+
 You can find the default configuration values in the `values.yaml` file. Customize these values as needed for your deployment.
 
 ## Supported Versions
