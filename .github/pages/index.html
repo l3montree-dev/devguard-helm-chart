@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DevGuard Helm Repository</title>
+    <style>
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        max-width: 44rem;
+        margin: 4rem auto;
+        padding: 0 1rem;
+        line-height: 1.6;
+      }
+      pre {
+        background: #f4f4f5;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+      }
+      @media (prefers-color-scheme: dark) {
+        body {
+          background: #18181b;
+          color: #e4e4e7;
+        }
+        pre {
+          background: #27272a;
+        }
+        a {
+          color: #93c5fd;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>DevGuard Helm Repository</h1>
+    <p>
+      Helm chart for <a href="https://devguard.org">DevGuard</a> — open-source
+      software supply chain security, vulnerability management, and compliance.
+    </p>
+<pre><code>helm repo add devguard __BASE_URL__
+helm repo update
+helm install devguard devguard/devguard</code></pre>
+    <p>
+      <a href="__BASE_URL__/index.yaml">index.yaml</a> ·
+      <a href="https://github.com/l3montree-dev/devguard-helm-chart">Source</a> ·
+      <a href="https://docs.devguard.org">Documentation</a>
+    </p>
+  </body>
+</html>

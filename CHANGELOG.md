@@ -4,6 +4,52 @@ All notable changes to the DevGuard Helm chart are documented here.
 
 For API and web frontend changes see the [main DevGuard CHANGELOG](https://github.com/l3montree-dev/devguard/blob/main/CHANGELOG.md).
 
+## [v1.12.3] — 2026-08-10
+
+### Changed
+
+- Bumped default DevGuard image versions: `devguard` / `postgresql` to `v1.12.4`, `devguard-web` to `v1.12.3`, `devguard-ci-components` to `v1.12.0`
+
+---
+
+## [v1.12.2] — 2026-08-10
+
+### Changed
+
+- Bumped default DevGuard image versions: `devguard` / `postgresql` to `v1.12.4`, `devguard-web` to `v1.12.2`, `devguard-ci-components` to `v1.12.0`
+
+---
+
+## [v1.12.1] — 2026-08-05
+
+### Changed
+
+- Bumped default DevGuard image versions: `devguard` / `postgresql` to `v1.12.3`, `devguard-web` to `v1.12.2`, `devguard-ci-components` to `v1.12.0`
+
+---
+
+## [v1.12.0] — 2026-08-02
+
+### Changed
+
+- Bumped default DevGuard image versions to v1.12.0, in line with the [versioning policy](https://github.com/l3montree-dev/devguard/blob/main/VERSIONING.md) that keeps the chart's minor version in sync with `devguard` and `devguard-web`
+
+---
+
+## [v1.11.0] — 2026-07-24
+
+### Added
+
+- Artifact Hub support: `artifacthub.io/category: security` annotation in `Chart.yaml` and a new `artifacthub-repo.yml` repository metadata file, enabling repository verification and indexing on Artifact Hub.
+- The otel-collector sidecar now runs a `memory_limiter` processor (first in every pipeline) so it applies backpressure and refuses new data before hitting its Kubernetes memory limit, instead of risking an OOM kill. Limits are derived automatically from `api.tracing.spanMetrics.resources.limits.memory` (hard limit ~80%, spike limit ~20% of that) via the new `devguard.otelMemLimitMib` helper, and the same value now sets `GOMEMLIMIT` on the collector container.
+
+### Changed
+
+- Bumped the default otel-collector sidecar memory resources: limits `256Mi` → `768Mi`, requests `64Mi` → `256Mi`, giving the new memory limiter headroom to operate.
+- Fixed the Helm release GitHub Actions workflow to pass `--version` explicitly to `helm package`, so packaged charts on `main` are versioned correctly.
+
+---
+
 ## [v1.10.2] — 2026-07-20
 
 ### Fixed
