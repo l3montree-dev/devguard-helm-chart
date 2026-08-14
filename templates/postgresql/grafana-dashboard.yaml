@@ -211,7 +211,7 @@ data:
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
               },
-              "expr": "pg_static{, instance=\"$instance\"}",
+              "expr": "pg_static{instance=\"$instance\"}",
               "format": "time_series",
               "instant": true,
               "intervalFactor": 1,
@@ -290,7 +290,7 @@ data:
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
               },
-              "expr": "pg_postmaster_start_time_seconds{, instance=\"$instance\"} * 1000",
+              "expr": "pg_postmaster_start_time_seconds{instance=\"$instance\"} * 1000",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "",
@@ -444,7 +444,7 @@ data:
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
               },
-              "expr": "SUM(pg_stat_database_tup_inserted{, datname=~\"$datname\", instance=~\"$instance\"})",
+              "expr": "SUM(pg_stat_database_tup_inserted{datname=~\"$datname\", instance=~\"$instance\"})",
               "format": "time_series",
               "intervalFactor": 2,
               "refId": "A",
@@ -598,7 +598,7 @@ data:
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
               },
-              "expr": "pg_settings_max_connections{, instance=\"$instance\"}",
+              "expr": "pg_settings_max_connections{instance=\"$instance\"}",
               "format": "time_series",
               "intervalFactor": 1,
               "refId": "A"
@@ -698,7 +698,7 @@ data:
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
               },
-              "expr": "avg(rate(process_cpu_seconds_total{, instance=\"$instance\"}[5m]) * 1000)",
+              "expr": "avg(rate(process_cpu_seconds_total{instance=\"$instance\"}[5m]) * 1000)",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "CPU Time",
@@ -799,7 +799,7 @@ data:
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
               },
-              "expr": "avg(rate(process_resident_memory_bytes{, instance=\"$instance\"}[5m]))",
+              "expr": "avg(rate(process_resident_memory_bytes{instance=\"$instance\"}[5m]))",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "Resident Mem",
@@ -810,7 +810,7 @@ data:
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
               },
-              "expr": "avg(rate(process_virtual_memory_bytes{, instance=\"$instance\"}[5m]))",
+              "expr": "avg(rate(process_virtual_memory_bytes{instance=\"$instance\"}[5m]))",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "Virtual Mem",
@@ -911,7 +911,7 @@ data:
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
               },
-              "expr": "process_open_fds{, instance=\"$instance\"}",
+              "expr": "process_open_fds{instance=\"$instance\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "Open FD",
@@ -3192,14 +3192,6 @@ data:
             "type": "interval"
           },
           {
-            "name": "namespace",
-            "type": "constant",
-            "label": "Namespace",
-            "query": "{{ .Release.Namespace }}",
-            "current": {},
-            "hide": 2
-          },
-          {
             "current": {
               "selected": false,
               "text": "10.244.133.215:9187",
@@ -3209,14 +3201,14 @@ data:
               "type": "prometheus",
               "uid": "${DS_PROMETHEUS}"
             },
-            "definition": "label_values(pg_up{namespace=\"$namespace\"}, instance)",
+            "definition": "label_values(pg_up{}, instance)",
             "hide": 0,
             "includeAll": false,
             "label": "Instance",
             "multi": false,
             "name": "instance",
             "options": [],
-            "query": "label_values(pg_up{namespace=\"$namespace\"}, instance)",
+            "query": "label_values(pg_up{}, instance)",
             "refresh": 1,
             "regex": "",
             "skipUrlSync": false,
@@ -3236,14 +3228,14 @@ data:
               "type": "prometheus",
               "uid": "${DS_PROMETHEUS}"
             },
-            "definition": "label_values(pg_stat_database_size_bytes{namespace=\"$namespace\"}, datname)",
+            "definition": "label_values(pg_stat_database_size_bytes{}, datname)",
             "hide": 0,
             "includeAll": true,
             "label": "Database",
             "multi": true,
             "name": "datname",
             "options": [],
-            "query": "label_values(pg_stat_database_size_bytes{namespace=\"$namespace\"}, datname)",
+            "query": "label_values(pg_stat_database_size_bytes{}, datname)",
             "refresh": 1,
             "regex": "",
             "skipUrlSync": false,
