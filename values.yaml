@@ -96,7 +96,7 @@ api:
   debug:
     profile: false # set to "true" to enable pprof profiling endpoints on /debug/pprof
   replicaCount: 1
-  ciComponentBase: https://gitlab.com/l3montree/devguard/-/raw/v1.12.0
+  ciComponentBase: https://gitlab.com/l3montree/devguard/-/raw/v1.12.1
   resources:
     limits:
       cpu: "2"
@@ -129,12 +129,12 @@ api:
     aggregatorName: "" # e.g. "Example GmbH"
     aggregatorContactDetails: "" # e.g. "csaf@example.com"
   image:
-    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard:v1.12.4)
+    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard:v1.12.5)
     # or an object with repository/tag/digest/pullPolicy.
     repository: ghcr.io/l3montree-dev/devguard
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: v1.12.4
+    tag: v1.12.5
   imagePullSecrets: []
   errorTracking:
     # https://<your-error-tracking-dsn>
@@ -278,15 +278,15 @@ web:
       cpu: 100m
       memory: 128Mi
   image:
-    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard-web:v1.12.3)
+    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard-web:v1.12.4)
     # or an object with repository/tag/digest/pullPolicy.
     repository: ghcr.io/l3montree-dev/devguard-web
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: v1.12.3
+    tag: v1.12.4
   imagePullSecrets: []
 
-  ciComponentBase: https://gitlab.com/l3montree/devguard/-/raw/v1.12.0
+  ciComponentBase: https://gitlab.com/l3montree/devguard/-/raw/v1.12.1
   devguardApiUrl: http://devguard-api-service:8080
   devguardApiUrlPublicInternet: ""
   privacyPolicyLink: ""
@@ -360,14 +360,14 @@ web:
 ######
 postgresql:
   image:
-    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard/postgresql:v1.12.4)
+    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard/postgresql:v1.12.5)
     # or an object with repository/tag/digest/pullPolicy.
     # Please note: we are using a custom PostgreSQL image that has the required
     # extensions pre-installed.
     repository: ghcr.io/l3montree-dev/devguard/postgresql
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: v1.12.4
+    tag: v1.12.5
   pvc:
     size: 21Gi
     # StorageClass for the PostgreSQL data volume.
