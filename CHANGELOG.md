@@ -4,6 +4,14 @@ All notable changes to the DevGuard Helm chart are documented here.
 
 For API and web frontend changes see the [main DevGuard CHANGELOG](https://github.com/l3montree-dev/devguard/blob/main/CHANGELOG.md).
 
+## [v1.12.4] — 2026-08-19
+
+### Fixed
+
+- Corrected the PostgreSQL Grafana dashboard: removed invalid stray commas in several PromQL queries (e.g. `pg_static{, instance="$instance"}`) that broke metric selectors, and dropped the broken `$namespace` template variable filter from the `instance`/`datname` variable queries.
+
+---
+
 ## [v1.12.3] — 2026-08-10
 
 ### Changed
