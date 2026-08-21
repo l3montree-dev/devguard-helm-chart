@@ -8,64 +8,7 @@
  *   - questions.yaml  the Rancher install form (subset of fields with `question`)
  */
 import { f, banner, type Question } from "./builder";
-
-
-/** Read a required env var or throw — these version knobs have no default. */
-function requiredEnv(name: string): string {
-  const v = process.env[name];
-  if (!v) {
-    throw new Error(
-      `${name} is required (e.g. ${name}=1.9.0). Set API_VERSION, WEB_VERSION, CHART_VERSION and CI_COMPONENTS_VERSION before running generate.`,
-    );
-  }
-  return v;
-}
-
-// Independent version knobs (used by devguard-maint's `release helm-chart`
-// command, which can release the api, web, chart, and ci-components at
-// different versions/cadences). No defaults — all must be set explicitly.
-export const apiVersion = requiredEnv("API_VERSION");
-export const webVersion = requiredEnv("WEB_VERSION");
-// The Helm chart's own version/appVersion.
-export const chartVersion = requiredEnv("CHART_VERSION");
-// devguard-ci-components is tagged and released independently (see
-// devguard-maint's `release ci-components` command) — its version does not
-// track the chart's own version.
-export const ciComponentsVersion = requiredEnv("CI_COMPONENTS_VERSION");
-
-const dependencies = {
-  kratos: {
-    repo: "oryd/kratos",
-    tag: "v26.2.0-distroless",
-    digest:
-      "sha256:481bfc3022e5427ffb94570eef84480b99c9f8158388378c57df8c1a4a104b3d",
-  },
-  api: {
-    repo: "ghcr.io/l3montree-dev/devguard",
-    tag: `v${apiVersion}`,
-  },
-  web: {
-    repo: "ghcr.io/l3montree-dev/devguard-web",
-    tag: `v${webVersion}`,
-  },
-  postgresql: {
-    repo: "ghcr.io/l3montree-dev/devguard/postgresql",
-    tag: `v${apiVersion}`,
-  },
-  postgresVolumePermissionImage: {
-    repo: "busybox",
-    tag: "1.37.0@sha256:1487d0af5f52b4ba31c7e465126ee2123fe3f2305d638e7827681e7cf6c83d5e",
-  },
-  postgresExporter: {
-    repo: "prometheuscommunity/postgres-exporter",
-    tag: "v0.19.1",
-  },
-  ciComponents: {
-    version: `v${ciComponentsVersion}`,
-  }
-}
-
-
+import { dependencies } from "./versions";
 
 
 // Group headings in the order they should appear in the Rancher install form.

@@ -14,7 +14,8 @@
 import { resolve, dirname } from "node:path";
 import { existsSync } from "node:fs";
 import { generateValues, generateQuestions } from "./builder";
-import { schema, GROUP_ORDER, chartVersion, apiVersion } from "./schema";
+import { schema, GROUP_ORDER } from "./schema";
+import { chartVersion, apiVersion } from "./versions";
 
 const HEADER =
   "# DO NOT EDIT — generated from schema/schema.ts. Run `bun run generate` in schema/.\n";
