@@ -93,6 +93,8 @@ api:
   # Ensure to keep the private key secret and secure. 
   # Keeping it empty disables admin endpoint access.
   # adminPublicKey: ""
+  dependencyProxyCache:
+    maxSizeMb: 2048
   debug:
     profile: false # set to "true" to enable pprof profiling endpoints on /debug/pprof
   replicaCount: 1
