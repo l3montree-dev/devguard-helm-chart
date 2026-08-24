@@ -83,6 +83,8 @@ spec:
             value: {{ .Values.web.termsOfUseLink | quote }}
           - name: IMPRINT_LINK
             value: {{ .Values.web.imprintLink | quote }}
+          - name: ISSUE_TRACKER_URL
+            value: {{ .Values.web.issueTrackerUrl | quote }}
           - name: THEME_JS_URL
             value: {{ .Values.web.themeJsUrl | quote }}
           - name: THEME_JS_INTEGRITY

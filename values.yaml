@@ -296,6 +296,7 @@ web:
   termsOfUseLink: ""
   imprintLink: ""
   accountDeletionMail: ""
+  issueTrackerUrl: ""
   # Custom Theme URLs (leave empty to use default theme)
   themeJsUrl: ""
   themeCssUrl: ""
