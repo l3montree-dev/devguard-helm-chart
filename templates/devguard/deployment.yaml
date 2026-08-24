@@ -85,6 +85,8 @@ spec:
             value: "5432"
           - name: GOMEMLIMIT
             value: 1024MiB
+          - name: DEPENDENCY_PROXY_CACHE_MAX_SIZE_MB
+            value: {{ .Values.api.dependencyProxyCache.maxSizeMb | quote }}
           command: ["devguard-cli", "migrate"]
           volumeMounts:
           - mountPath: /tmp

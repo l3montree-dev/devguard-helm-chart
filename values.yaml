@@ -93,6 +93,9 @@ api:
   # Ensure to keep the private key secret and secure. 
   # Keeping it empty disables admin endpoint access.
   # adminPublicKey: ""
+  dependencyProxyCache:
+    # Maximum size of the dependency proxy cache in MB. The cache is stored in a tmp dir.
+    maxSizeMb: 4096
   debug:
     profile: false # set to "true" to enable pprof profiling endpoints on /debug/pprof
   replicaCount: 1
