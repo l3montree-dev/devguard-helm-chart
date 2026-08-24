@@ -93,13 +93,10 @@ api:
   # Ensure to keep the private key secret and secure. 
   # Keeping it empty disables admin endpoint access.
   # adminPublicKey: ""
-  dependencyProxyCache:
-    # Maximum size of the dependency proxy cache in MB. The cache is stored in a tmp dir.
-    maxSizeMb: 4096
   debug:
     profile: false # set to "true" to enable pprof profiling endpoints on /debug/pprof
   replicaCount: 1
-  ciComponentBase: https://gitlab.com/l3montree/devguard/-/raw/v1.12.1
+  ciComponentBase: https://gitlab.com/l3montree/devguard/-/raw/v1.13.0
   resources:
     limits:
       cpu: "2"
@@ -132,12 +129,12 @@ api:
     aggregatorName: "" # e.g. "Example GmbH"
     aggregatorContactDetails: "" # e.g. "csaf@example.com"
   image:
-    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard:v1.12.5)
+    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard:v1.13.0)
     # or an object with repository/tag/digest/pullPolicy.
     repository: ghcr.io/l3montree-dev/devguard
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: v1.12.5
+    tag: v1.13.0
   imagePullSecrets: []
   errorTracking:
     # https://<your-error-tracking-dsn>
@@ -281,22 +278,21 @@ web:
       cpu: 100m
       memory: 128Mi
   image:
-    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard-web:v1.12.4)
+    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard-web:v1.13.0)
     # or an object with repository/tag/digest/pullPolicy.
     repository: ghcr.io/l3montree-dev/devguard-web
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: v1.12.4
+    tag: v1.13.0
   imagePullSecrets: []
 
-  ciComponentBase: https://gitlab.com/l3montree/devguard/-/raw/v1.12.1
+  ciComponentBase: https://gitlab.com/l3montree/devguard/-/raw/v1.13.0
   devguardApiUrl: http://devguard-api-service:8080
   devguardApiUrlPublicInternet: ""
   privacyPolicyLink: ""
   termsOfUseLink: ""
   imprintLink: ""
   accountDeletionMail: ""
-  issueTrackerUrl: ""
   # Custom Theme URLs (leave empty to use default theme)
   themeJsUrl: ""
   themeCssUrl: ""
@@ -364,14 +360,14 @@ web:
 ######
 postgresql:
   image:
-    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard/postgresql:v1.12.5)
+    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard/postgresql:v1.13.0)
     # or an object with repository/tag/digest/pullPolicy.
     # Please note: we are using a custom PostgreSQL image that has the required
     # extensions pre-installed.
     repository: ghcr.io/l3montree-dev/devguard/postgresql
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: v1.12.5
+    tag: v1.13.0
   pvc:
     size: 21Gi
     # StorageClass for the PostgreSQL data volume.
