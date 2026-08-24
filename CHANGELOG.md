@@ -4,6 +4,15 @@ All notable changes to the DevGuard Helm chart are documented here.
 
 For API and web frontend changes see the [main DevGuard CHANGELOG](https://github.com/l3montree-dev/devguard/blob/main/CHANGELOG.md).
 
+## [v1.13.0] — 2026-08-24
+
+### Added
+
+- New `api.dependencyProxyCache.maxSizeMb` value (default `4096`), passed to the `devguard` deployment as `DEPENDENCY_PROXY_CACHE_MAX_SIZE_MB`, to configure the maximum size of the dependency proxy cache.
+- New `web.issueTrackerUrl` value, passed to the `devguard-web` deployment as `ISSUE_TRACKER_URL`, to configure a link to the project's issue tracker.
+
+---
+
 ## [v1.12.4] — 2026-08-19
 
 ### Fixed
