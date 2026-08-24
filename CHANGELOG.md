@@ -4,6 +4,11 @@ All notable changes to the DevGuard Helm chart are documented here.
 
 For API and web frontend changes see the [main DevGuard CHANGELOG](https://github.com/l3montree-dev/devguard/blob/main/CHANGELOG.md).
 
+## [v1.13.2] — 2026-08-24
+
+### Fixed
+- Missing chart version bump in v1.13.1 release, which caused the chart to be packaged with the same version as v1.13.0 and fail to upload to Artifact Hub.
+
 ## [v1.13.1] — 2026-08-24
 
 ### Fixed
