@@ -4,6 +4,14 @@ All notable changes to the DevGuard Helm chart are documented here.
 
 For API and web frontend changes see the [main DevGuard CHANGELOG](https://github.com/l3montree-dev/devguard/blob/main/CHANGELOG.md).
 
+## [v1.13.1] — 2026-08-24
+
+### Fixed
+
+- Restored the `api.dependencyProxyCache.maxSizeMb` default value in `values.yaml`, which was missing after the v1.13.0 release.
+
+---
+
 ## [v1.13.0] — 2026-08-24
 
 ### Added
