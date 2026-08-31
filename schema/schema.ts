@@ -193,6 +193,11 @@ export const schema = {
           requests: { cpu: "100m", memory: "1548Mi" },
         },
       },
+      dependencyProxyCache: {
+        maxSizeMb: f(4096, {
+          comment: "Maximum size (in MB) of the dependency proxy cache.",
+        }),
+      },
       csaf: {
         existingCsafSecretName: f("", {
           comment:

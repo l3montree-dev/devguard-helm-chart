@@ -111,6 +111,9 @@ api:
       requests:
         cpu: 100m
         memory: 1548Mi
+  dependencyProxyCache:
+    # Maximum size (in MB) of the dependency proxy cache.
+    maxSizeMb: 4096
   csaf:
     ######### CSAF Keys
     # needs to contain keys: "passphrase", "privateKey", "publicKey", "fingerprint"
