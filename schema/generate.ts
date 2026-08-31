@@ -68,14 +68,10 @@ const outputs: {
     {
       path: resolve(repoRoot, ".github/sbom-artifact.json"),
       content:
-        JSON.stringify(
-          {
-            artifactName: "pkg:oci/devguard-helm-chart",
-            informationSources: buildSBOMUrls(dependencies).map(({ url }) => ({ url })),
-          },
-          null,
-          2,
-        ) + "\n",
+        JSON.stringify({
+          artifactName: "pkg:oci/devguard-helm-chart",
+          informationSources: buildSBOMUrls(dependencies).map(({ url }) => ({ url })),
+        }) + "\n",
       header: false,
     },
     { path: PARTNER_QUESTIONS, content: questionsYaml, header: true, optional: true },
