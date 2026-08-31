@@ -33,11 +33,12 @@ export const chartVersion = requiredEnv("CHART_VERSION");
 export const ciComponentsVersion = requiredEnv("CI_COMPONENTS_VERSION");
 
 export const dependencies = {
+  // kratos is now built and published as our own image (see
+  // nix/kratos.nix in the devguard repo), tagged and released alongside
+  // devguard/postgresql, so it tracks apiVersion like postgresql does below.
   kratos: {
-    repo: "oryd/kratos",
-    tag: "v26.2.0-distroless",
-    digest:
-      "sha256:481bfc3022e5427ffb94570eef84480b99c9f8158388378c57df8c1a4a104b3d",
+    repo: "ghcr.io/l3montree-dev/devguard/kratos",
+    tag: `v${apiVersion}`,
   },
   api: {
     repo: "ghcr.io/l3montree-dev/devguard",

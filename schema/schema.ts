@@ -58,7 +58,6 @@ export const schema = {
       image: {
         repository: dependencies.kratos.repo,
         tag: dependencies.kratos.tag,
-        digest: dependencies.kratos.digest,
         pullPolicy: "IfNotPresent",
       },
       webauthn: { enabled: false },
