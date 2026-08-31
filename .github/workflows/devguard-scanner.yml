@@ -25,9 +25,8 @@ jobs:
           fetch-depth: 0
       - name: DevGuard Infrastructure as Code
         uses: docker://ghcr.io/l3montree-dev/devguard/scanner:main
-        continue-on-error: true
         with:
-          args: devguard-scanner iac --assetName="${{ env.DEVGUARD_ASSET_NAME }}" --apiUrl="${{ env.DEVGUARD_API_URL }}" --token="${{ secrets.DEVGUARD_TOKEN }}" --path="${{ github.workspace }}" --defaultRef="${{ github.event.repository.default_branch }}" --ref="${{ github.ref_name }}" --isTag="${{ github.ref_type == 'tag' }}" --webUI=${{ env.DEVGUARD_WEB_UI }}
+          args: devguard-scanner iac --assetName="${{ env.DEVGUARD_ASSET_NAME }}" --apiUrl="${{ env.DEVGUARD_API_URL }}" --token="${{ secrets.DEVGUARD_TOKEN }}" --path="." --defaultRef="${{ github.event.repository.default_branch }}" --ref="${{ github.ref_name }}" --isTag="${{ github.ref_type == 'tag' }}" --webUI=${{ env.DEVGUARD_WEB_UI }}
 
   devguard_secret_scanning:
     name: devguard:secret-scanning
@@ -41,9 +40,8 @@ jobs:
           fetch-depth: 0
       - name: Run DevGuard Secret Scanning
         uses: docker://ghcr.io/l3montree-dev/devguard/scanner:main
-        continue-on-error: true
         with:
-          args: devguard-scanner secret-scanning --assetName="${{ env.DEVGUARD_ASSET_NAME }}" --apiUrl="${{ env.DEVGUARD_API_URL }}" --token="${{ secrets.DEVGUARD_TOKEN }}" --path="${{ github.workspace }}" --defaultRef="${{ github.event.repository.default_branch }}" --ref="${{ github.ref_name }}" --isTag="${{ github.ref_type == 'tag' }}" --webUI=${{ env.DEVGUARD_WEB_UI }}
+          args: devguard-scanner secret-scanning --assetName="${{ env.DEVGUARD_ASSET_NAME }}" --apiUrl="${{ env.DEVGUARD_API_URL }}" --token="${{ secrets.DEVGUARD_TOKEN }}" --path="." --defaultRef="${{ github.event.repository.default_branch }}" --ref="${{ github.ref_name }}" --isTag="${{ github.ref_type == 'tag' }}" --webUI=${{ env.DEVGUARD_WEB_UI }}
 
   upload-sboms:
     runs-on: ubuntu-latest
@@ -60,8 +58,8 @@ jobs:
           entrypoint: /bin/sh
           args: >-
             -c "devguard-scanner curl -X POST -H 'Content-Type: application/json'
-                  -d \"\$(cat .github/sbom-artifact.json)\"
-                  $DEVGUARD_API_URL/api/v1/organizations/$DEVGUARD_ASSET_NAME/refs/${{ github.ref_name }}/artifacts/"
+            -d \"\$(cat .github/sbom-artifact.json)\"
+            $DEVGUARD_API_URL/api/v1/organizations/$DEVGUARD_ASSET_NAME/refs/${{ github.ref_name }}/artifacts/"
         env:
           DEVGUARD_TOKEN: ${{ secrets.DEVGUARD_TOKEN }}
  
