@@ -8,9 +8,9 @@
 ######
 kratos:
   image:
-    repository: oryd/kratos
-    tag: v26.2.0-distroless
-    digest: sha256:481bfc3022e5427ffb94570eef84480b99c9f8158388378c57df8c1a4a104b3d
+    repository: ghcr.io/l3montree-dev/devguard/kratos
+    tag: v1.13.1
+    digest: sha256:2f017b794be105772a0cea932bf0d7fe893dc3f215c27360d6f7fc1abb80756a
     pullPolicy: IfNotPresent
   webauthn:
     enabled: false
