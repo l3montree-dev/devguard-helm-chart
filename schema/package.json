@@ -5,7 +5,8 @@
   "description": "Source of truth for the DevGuard Helm chart values.yaml and the Rancher questions.yaml. Edit schema.ts, then run `bun run generate`.",
   "scripts": {
     "generate": "bun run generate.ts",
-    "check": "bun run generate.ts --check"
+    "check": "bun run generate.ts --check",
+    "extractSbomUrls": "bun run extractSBOMUrls.ts"
   },
   "dependencies": {
     "yaml": "^2.9.0"

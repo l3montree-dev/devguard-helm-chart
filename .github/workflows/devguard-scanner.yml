@@ -1,0 +1,76 @@
+name: DevGuard-Workflow
+
+on:
+  workflow_dispatch:
+  push:
+
+permissions:
+  contents: read
+
+env:
+  DEVGUARD_ASSET_NAME: ${{ vars.DEVGUARD_ASSET_NAME }}
+  DEVGUARD_API_URL: https://api.main.devguard.org
+  DEVGUARD_WEB_UI: https://main.devguard.org
+
+jobs:
+  devguard_infrastructure_as_code:
+    name: devguard:infrastructure-as-code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          submodules: recursive
+          persist-credentials: false
+          fetch-depth: 0
+      - name: DevGuard Infrastructure as Code
+        uses: docker://ghcr.io/l3montree-dev/devguard/scanner:main
+        continue-on-error: true
+        with:
+          args: devguard-scanner iac --assetName="${{ env.DEVGUARD_ASSET_NAME }}" --apiUrl="${{ env.DEVGUARD_API_URL }}" --token="${{ secrets.DEVGUARD_TOKEN }}" --path="." --defaultRef="${{ github.event.repository.default_branch }}" --ref="${{ github.ref_name }}" --isTag="${{ github.ref_type == 'tag' }}" --webUI=${{ env.DEVGUARD_WEB_UI }}
+
+  devguard_secret_scanning:
+    name: devguard:secret-scanning
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          submodules: recursive
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Run DevGuard Secret Scanning
+        uses: docker://ghcr.io/l3montree-dev/devguard/scanner:main
+        continue-on-error: true
+        with:
+          args: devguard-scanner secret-scanning --assetName="${{ env.DEVGUARD_ASSET_NAME }}" --apiUrl="${{ env.DEVGUARD_API_URL }}" --token="${{ secrets.DEVGUARD_TOKEN }}" --path="." --defaultRef="${{ github.event.repository.default_branch }}" --ref="${{ github.ref_name }}" --isTag="${{ github.ref_type == 'tag' }}" --webUI=${{ env.DEVGUARD_WEB_UI }}
+
+  upload-sboms:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          persist-credentials: false
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+
+      - name: Generate SBOM artifact
+        working-directory: schema
+        run: |
+          bun install
+          bun run extractSbomUrls
+
+      - name: Create artifact from SBOM URLs
+        uses: docker://ghcr.io/l3montree-dev/devguard/scanner:main
+        continue-on-error: true
+        with:
+          entrypoint: /bin/sh
+          args: >-
+            -c "devguard-scanner curl -X POST -H 'Content-Type: application/json'
+            -d $(cat .github/sbom-artifact.json)
+            $DEVGUARD_API_URL/api/v1/organizations/$DEVGUARD_ASSET_NAME/refs/${{ github.ref_name }}/artifacts/"
+        env:
+          DEVGUARD_TOKEN: ${{ secrets.DEVGUARD_TOKEN }}
+ 
