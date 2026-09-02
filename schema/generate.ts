@@ -15,8 +15,7 @@ import { resolve, dirname } from "node:path";
 import { existsSync } from "node:fs";
 import { generateValues, generateQuestions } from "./builder";
 import { schema, GROUP_ORDER } from "./schema";
-import { chartVersion, apiVersion, dependencies } from "./versions";
-import { buildSBOMUrls } from "./extractSBOMUrls";
+import { chartVersion, apiVersion } from "./versions";
 
 const HEADER =
   "# DO NOT EDIT — generated from schema/schema.ts. Run `bun run generate` in schema/.\n";
@@ -65,15 +64,6 @@ const outputs: {
 }[] = [
     { path: resolve(repoRoot, "values.yaml"), content: valuesYaml, header: true },
     { path: chartPath, content: chartYaml, header: false },
-    {
-      path: resolve(repoRoot, ".github/sbom-artifact.json"),
-      content:
-        JSON.stringify({
-          artifactName: "pkg:oci/devguard-helm-chart",
-          informationSources: buildSBOMUrls(dependencies).map(({ url }) => ({ url })),
-        }) + "\n",
-      header: false,
-    },
     { path: PARTNER_QUESTIONS, content: questionsYaml, header: true, optional: true },
   ];
 
