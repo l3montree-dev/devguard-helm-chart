@@ -53,6 +53,28 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+
+      - name: Derive versions from committed files
+        id: versions
+        run: |
+          echo "api=$(sed -n 's/^appVersion: "v\(.*\)"/\1/p' Chart.yaml)" >> "$GITHUB_OUTPUT"
+          echo "web=$(grep -A5 'repository: ghcr.io/l3montree-dev/devguard-web$' values.yaml | grep -m1 'tag:' | awk '{print $2}' | sed 's/^v//')" >> "$GITHUB_OUTPUT"
+          echo "chart=$(sed -n 's/^version: //p' Chart.yaml)" >> "$GITHUB_OUTPUT"
+          echo "ci_components=$(grep -m1 ciComponentBase values.yaml | sed 's#.*/v##')" >> "$GITHUB_OUTPUT"
+
+      - name: Generate SBOM artifact
+        working-directory: schema
+        env:
+          API_VERSION: ${{ steps.versions.outputs.api }}
+          WEB_VERSION: ${{ steps.versions.outputs.web }}
+          CHART_VERSION: ${{ steps.versions.outputs.chart }}
+          CI_COMPONENTS_VERSION: ${{ steps.versions.outputs.ci_components }}
+        run: |
+          bun install
+          bun run generate
+
       - name: Create artifact from SBOM URLs
         uses: docker://ghcr.io/l3montree-dev/devguard/scanner:main
         continue-on-error: true
