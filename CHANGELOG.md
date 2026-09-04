@@ -4,6 +4,13 @@ All notable changes to the DevGuard Helm chart are documented here.
 
 For API and web frontend changes see the [main DevGuard CHANGELOG](https://github.com/l3montree-dev/devguard/blob/main/CHANGELOG.md).
 
+## [v1.13.5] — 2026-09-04
+
+### Fixed
+- switched all `additionalEnvs` ocurrances to use correct default type of `{}` instead of `[]`.
+
+---
+
 ## [v1.13.4] — 2026-08-31
 
 ### Fixed
