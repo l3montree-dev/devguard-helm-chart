@@ -110,7 +110,7 @@ export const schema = {
         comment:
           'If set to "true", the user will be responsible to provide a secret for kratos.\nThis is useful for situations where the helm "lookup" function cannot be used (e.g. ArgoCD)\nRequirements for that secret:\n- the secret name must match "kratos"\n- a data entry named "secretsDefault" with the corresponding secret used for session signing as value\n- a data entry named "secretsCookie" with the corresponding secret used for cookie encryption as value\n- a data entry named "secretsCipher" with the corresponding secret used for cipher as value',
       }),
-      additionalEnvs: f([], {
+      additionalEnvs: f({}, {
         blankBefore: true,
         comment: additionalEnvsComment("kratos deployment"),
       }),
@@ -374,7 +374,7 @@ export const schema = {
         comment:
           'If set to "true", the user will be responsible to provide a secret for the pprof password\nThis is useful for situations where the helm "lookup" function cannot be used (e.g. ArgoCD)\nRequirements for that secret:\n- the secret name must match "devguard-pprof-password"\n- a data entry named "password" with the corresponding pprof password as value',
       }),
-      additionalEnvs: f([], {
+      additionalEnvs: f({}, {
         blankBefore: true,
         comment: additionalEnvsComment("api deployment"),
       }),
@@ -420,7 +420,7 @@ export const schema = {
       errorTracking: {
         dsn: f("", { comment: "https://<your-error-tracking-dsn>" }),
       },
-      additionalEnvs: f([], {
+      additionalEnvs: f({}, {
         blankBefore: true,
         comment: additionalEnvsComment("web deployment"),
       }),
@@ -614,7 +614,7 @@ export const schema = {
         comment:
           'If set to "true", the user will be responsible to provide a secret for the kratos database.\nThis is useful for situations where the helm "lookup" function cannot be used (e.g. ArgoCD)\nRequirements for that secret:\n- the secret name must match "kratos-db-secret"\n- a data entry named "password" with the corresponding password for the "kratos" database user as value',
       }),
-      additionalEnvs: f([], {
+      additionalEnvs: f({}, {
         blankBefore: true,
         comment: additionalEnvsComment("postgresql statefulset"),
       }),
