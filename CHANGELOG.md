@@ -4,6 +4,13 @@ All notable changes to the DevGuard Helm chart are documented here.
 
 For API and web frontend changes see the [main DevGuard CHANGELOG](https://github.com/l3montree-dev/devguard/blob/main/CHANGELOG.md).
 
+## [v1.13.5] — 2026-09-08
+
+### Changed
+- Release workflow now runs the DevGuard scanner and attaches an SBOM as a release asset, extracting SBOM URLs (including the upstream chart version) as part of the schema generation step. No chart templates or values changed.
+
+---
+
 ## [v1.13.4] — 2026-08-31
 
 ### Fixed
