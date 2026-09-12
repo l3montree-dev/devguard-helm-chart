@@ -3,10 +3,13 @@ name: Publish Helm Repository
 # Publishes a classic (HTTP) Helm repository to GitHub Pages.
 #
 # The site is rebuilt from scratch on every run: all `*.tgz` chart packages
-# attached to the GitHub releases are downloaded, `helm repo index` generates
-# the `index.yaml`, and `artifacthub-repo.yml` is copied next to it so
-# artifacthub.io can pick up the repository metadata (ownership claim /
-# verified publisher).
+# attached to the GitHub releases are downloaded together with their `*.prov`
+# provenance files, `helm repo index` generates the `index.yaml`, and
+# `artifacthub-repo.yml` is copied next to it so artifacthub.io can pick up the
+# repository metadata (ownership claim / verified publisher).
+#
+# The provenance files must be served as `<chart-url>.prov` — that is exactly
+# where `helm verify` and Artifact Hub's "signed" badge look for them.
 #
 # Requires Pages to be enabled with "GitHub Actions" as the build source
 # (Settings → Pages → Build and deployment → Source: GitHub Actions).
@@ -36,6 +39,9 @@ env:
   # them from `helm install`/`helm search` unless `--devel` is passed, but they
   # do show up on Artifact Hub.
   INCLUDE_PRERELEASES: 'false'
+  # Public half of the chart signing key. Kept in sync with helm-release.yml,
+  # which signs the packages with the private half.
+  PUBLIC_KEY: .github/pages/signing-key.asc
 
 # Never let two deployments race for the single Pages environment.
 concurrency:
@@ -105,7 +111,9 @@ jobs:
               continue
             fi
 
-            if gh release download "$TAG" --pattern '*.tgz' --dir site --skip-existing; then
+            # Releases made before chart signing was introduced have no *.prov
+            # asset; gh only fails when neither pattern matches anything.
+            if gh release download "$TAG" --pattern '*.tgz' --pattern '*.tgz.prov' --dir site --skip-existing; then
               echo "Downloaded chart package(s) for $TAG"
             else
               echo "::notice::Release $TAG has no chart package attached — skipping"
@@ -120,6 +128,42 @@ jobs:
           if [ "$COUNT" -eq 0 ]; then
             echo "::error::No chart packages found in any release — refusing to publish an empty repository."
             exit 1
+          fi
+
+      # Guards against publishing a provenance file that nobody can verify —
+      # e.g. after the signing key was rotated but the committed public half
+      # was not.
+      - name: Verify chart signatures
+        run: |
+          set -euo pipefail
+          if [ ! -f "$PUBLIC_KEY" ]; then
+            echo "::warning::$PUBLIC_KEY is missing — skipping signature verification."
+            exit 0
+          fi
+          gpg --dearmor < "$PUBLIC_KEY" > "$RUNNER_TEMP/pubring.gpg"
+
+          SIGNED=0
+          UNSIGNED=0
+          for CHART in site/*.tgz; do
+            if [ -f "$CHART.prov" ]; then
+              helm verify "$CHART" --keyring "$RUNNER_TEMP/pubring.gpg"
+              SIGNED=$((SIGNED + 1))
+            else
+              echo "::notice::$(basename "$CHART") has no provenance file — released before chart signing was introduced."
+              UNSIGNED=$((UNSIGNED + 1))
+            fi
+          done
+          echo "$SIGNED signed, $UNSIGNED unsigned chart package(s)"
+
+      # Served at <pages-url>/signing-key.asc, which is the URL advertised in the
+      # chart's `artifacthub.io/signKey` annotation.
+      - name: Publish the signing public key
+        run: |
+          set -euo pipefail
+          if [ -f "$PUBLIC_KEY" ]; then
+            cp "$PUBLIC_KEY" site/signing-key.asc
+          else
+            echo "::warning::$PUBLIC_KEY is missing — users have no key to verify chart signatures against."
           fi
 
       - name: Generate Helm repository index
