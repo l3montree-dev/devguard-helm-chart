@@ -14,7 +14,7 @@ function requiredEnv(name: string): string {
   const v = process.env[name];
   if (!v) {
     throw new Error(
-      `${name} is required (e.g. ${name}=1.9.0). Set API_VERSION, WEB_VERSION, CHART_VERSION and CI_COMPONENTS_VERSION before running generate.`,
+      `${name} is required (e.g. ${name}=1.9.0). Set API_VERSION, WEB_VERSION, CHART_VERSION, CI_COMPONENTS_VERSION, KRATOS_VERSION and POSTGRESQL_VERSION before running generate.`,
     );
   }
   return v;
@@ -31,14 +31,16 @@ export const chartVersion = requiredEnv("CHART_VERSION");
 // devguard-maint's `release ci-components` command) — its version does not
 // track the chart's own version.
 export const ciComponentsVersion = requiredEnv("CI_COMPONENTS_VERSION");
+// kratos and postgresql are built and published as our own images (see
+// nix/kratos.nix and nix/postgresql.nix in the devguard repo), pinned to
+// their upstream versions rather than devguard's own release version.
+export const kratosVersion = requiredEnv("KRATOS_VERSION");
+export const postgresqlVersion = requiredEnv("POSTGRESQL_VERSION");
 
 export const dependencies = {
-  // kratos is now built and published as our own image (see
-  // nix/kratos.nix in the devguard repo), tagged and released alongside
-  // devguard/postgresql, so it tracks apiVersion like postgresql does below.
   kratos: {
     repo: "ghcr.io/l3montree-dev/devguard/kratos",
-    tag: `v${apiVersion}`,
+    tag: kratosVersion,
   },
   api: {
     repo: "ghcr.io/l3montree-dev/devguard",
@@ -50,7 +52,7 @@ export const dependencies = {
   },
   postgresql: {
     repo: "ghcr.io/l3montree-dev/devguard/postgresql",
-    tag: `v${apiVersion}`,
+    tag: postgresqlVersion,
   },
   postgresVolumePermissionImage: {
     repo: "busybox",
