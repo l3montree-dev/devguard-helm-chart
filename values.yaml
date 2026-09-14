@@ -9,7 +9,7 @@
 kratos:
   image:
     repository: ghcr.io/l3montree-dev/devguard/kratos
-    tag: v1.13.7
+    tag: "26.2.0"
     pullPolicy: IfNotPresent
   webauthn:
     enabled: false
@@ -362,14 +362,14 @@ web:
 ######
 postgresql:
   image:
-    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard/postgresql:v1.13.7)
+    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard/postgresql:16.15)
     # or an object with repository/tag/digest/pullPolicy.
     # Please note: we are using a custom PostgreSQL image that has the required
     # extensions pre-installed.
     repository: ghcr.io/l3montree-dev/devguard/postgresql
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: v1.13.7
+    tag: "16.15"
   pvc:
     size: 21Gi
     # StorageClass for the PostgreSQL data volume.
