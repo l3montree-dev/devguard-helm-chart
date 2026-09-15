@@ -5,7 +5,7 @@ metadata:
   name: kratos-cleanup
   namespace: "{{ .Release.Namespace }}"
   labels:
-    app.kubernetes.io/name: kratos
+    app.kubernetes.io/name: kratos-cleanup
 spec:
   schedule: {{ .Values.kratos.cleanup.schedule | quote }}
   concurrencyPolicy: Forbid
@@ -17,7 +17,7 @@ spec:
       template:
         metadata:
           labels:
-            app.kubernetes.io/name: kratos
+            app.kubernetes.io/name: kratos-cleanup
         spec:
           restartPolicy: Never
           containers:
