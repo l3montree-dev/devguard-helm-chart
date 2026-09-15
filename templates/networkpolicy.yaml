@@ -86,6 +86,9 @@ spec:
     - podSelector:
         matchLabels:
           app.kubernetes.io/name: kratos
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: kratos-cleanup
 {{- if .Values.observability.serviceMonitor.enabled }}
 ---
 kind: NetworkPolicy
