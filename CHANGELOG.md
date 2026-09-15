@@ -4,6 +4,14 @@ All notable changes to the DevGuard Helm chart are documented here.
 
 For API and web frontend changes see the [main DevGuard CHANGELOG](https://github.com/l3montree-dev/devguard/blob/main/CHANGELOG.md).
 
+## [v1.13.11] — 2026-09-15
+
+### Fixed
+
+- The `kratos-cleanup` CronJob could no longer reach PostgreSQL after the label change in v1.13.9. The `devguard-postgresql-ingress` NetworkPolicy only allowed ingress from pods labelled `app.kubernetes.io/name: kratos`, so cleanup pods were silently dropped and failed with `Unable to ping database, retrying` / `dial error: timeout`. The policy now also permits `app.kubernetes.io/name: kratos-cleanup`.
+
+---
+
 ## [v1.13.10] — 2026-09-15
 
 ### Changed
