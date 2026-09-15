@@ -4,6 +4,14 @@ All notable changes to the DevGuard Helm chart are documented here.
 
 For API and web frontend changes see the [main DevGuard CHANGELOG](https://github.com/l3montree-dev/devguard/blob/main/CHANGELOG.md).
 
+## [v1.13.9] — 2026-09-15
+
+### Fixed
+
+- The `kratos-cleanup` CronJob now uses `app.kubernetes.io/name: kratos-cleanup` on the CronJob and its pod template instead of `kratos`, so cleanup pods are no longer selected by resources targeting the Kratos deployment (e.g. the Kratos service).
+
+---
+
 ## [v1.13.8] — 2026-09-14
 
 ### Changed
