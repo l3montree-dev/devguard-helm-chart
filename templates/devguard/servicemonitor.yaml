@@ -1,4 +1,4 @@
-{{- if and .Values.observability.serviceMonitor.enabled .Values.api.tracing.enabled }}
+{{- if and .Values.observability.serviceMonitor.enabled .Values.api.tracing.enabled .Values.api.tracing.spanMetrics.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:

@@ -345,8 +345,10 @@ spec:
               containerPort: 4317
             - name: otlp-http
               containerPort: 4318
+            {{- if .Values.api.tracing.spanMetrics.enabled }}
             - name: span-metrics
               containerPort: 8889
+            {{- end }}
           env:
             - name: GOMEMLIMIT
               value: {{ printf "%dMiB" (div (mul (include "devguard.otelMemLimitMib" . | int) 80) 100) }}

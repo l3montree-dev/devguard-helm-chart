@@ -12,7 +12,7 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
-    {{- if .Values.api.tracing.enabled }}
+    {{- if and .Values.api.tracing.enabled .Values.api.tracing.spanMetrics.enabled }}
     - port: 8889
       targetPort: span-metrics
       protocol: TCP

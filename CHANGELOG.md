@@ -4,6 +4,18 @@ All notable changes to the DevGuard Helm chart are documented here.
 
 For API and web frontend changes see the [main DevGuard CHANGELOG](https://github.com/l3montree-dev/devguard/blob/main/CHANGELOG.md).
 
+## [Unreleased]
+
+---
+
+## [v1.13.12] — 2026-09-16
+
+### Added
+
+- `api.tracing.spanMetrics.enabled` (default `true`) to turn the OTel Collector sidecar's `spanmetrics` connector on or off independently of tracing itself. The connector aggregates spans in memory and shares the traces pipeline, so under load or memory pressure (`memory_limiter`) it can apply backpressure that also stalls the OTLP export. Setting it to `false` keeps the sidecar forwarding spans to `api.tracing.otlpEndpoint` and drops the Prometheus `/metrics` exporter, the `span-metrics` container/service port (8889), its NetworkPolicy ingress rule and the ServiceMonitor endpoint. With `spanMetrics.enabled=false` and no `api.tracing.otlpEndpoint`, the template now fails with a hint instead of rendering a collector config with no trace exporter.
+
+---
+
 ## [v1.13.11] — 2026-09-15
 
 ### Fixed

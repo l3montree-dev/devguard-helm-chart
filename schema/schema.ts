@@ -273,6 +273,10 @@ export const schema = {
             "Existing secret with basic auth credentials for the OTLP exporter (keys: username, password)",
         }),
         spanMetrics: {
+          enabled: f(true, {
+            comment:
+              "Generate RED metrics from spans via the spanmetrics connector and expose them\nfor Prometheus on the sidecar's /metrics endpoint (port 8889).\nSet to false to only forward spans to otlpEndpoint: the connector aggregates in\nmemory and, under load or memory pressure (memory_limiter), applies backpressure\nto the whole traces pipeline, which can also stall the OTLP export.\nDisabling it drops the span-metrics service port and the ServiceMonitor endpoint\n(the Grafana span-metrics dashboard then has no data); otlpEndpoint must be set.",
+          }),
           image: f(
             {
               repository: "otel/opentelemetry-collector-contrib",
