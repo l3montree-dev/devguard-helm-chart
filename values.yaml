@@ -369,6 +369,29 @@ web:
 ## DevGuard PostgreSQL Database Settings
 ######
 postgresql:
+  # Deploy the bundled PostgreSQL StatefulSet, Service, PVC and init job.
+  # Set to false to use an external database — configure postgresql.external below.
+  enabled: true
+
+  # Connection settings used by the API, Kratos and the Kratos cleanup job when
+  # enabled=false. Host is required in that case.
+
+  # What the external PostgreSQL (>= 16) must provide:
+  # - a "devguard" database owned by a "devguard" role
+  # - CREATE EXTENSION semver; on the "devguard" database. pg_semver is not part of
+  #   a stock postgres image and must be installed on the server beforehand
+  # - a "kratos" database owned by a "kratos" role, which needs USAGE and CREATE on
+  #   its public schema (Kratos runs its own migrations)
+  # - the passwords supplied through the usual secrets: "db-secret" key
+  #   "postgres-password" for the devguard role, "kratos-db-secret" key "password"
+  #   for the kratos role. Set useExistingSecret / useExistingKratosDatabaseSecret
+  #   to true and create both secrets yourself.
+  external:
+    host: ""
+    port: 5432
+    # Applies to the Kratos connections only. The DevGuard API always connects
+    # with sslmode=disable — terminate TLS in the network path if you need it.
+    sslMode: disable
   image:
     # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard/postgresql:16.15)
     # or an object with repository/tag/digest/pullPolicy.

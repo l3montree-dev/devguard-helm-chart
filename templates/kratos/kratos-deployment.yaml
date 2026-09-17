@@ -41,7 +41,7 @@ spec:
               name: kratos-db-secret
               key: password
         - name: DSN
-          value: postgres://kratos:$(DB_PASSWORD)@postgresql:5432/kratos?sslmode=disable
+          value: {{ include "devguard.kratosDsn" . | quote }}
         {{- if .Values.mail.existingSMTPConnectionUriSecret }}
         - name: COURIER_SMTP_CONNECTION_URI
           valueFrom:
@@ -103,7 +103,7 @@ spec:
               name: kratos-db-secret
               key: password
         - name: DSN
-          value: postgres://kratos:$(DB_PASSWORD)@postgresql:5432/kratos?sslmode=disable
+          value: {{ include "devguard.kratosDsn" . | quote }}
         - name: SECRETS_DEFAULT
           valueFrom:
             secretKeyRef:

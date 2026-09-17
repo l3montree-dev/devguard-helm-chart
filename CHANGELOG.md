@@ -6,6 +6,10 @@ For API and web frontend changes see the [main DevGuard CHANGELOG](https://githu
 
 ## [Unreleased]
 
+### Added
+
+- `postgresql.enabled` (default `true`) and `postgresql.external` (`host`, `port`, `sslMode`) to run DevGuard against a PostgreSQL you operate yourself. With `postgresql.enabled=false` the bundled StatefulSet, Service, PVC, ConfigMaps, ServiceMonitor, Grafana dashboard and the `devguard-postgresql-ingress` NetworkPolicy are no longer rendered, and the API `POSTGRES_HOST`/`POSTGRES_PORT` envs plus both Kratos DSNs resolve to `postgresql.external`. Rendering fails with a hint if `external.host` is unset. The existing secret contract is unchanged, so `useExistingSecret` / `useExistingKratosDatabaseSecret` work for external databases too. See the external PostgreSQL prerequisites in the [README](README.md#external-postgresql) — the `semver` extension in particular. `external.sslMode` applies to the Kratos connections only; the API always connects with `sslmode=disable`.
+
 ---
 
 ## [v1.13.12] — 2026-09-16
