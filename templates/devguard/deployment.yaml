@@ -80,9 +80,9 @@ spec:
           - name: POSTGRES_USER
             value: devguard
           - name: POSTGRES_HOST
-            value: postgresql
+            value: {{ include "devguard.postgresHost" . | quote }}
           - name: POSTGRES_PORT
-            value: "5432"
+            value: {{ include "devguard.postgresPort" . | quote }}
           - name: GOMEMLIMIT
             value: 1024MiB
           - name: DEPENDENCY_PROXY_CACHE_MAX_SIZE_MB
@@ -117,9 +117,9 @@ spec:
           - name: POSTGRES_USER
             value: devguard
           - name: POSTGRES_HOST
-            value: postgresql
+            value: {{ include "devguard.postgresHost" . | quote }}
           - name: POSTGRES_PORT
-            value: "5432"
+            value: {{ include "devguard.postgresPort" . | quote }}
           - name: APP_SIDE_ENCRYPTION_KEY_PATH
             value: /encryption/key
           command: ["devguard-cli", "encryption", "migration"]
@@ -154,11 +154,11 @@ spec:
           - name: POSTGRES_USER
             value: devguard
           - name: POSTGRES_HOST
-            value: postgresql
+            value: {{ include "devguard.postgresHost" . | quote }}
           - name: OSI_LICENSES_API
             value: https://opensource.org/api/license/
           - name: POSTGRES_PORT
-            value: "5432"
+            value: {{ include "devguard.postgresPort" . | quote }}
           - name: DEVGUARD_CI_COMPONENT_BASE
             value: {{ .Values.api.ciComponentBase | quote }}
           - name: FRONTEND_URL

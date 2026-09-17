@@ -482,6 +482,25 @@ export const schema = {
 
   postgresql: f(
     {
+      enabled: f(true, {
+        comment:
+          "Deploy the bundled PostgreSQL StatefulSet, Service, PVC and init job.\nSet to false to use an external database — configure postgresql.external below.",
+      }),
+      external: f(
+        {
+          host: "",
+          port: 5432,
+          sslMode: f("disable", {
+            comment:
+              "Applies to the Kratos connections only. The DevGuard API always connects\nwith sslmode=disable — terminate TLS in the network path if you need it.",
+          }),
+        },
+        {
+          blankBefore: true,
+          comment:
+            'Connection settings used by the API, Kratos and the Kratos cleanup job when\nenabled=false. Host is required in that case.\n\nWhat the external PostgreSQL (>= 16) must provide:\n- a "devguard" database owned by a "devguard" role\n- CREATE EXTENSION semver; on the "devguard" database. pg_semver is not part of\n  a stock postgres image and must be installed on the server beforehand\n- a "kratos" database owned by a "kratos" role, which needs USAGE and CREATE on\n  its public schema (Kratos runs its own migrations)\n- the passwords supplied through the usual secrets: "db-secret" key\n  "postgres-password" for the devguard role, "kratos-db-secret" key "password"\n  for the kratos role. Set useExistingSecret / useExistingKratosDatabaseSecret\n  to true and create both secrets yourself.',
+        },
+      ),
       image: {
         repository: f(dependencies.postgresql.repo, {
           comment:
