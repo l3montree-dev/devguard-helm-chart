@@ -183,6 +183,7 @@ export const schema = {
       ),
       replicaCount: 1,
       ciComponentBase: `https://gitlab.com/l3montree/devguard/-/raw/${dependencies.ciComponents.version}`,
+      pdfGenerationApi: "",
       resources: {
         limits: { cpu: "2", memory: "2048Mi" },
         requests: { cpu: "100m", memory: "1024Mi" },

@@ -39,6 +39,19 @@ For `api.image`, `web.image`, and `postgresql.image`, the chart supports both:
 
 When `digest` is set in object format, it is preferred over `tag` and rendered as `repository@digest`.
 
+## PDF Report Generation
+
+`api.pdfGenerationApi` is the URL of the external service that renders SBOM and vulnerability report PDFs - expects this [service](https://gitlab.opencode.de/open-code/document-writing-tools/document-writing-ci-components/-/blob/v3/scripts/Dockerfile.api). It is empty by default, so no report data leaves the cluster. With it unset, `GET …/sbom.pdf/` and `GET …/vulnerability-report.pdf/` return HTTP 500; every other API route is unaffected. Set it to use a rendering service:
+
+```yaml
+api:
+  pdfGenerationApi: https://example.com/pdf
+```
+
+## Public API URL
+
+`INSTANCE_DOMAIN` — the URL the instance advertises to itself and to CI clients — is derived from `api.ingress.host` and `api.ingress.tls` regardless of `api.ingress.enabled`, mirroring how `FRONTEND_URL` is derived from `web.ingress.host`. Set both when the API is published by something other than the chart's Ingress (Gateway API `HTTPRoute`, OpenShift `Route`, a service mesh) and leave `api.ingress.enabled=false` so no Ingress object is created.
+
 ## Kyverno Policy
 
 The chart includes an optional [Kyverno](https://kyverno.io) policy for supply chain security. Enable it with:

@@ -171,11 +171,7 @@ spec:
                 name: devguard-pprof-password
                 key: password
           - name: INSTANCE_DOMAIN
-            {{- if .Values.api.ingress.enabled }}
-            value: {{ printf "%s://%s" $apiProtocol $apiHost }}
-            {{- else }}
-            value: http://devguard-api-service.{{ .Release.Namespace }}.svc.cluster.local:8080
-            {{- end }}
+            value: {{ printf "%s://%s" $apiProtocol $apiHost | quote }}
         {{- if .Values.api.adminPublicKey }}
           - name: INSTANCE_ADMIN_PUB_KEY_PATH
             value: /instance_admin_pub_key.pem
@@ -187,7 +183,7 @@ spec:
           - name: GOMEMLIMIT
             value: 1024MiB
           - name: PDF_GENERATION_API
-            value: https://dwt-api.dev-l3montree.cloud/pdf
+            value: {{ .Values.api.pdfGenerationApi | quote }}
           - name: DEPENDENCY_PROXY_CACHE_DIR
             value: /tmp/dependency-proxy-cache
         {{- if .Values.api.csaf.existingCsafSecretName }}
