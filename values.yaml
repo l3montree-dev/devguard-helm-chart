@@ -111,6 +111,7 @@ api:
       requests:
         cpu: 100m
         memory: 1548Mi
+  dependencyProxyBaseUrl: "https://api.main.devguard.org/api/v1/dependency-proxy"
   dependencyProxyCache:
     # Maximum size (in MB) of the dependency proxy cache.
     maxSizeMb: 4096
