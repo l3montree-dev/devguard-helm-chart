@@ -170,6 +170,8 @@ spec:
               secretKeyRef:
                 name: devguard-pprof-password
                 key: password
+          - name: DEPENDENCY_PROXY_BASE_URL
+            value: {{ .Values.api.dependencyProxyBaseUrl | quote }}
           - name: INSTANCE_DOMAIN
             {{- if .Values.api.ingress.enabled }}
             value: {{ printf "%s://%s" $apiProtocol $apiHost }}
