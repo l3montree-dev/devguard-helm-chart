@@ -193,6 +193,13 @@ export const schema = {
           requests: { cpu: "100m", memory: "1548Mi" },
         },
       },
+      dependencyProxyBaseUrl: f(
+        "https://api.main.devguard.org/api/v1/dependency-proxy",
+        {
+          comment:
+            "Base URL of the dependency proxy"
+        },
+      ),
       dependencyProxyCache: {
         maxSizeMb: f(4096, {
           comment: "Maximum size (in MB) of the dependency proxy cache.",
