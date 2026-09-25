@@ -39,6 +39,9 @@ kratos:
     #     - openid
     #     - profile
     #     - email
+    # - id: okta
+    #   provider: generic
+    #   claimsSource: userinfo # optional, default id_token; Okta only serves email/profile via userinfo
     # ingressNamespaceSelectorKey: "role"
     # ingressNamespaceSelectorValue: "ingress"
     providers: []
