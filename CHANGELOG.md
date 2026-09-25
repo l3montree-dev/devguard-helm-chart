@@ -22,6 +22,15 @@ For API and web frontend changes see the [main DevGuard CHANGELOG](https://githu
 
 ## [Unreleased]
 
+### Added
+
+- `api.pdfGenerationApi`, passed to the API as `PDF_GENERATION_API`, which was previously hardcoded to `https://dwt-api.dev-l3montree.cloud/pdf`.
+
+### Changed
+
+- **`PDF_GENERATION_API` now defaults to empty**, so a self-hosted instance no longer sends report data to an L3montree-operated endpoint unless configured to. With it unset, `GET …/sbom.pdf/` and `GET …/vulnerability-report.pdf/` return HTTP 500 — the web frontend still offers the download. To keep the previous behaviour, set `api.pdfGenerationApi: https://dwt-api.dev-l3montree.cloud/pdf`.
+- `INSTANCE_DOMAIN` is now derived from `api.ingress.host` / `api.ingress.tls` whenever they are set, regardless of `api.ingress.enabled`, instead of falling back to the in-cluster Service URL when the Ingress is disabled. This makes the instance advertise a reachable URL when the API is published by an `HTTPRoute`, an OpenShift `Route` or a service mesh. Installs that ran with `api.ingress.enabled=false` and a placeholder `api.ingress.host` now advertise that host — set it to the real public URL.
+
 ---
 
 ## [v1.13.12] — 2026-09-16
