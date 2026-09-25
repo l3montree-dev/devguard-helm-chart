@@ -70,6 +70,48 @@ Usage: include "devguard.apiHost" .
 {{- end }}
 
 {{/*
+Resolve the PostgreSQL endpoint. Returns the in-release Service when the
+bundled StatefulSet is deployed (postgresql.enabled), otherwise the external
+database configured under postgresql.external.
+Usage: include "devguard.postgresHost" . / "devguard.postgresPort" .
+*/}}
+{{- define "devguard.postgresHost" -}}
+{{- if .Values.postgresql.enabled -}}
+postgresql
+{{- else -}}
+{{- required "postgresql.external.host is required when postgresql.enabled is false" .Values.postgresql.external.host -}}
+{{- end -}}
+{{- end }}
+
+{{- define "devguard.postgresSslMode" -}}
+{{- if .Values.postgresql.enabled -}}
+disable
+{{- else -}}
+{{- .Values.postgresql.external.sslMode | default "disable" -}}
+{{- end -}}
+{{- end }}
+
+{{- define "devguard.postgresPort" -}}
+{{- if .Values.postgresql.enabled -}}
+5432
+{{- else -}}
+{{- .Values.postgresql.external.port | default 5432 -}}
+{{- end -}}
+{{- end }}
+
+{{/*
+DSN for kratos and the kratos cleanup job. Expects DB_PASSWORD in the env.
+Usage: include "devguard.kratosDsn" .
+*/}}
+{{- define "devguard.kratosDsn" -}}
+{{- $sslMode := "disable" -}}
+{{- if not .Values.postgresql.enabled -}}
+{{- $sslMode = .Values.postgresql.external.sslMode | default "disable" -}}
+{{- end -}}
+{{- printf "postgres://kratos:$(DB_PASSWORD)@%s:%s/kratos?sslmode=%s" (include "devguard.postgresHost" .) (include "devguard.postgresPort" .) $sslMode -}}
+{{- end }}
+
+{{/*
 Parse the otel-collector sidecar memory limit (e.g. "768Mi", "1Gi") into an
 integer number of MiB. Used to derive the memory_limiter processor limits and
 GOMEMLIMIT so the collector stays below its Kubernetes memory limit.

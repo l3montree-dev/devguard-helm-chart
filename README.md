@@ -30,6 +30,41 @@ The chart declares `kubeVersion: >=1.21-0` and is expected to work on other Ranc
 - **Storage**: DevGuard's PostgreSQL requires a `PersistentVolumeClaim`. Your cluster must provide a StorageClass — either a default one, or set `postgresql.pvc.storageClassName` explicitly. Note that some distributions (e.g. RKE2, or Rancher's local cluster) do not ship a default StorageClass; the [local-path-provisioner](https://github.com/rancher/local-path-provisioner) is a simple option for single-node setups.
 - **Ingress**: An ingress controller must be available if `api.ingress.enabled` / `web.ingress.enabled` are used (default: enabled).
 
+## External PostgreSQL
+
+Set `postgresql.enabled=false` to skip the bundled StatefulSet, Service, PVC and init job and point the API, Kratos and the Kratos cleanup job at a database you operate:
+
+```yaml
+postgresql:
+  enabled: false
+  external:
+    host: postgres.example.internal
+    port: 5432
+    sslMode: disable
+  useExistingSecret: true
+  useExistingKratosDatabaseSecret: true
+```
+
+The chart does not bootstrap an external server. Prepare it beforehand — PostgreSQL 16 or newer:
+
+```sql
+CREATE ROLE devguard LOGIN PASSWORD '<devguard-password>';
+CREATE DATABASE devguard OWNER devguard;
+\c devguard
+CREATE EXTENSION IF NOT EXISTS semver;
+
+CREATE ROLE kratos LOGIN PASSWORD '<kratos-password>';
+CREATE DATABASE kratos OWNER kratos;
+\c kratos
+GRANT USAGE, CREATE ON SCHEMA public TO kratos;
+```
+
+- The [pg_semver](https://github.com/theory/pg-semver) extension is required. It is not part of a stock `postgres` image.
+- Kratos runs its own migrations, so the `kratos` role needs `USAGE` and `CREATE` on its `public` schema.
+- For credentials keep the existing secret contract: `db-secret` key `postgres-password` (devguard role) and `kratos-db-secret` key `password` (kratos role). With `useExistingSecret` / `useExistingKratosDatabaseSecret` set to `true` — the usual choice under Argo CD, where the Helm `lookup` function is unavailable — create both secrets yourself.
+- `external.sslMode` applies to the Kratos connections only. The DevGuard API always connects with `sslmode=disable` - terminate TLS in the network path (e.g. a sidecar or service mesh) if your database requires it.
+- `postgresql.enabled=false` also drops the PostgreSQL ServiceMonitor, Grafana dashboard and the `devguard-postgresql-ingress` NetworkPolicy.
+
 ## Image Configuration
 
 For `api.image`, `web.image`, and `postgresql.image`, the chart supports both:
