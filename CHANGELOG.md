@@ -10,6 +10,32 @@ For API and web frontend changes see the [main DevGuard CHANGELOG](https://githu
 
 - `postgresql.enabled` (default `true`) and `postgresql.external` (`host`, `port`, `sslMode`) to run DevGuard against a PostgreSQL you operate yourself. With `postgresql.enabled=false` the bundled StatefulSet, Service, PVC, ConfigMaps, ServiceMonitor, Grafana dashboard and the `devguard-postgresql-ingress` NetworkPolicy are no longer rendered, and the API `POSTGRES_HOST`/`POSTGRES_PORT` envs plus both Kratos DSNs resolve to `postgresql.external`. Rendering fails with a hint if `external.host` is unset. The existing secret contract is unchanged, so `useExistingSecret` / `useExistingKratosDatabaseSecret` work for external databases too. See the external PostgreSQL prerequisites in the [README](README.md#external-postgresql) — the `semver` extension in particular. `external.sslMode` applies to the Kratos connections only; the API always connects with `sslmode=disable`.
 
+- `api.pdfGenerationApi`, passed to the API as `PDF_GENERATION_API`, which was previously hardcoded to `https://dwt-api.dev-l3montree.cloud/pdf`.
+
+### Changed
+
+- **`PDF_GENERATION_API` now defaults to empty**, so a self-hosted instance no longer sends report data to an L3montree-operated endpoint unless configured to. With it unset, `GET …/sbom.pdf/` and `GET …/vulnerability-report.pdf/` return HTTP 500 — the web frontend still offers the download. To keep the previous behaviour, set `api.pdfGenerationApi: https://dwt-api.dev-l3montree.cloud/pdf`.
+- `INSTANCE_DOMAIN` is now derived from `api.ingress.host` / `api.ingress.tls` whenever they are set, regardless of `api.ingress.enabled`, instead of falling back to the in-cluster Service URL when the Ingress is disabled. This makes the instance advertise a reachable URL when the API is published by an `HTTPRoute`, an OpenShift `Route` or a service mesh. Installs that ran with `api.ingress.enabled=false` and a placeholder `api.ingress.host` now advertise that host — set it to the real public URL.
+
+### Fixed
+
+- switched all `additionalEnvs` occurrences to use correct default type of `{}` instead of `[]`. (thanks a lot @skuethe for the fix!)
+
+---
+
+## [v1.14.1] — 2026-09-19
+
+### Changed
+
+- Bumped default DevGuard image versions: `devguard` to `v1.14.2`, `devguard-web` to `v1.14.1`.
+
+---
+
+## [v1.14.0] — 2026-09-17
+
+### Changed
+
+- Bumped default DevGuard image versions: `devguard` to `v1.14.0`, `devguard-web` to `v1.14.0`, `devguard-ci-components` to `v1.14.0`, `kratos` to `v26.2.0`, `postgresql` to `16.15`
 ---
 
 ## [v1.13.12] — 2026-09-16
@@ -33,6 +59,8 @@ For API and web frontend changes see the [main DevGuard CHANGELOG](https://githu
 ### Changed
 
 - Missing chart version update
+
+---
 
 ## [v1.13.9] — 2026-09-15
 

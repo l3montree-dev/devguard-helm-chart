@@ -83,6 +83,8 @@ spec:
             value: {{ include "devguard.postgresHost" . | quote }}
           - name: POSTGRES_PORT
             value: {{ include "devguard.postgresPort" . | quote }}
+          - name: POSTGRES_SSL_MODE
+            value: {{ include "devguard.postgresSslMode" . | quote }}
           - name: GOMEMLIMIT
             value: 1024MiB
           - name: DEPENDENCY_PROXY_CACHE_MAX_SIZE_MB
@@ -170,12 +172,10 @@ spec:
               secretKeyRef:
                 name: devguard-pprof-password
                 key: password
+          - name: DEPENDENCY_PROXY_BASE_URL
+            value: {{ .Values.api.dependencyProxyBaseUrl | quote }}
           - name: INSTANCE_DOMAIN
-            {{- if .Values.api.ingress.enabled }}
-            value: {{ printf "%s://%s" $apiProtocol $apiHost }}
-            {{- else }}
-            value: http://devguard-api-service.{{ .Release.Namespace }}.svc.cluster.local:8080
-            {{- end }}
+            value: {{ printf "%s://%s" $apiProtocol $apiHost | quote }}
         {{- if .Values.api.adminPublicKey }}
           - name: INSTANCE_ADMIN_PUB_KEY_PATH
             value: /instance_admin_pub_key.pem
@@ -187,7 +187,7 @@ spec:
           - name: GOMEMLIMIT
             value: 1024MiB
           - name: PDF_GENERATION_API
-            value: https://dwt-api.dev-l3montree.cloud/pdf
+            value: {{ .Values.api.pdfGenerationApi | quote }}
           - name: DEPENDENCY_PROXY_CACHE_DIR
             value: /tmp/dependency-proxy-cache
         {{- if .Values.api.csaf.existingCsafSecretName }}

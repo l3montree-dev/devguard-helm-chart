@@ -39,6 +39,9 @@ kratos:
     #     - openid
     #     - profile
     #     - email
+    # - id: okta
+    #   provider: generic
+    #   claimsSource: userinfo # optional, default id_token; valid values: userinfo, id_token; Okta only serves email/profile via userinfo
     # ingressNamespaceSelectorKey: "role"
     # ingressNamespaceSelectorValue: "ingress"
     providers: []
@@ -65,7 +68,7 @@ kratos:
   # additionalEnvs:
   #   TEST_CHART_VERSION: "{{ .Chart.Version }}"
   #   MY_ENV_VAR: "my-value"
-  additionalEnvs: []
+  additionalEnvs: {}
 mail:
   # needs to contain key: "uri". Format should be like: smtps://<user>@<your-domain.com>:<secret>@<mail-server.de>:465/?skip_ssl_verify=false
   existingSMTPConnectionUriSecret: ""
@@ -95,7 +98,8 @@ api:
   debug:
     profile: false # set to "true" to enable pprof profiling endpoints on /debug/pprof
   replicaCount: 1
-  ciComponentBase: https://gitlab.com/l3montree/devguard/-/raw/v1.13.2
+  ciComponentBase: https://gitlab.com/l3montree/devguard/-/raw/v1.14.0
+  pdfGenerationApi: ""
   resources:
     limits:
       cpu: "2"
@@ -111,6 +115,8 @@ api:
       requests:
         cpu: 100m
         memory: 1548Mi
+  # Base URL of the dependency proxy
+  dependencyProxyBaseUrl: https://api.main.devguard.org/api/v1/dependency-proxy
   dependencyProxyCache:
     # Maximum size (in MB) of the dependency proxy cache.
     maxSizeMb: 4096
@@ -131,12 +137,12 @@ api:
     aggregatorName: "" # e.g. "Example GmbH"
     aggregatorContactDetails: "" # e.g. "csaf@example.com"
   image:
-    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard:v1.13.7)
+    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard:v1.14.2)
     # or an object with repository/tag/digest/pullPolicy.
     repository: ghcr.io/l3montree-dev/devguard
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: v1.13.7
+    tag: v1.14.2
   imagePullSecrets: []
   errorTracking:
     # https://<your-error-tracking-dsn>
@@ -271,7 +277,7 @@ api:
   # additionalEnvs:
   #   TEST_CHART_VERSION: "{{ .Chart.Version }}"
   #   MY_ENV_VAR: "my-value"
-  additionalEnvs: []
+  additionalEnvs: {}
 
 ################################################################################################
 ## DevGuard Web Frontend Settings
@@ -288,15 +294,15 @@ web:
       cpu: 100m
       memory: 128Mi
   image:
-    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard-web:v1.13.2)
+    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard-web:v1.14.1)
     # or an object with repository/tag/digest/pullPolicy.
     repository: ghcr.io/l3montree-dev/devguard-web
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: v1.13.2
+    tag: v1.14.1
   imagePullSecrets: []
 
-  ciComponentBase: https://gitlab.com/l3montree/devguard/-/raw/v1.13.2
+  ciComponentBase: https://gitlab.com/l3montree/devguard/-/raw/v1.14.0
   devguardApiUrl: http://devguard-api-service:8080
   devguardApiUrlPublicInternet: ""
   privacyPolicyLink: ""
@@ -318,7 +324,7 @@ web:
   # additionalEnvs:
   #   TEST_CHART_VERSION: "{{ .Chart.Version }}"
   #   MY_ENV_VAR: "my-value"
-  additionalEnvs: []
+  additionalEnvs: {}
 
   ingress:
     enabled: true
@@ -511,7 +517,7 @@ postgresql:
   # additionalEnvs:
   #   TEST_CHART_VERSION: "{{ .Chart.Version }}"
   #   MY_ENV_VAR: "my-value"
-  additionalEnvs: []
+  additionalEnvs: {}
 
 ################################################################################################
 ## Observability Settings

@@ -83,6 +83,14 @@ postgresql
 {{- end -}}
 {{- end }}
 
+{{- define "devguard.postgresSslMode" -}}
+{{- if .Values.postgresql.enabled -}}
+disable
+{{- else -}}
+{{- .Values.postgresql.external.sslMode | default "disable" -}}
+{{- end -}}
+{{- end }}
+
 {{- define "devguard.postgresPort" -}}
 {{- if .Values.postgresql.enabled -}}
 5432

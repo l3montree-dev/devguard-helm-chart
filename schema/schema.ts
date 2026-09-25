@@ -93,7 +93,7 @@ export const schema = {
         // as a comment block before `providers: []` in values.yaml.
         providers: f([], {
           comment:
-            '- id: github\n  provider: github\n  clientId: "sample-client-id"\n  disableTicketSync: false\n  existingClientSecretName: github-client-secret # needs to contain key "secret"\n- id: gitlab\n  provider: gitlab\n  issuerUrl: https://gitlab.de\n  clientId: client-id\n  existingClientSecretName: gitlab-secret\n  existingAdminTokenSecretName: gitlab-admin-token # needs to contain key "token"\n  scope:\n    - read_user\n    - openid\n    - profile\n    - email\ningressNamespaceSelectorKey: "role"\ningressNamespaceSelectorValue: "ingress"',
+            '- id: github\n  provider: github\n  clientId: "sample-client-id"\n  disableTicketSync: false\n  existingClientSecretName: github-client-secret # needs to contain key "secret"\n- id: gitlab\n  provider: gitlab\n  issuerUrl: https://gitlab.de\n  clientId: client-id\n  existingClientSecretName: gitlab-secret\n  existingAdminTokenSecretName: gitlab-admin-token # needs to contain key "token"\n  scope:\n    - read_user\n    - openid\n    - profile\n    - email\n- id: okta\n  provider: generic\n  claimsSource: userinfo # optional, default id_token; valid values: userinfo, id_token; Okta only serves email/profile via userinfo\ningressNamespaceSelectorKey: "role"\ningressNamespaceSelectorValue: "ingress"',
         }),
       },
       cleanup: f(
@@ -110,7 +110,7 @@ export const schema = {
         comment:
           'If set to "true", the user will be responsible to provide a secret for kratos.\nThis is useful for situations where the helm "lookup" function cannot be used (e.g. ArgoCD)\nRequirements for that secret:\n- the secret name must match "kratos"\n- a data entry named "secretsDefault" with the corresponding secret used for session signing as value\n- a data entry named "secretsCookie" with the corresponding secret used for cookie encryption as value\n- a data entry named "secretsCipher" with the corresponding secret used for cipher as value',
       }),
-      additionalEnvs: f([], {
+      additionalEnvs: f({}, {
         blankBefore: true,
         comment: additionalEnvsComment("kratos deployment"),
       }),
@@ -183,6 +183,7 @@ export const schema = {
       ),
       replicaCount: 1,
       ciComponentBase: `https://gitlab.com/l3montree/devguard/-/raw/${dependencies.ciComponents.version}`,
+      pdfGenerationApi: "",
       resources: {
         limits: { cpu: "2", memory: "2048Mi" },
         requests: { cpu: "100m", memory: "1024Mi" },
@@ -193,6 +194,13 @@ export const schema = {
           requests: { cpu: "100m", memory: "1548Mi" },
         },
       },
+      dependencyProxyBaseUrl: f(
+        "https://api.main.devguard.org/api/v1/dependency-proxy",
+        {
+          comment:
+            "Base URL of the dependency proxy"
+        },
+      ),
       dependencyProxyCache: {
         maxSizeMb: f(4096, {
           comment: "Maximum size (in MB) of the dependency proxy cache.",
@@ -378,7 +386,7 @@ export const schema = {
         comment:
           'If set to "true", the user will be responsible to provide a secret for the pprof password\nThis is useful for situations where the helm "lookup" function cannot be used (e.g. ArgoCD)\nRequirements for that secret:\n- the secret name must match "devguard-pprof-password"\n- a data entry named "password" with the corresponding pprof password as value',
       }),
-      additionalEnvs: f([], {
+      additionalEnvs: f({}, {
         blankBefore: true,
         comment: additionalEnvsComment("api deployment"),
       }),
@@ -424,7 +432,7 @@ export const schema = {
       errorTracking: {
         dsn: f("", { comment: "https://<your-error-tracking-dsn>" }),
       },
-      additionalEnvs: f([], {
+      additionalEnvs: f({}, {
         blankBefore: true,
         comment: additionalEnvsComment("web deployment"),
       }),
@@ -637,7 +645,7 @@ export const schema = {
         comment:
           'If set to "true", the user will be responsible to provide a secret for the kratos database.\nThis is useful for situations where the helm "lookup" function cannot be used (e.g. ArgoCD)\nRequirements for that secret:\n- the secret name must match "kratos-db-secret"\n- a data entry named "password" with the corresponding password for the "kratos" database user as value',
       }),
-      additionalEnvs: f([], {
+      additionalEnvs: f({}, {
         blankBefore: true,
         comment: additionalEnvsComment("postgresql statefulset"),
       }),
