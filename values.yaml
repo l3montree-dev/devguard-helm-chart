@@ -68,7 +68,7 @@ kratos:
   # additionalEnvs:
   #   TEST_CHART_VERSION: "{{ .Chart.Version }}"
   #   MY_ENV_VAR: "my-value"
-  additionalEnvs: []
+  additionalEnvs: {}
 mail:
   # needs to contain key: "uri". Format should be like: smtps://<user>@<your-domain.com>:<secret>@<mail-server.de>:465/?skip_ssl_verify=false
   existingSMTPConnectionUriSecret: ""
@@ -277,7 +277,7 @@ api:
   # additionalEnvs:
   #   TEST_CHART_VERSION: "{{ .Chart.Version }}"
   #   MY_ENV_VAR: "my-value"
-  additionalEnvs: []
+  additionalEnvs: {}
 
 ################################################################################################
 ## DevGuard Web Frontend Settings
@@ -324,7 +324,7 @@ web:
   # additionalEnvs:
   #   TEST_CHART_VERSION: "{{ .Chart.Version }}"
   #   MY_ENV_VAR: "my-value"
-  additionalEnvs: []
+  additionalEnvs: {}
 
   ingress:
     enabled: true
@@ -494,7 +494,7 @@ postgresql:
   # additionalEnvs:
   #   TEST_CHART_VERSION: "{{ .Chart.Version }}"
   #   MY_ENV_VAR: "my-value"
-  additionalEnvs: []
+  additionalEnvs: {}
 
 ################################################################################################
 ## Observability Settings
