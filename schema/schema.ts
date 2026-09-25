@@ -93,7 +93,7 @@ export const schema = {
         // as a comment block before `providers: []` in values.yaml.
         providers: f([], {
           comment:
-            '- id: github\n  provider: github\n  clientId: "sample-client-id"\n  disableTicketSync: false\n  existingClientSecretName: github-client-secret # needs to contain key "secret"\n- id: gitlab\n  provider: gitlab\n  issuerUrl: https://gitlab.de\n  clientId: client-id\n  existingClientSecretName: gitlab-secret\n  existingAdminTokenSecretName: gitlab-admin-token # needs to contain key "token"\n  scope:\n    - read_user\n    - openid\n    - profile\n    - email\n- id: okta\n  provider: generic\n  claimsSource: userinfo # optional, default id_token; Okta only serves email/profile via userinfo\ningressNamespaceSelectorKey: "role"\ningressNamespaceSelectorValue: "ingress"',
+            '- id: github\n  provider: github\n  clientId: "sample-client-id"\n  disableTicketSync: false\n  existingClientSecretName: github-client-secret # needs to contain key "secret"\n- id: gitlab\n  provider: gitlab\n  issuerUrl: https://gitlab.de\n  clientId: client-id\n  existingClientSecretName: gitlab-secret\n  existingAdminTokenSecretName: gitlab-admin-token # needs to contain key "token"\n  scope:\n    - read_user\n    - openid\n    - profile\n    - email\n- id: okta\n  provider: generic\n  claimsSource: userinfo # optional, default id_token; valid values: userinfo, id_token; Okta only serves email/profile via userinfo\ningressNamespaceSelectorKey: "role"\ningressNamespaceSelectorValue: "ingress"',
         }),
       },
       cleanup: f(
