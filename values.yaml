@@ -419,12 +419,12 @@ postgresql:
     # Max number of concurrent connections. (change requires restart)
     maxConnections: "100"
     # Recommended: 25% of total RAM. (change requires restart)
-    sharedBuffers: 1GB
+    sharedBuffers: 2GB
     # Hint to the query planner: shared_buffers + OS page cache. Rule of thumb: 75% of total RAM.
     # Does not allocate memory — only affects query planning decisions.
-    effectiveCacheSize: 3GB
+    effectiveCacheSize: 6GB
     # Memory for VACUUM, CREATE INDEX, ALTER TABLE. Recommended: 5–10% of total RAM.
-    maintenanceWorkMem: 256MB
+    maintenanceWorkMem: 512MB
     # Per-sort / per-hash memory. Each query can use this multiple times.
     # Formula: (RAM - sharedBuffers) / (maxConnections * 3) for worst-case safety.
     # For web workloads with low actual concurrency, 32–64MB is a good balance.
