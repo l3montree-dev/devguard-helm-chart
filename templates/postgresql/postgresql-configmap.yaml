@@ -45,6 +45,14 @@ data:
     default_statistics_target = 100
 
     # -----------------------------
+    # Logging
+    # -----------------------------
+    # Logs any statement (with full text and duration) that runs at least this
+    # long. -1 disables. Goes to stderr, which `kubectl logs` on this container
+    # already captures — no logging_collector/file setup needed.
+    log_min_duration_statement = {{ .Values.postgresql.config.logMinDurationStatement }}
+
+    # -----------------------------
     # Locale and Formatting
     # -----------------------------
     log_timezone = 'Etc/UTC'
