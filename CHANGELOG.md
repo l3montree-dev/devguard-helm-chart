@@ -4,15 +4,13 @@ All notable changes to the DevGuard Helm chart are documented here.
 
 For API and web frontend changes see the [main DevGuard CHANGELOG](https://github.com/l3montree-dev/devguard/blob/main/CHANGELOG.md).
 
+## [v1.15.1] — 2026-10-02
+
+## Changed
+- Increased default PostgreSQL resource settings: `sharedBuffers` to `2GB`, `effectiveCacheSize` to `6GB`, `maintenanceWorkMem` to `512MB`.
+- `postgresql.config.logMinDurationStatement` (default `2s`) to log slow queries to stderr.
+
 ## [v1.15.0] — 2026-10-01
-
-### Changed
-
-- Bumped default DevGuard image versions: `devguard` to `v1.15.0`, `devguard-web` to `v1.15.0`, `devguard-ci-components` to `v1.15.0`, `kratos` to `v26.2.0`, `postgresql` to `16.15`
-
----
-
-## [Unreleased]
 
 ### Added
 
@@ -22,6 +20,7 @@ For API and web frontend changes see the [main DevGuard CHANGELOG](https://githu
 
 ### Changed
 
+- Bumped default DevGuard image versions: `devguard` to `v1.15.0`, `devguard-web` to `v1.15.0`, `devguard-ci-components` to `v1.15.0`, `kratos` to `v26.2.0`, `postgresql` to `16.15`
 - **`PDF_GENERATION_API` now defaults to empty**, so a self-hosted instance no longer sends report data to an L3montree-operated endpoint unless configured to. With it unset, `GET …/sbom.pdf/` and `GET …/vulnerability-report.pdf/` return HTTP 500 — the web frontend still offers the download. To keep the previous behaviour, set `api.pdfGenerationApi: https://dwt-api.dev-l3montree.cloud/pdf`.
 - `INSTANCE_DOMAIN` is now derived from `api.ingress.host` / `api.ingress.tls` whenever they are set, regardless of `api.ingress.enabled`, instead of falling back to the in-cluster Service URL when the Ingress is disabled. This makes the instance advertise a reachable URL when the API is published by an `HTTPRoute`, an OpenShift `Route` or a service mesh. Installs that ran with `api.ingress.enabled=false` and a placeholder `api.ingress.host` now advertise that host — set it to the real public URL.
 
