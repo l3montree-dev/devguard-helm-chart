@@ -541,14 +541,14 @@ export const schema = {
           comment:
             "Max number of concurrent connections. (change requires restart)",
         }),
-        sharedBuffers: f("1GB", {
+        sharedBuffers: f("2GB", {
           comment: "Recommended: 25% of total RAM. (change requires restart)",
         }),
-        effectiveCacheSize: f("3GB", {
+        effectiveCacheSize: f("6GB", {
           comment:
             "Hint to the query planner: shared_buffers + OS page cache. Rule of thumb: 75% of total RAM.\nDoes not allocate memory — only affects query planning decisions.",
         }),
-        maintenanceWorkMem: f("256MB", {
+        maintenanceWorkMem: f("512MB", {
           comment:
             "Memory for VACUUM, CREATE INDEX, ALTER TABLE. Recommended: 5–10% of total RAM.",
         }),
@@ -583,6 +583,10 @@ export const schema = {
         maxParallelWorkers: f("4", {
           comment:
             "Max parallel workers across all parallel operations. Should not exceed CPU count.",
+        }),
+        logMinDurationStatement: f("2s", {
+          comment:
+            "Log statements running at least this long. -1 disables. Goes to stderr, which `kubectl logs` on this container already captures.",
         }),
       },
       shm: f(
