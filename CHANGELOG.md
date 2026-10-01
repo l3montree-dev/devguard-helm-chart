@@ -4,9 +4,14 @@ All notable changes to the DevGuard Helm chart are documented here.
 
 For API and web frontend changes see the [main DevGuard CHANGELOG](https://github.com/l3montree-dev/devguard/blob/main/CHANGELOG.md).
 
+## [v1.15.2] — 2026-10-02
+### Fixed
+
+- Not all devguard containers received the POSTGRESQL_SSL_MODE env var when `postgresql.external.sslMode` was set, so Kratos and the API could fail to connect to an external PostgreSQL with SSL enabled. The env var is now passed to all containers that connect to PostgreSQL.
+
 ## [v1.15.1] — 2026-10-02
 
-## Changed
+### Changed
 - Increased default PostgreSQL resource settings: `sharedBuffers` to `2GB`, `effectiveCacheSize` to `6GB`, `maintenanceWorkMem` to `512MB`.
 - `postgresql.config.logMinDurationStatement` (default `2s`) to log slow queries to stderr.
 

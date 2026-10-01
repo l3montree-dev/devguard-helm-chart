@@ -500,7 +500,7 @@ export const schema = {
           port: 5432,
           sslMode: f("disable", {
             comment:
-              "Applies to the Kratos connections only. The DevGuard API always connects\nwith sslmode=disable — terminate TLS in the network path if you need it.",
+              "libpq sslmode for all DevGuard API and Kratos connections\n(disable, require, verify-ca, verify-full, ...).",
           }),
         },
         {
