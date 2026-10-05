@@ -17,5 +17,14 @@ data:
         \c kratos
 
         GRANT USAGE, CREATE ON SCHEMA public TO kratos;
+
+
+        CREATE DATABASE river;
+        CREATE USER river PASSWORD '${RIVER_POSTGRES_PASSWORD}';
+        GRANT ALL PRIVILEGES ON DATABASE river to river;
+
+        \c river
+
+        GRANT USAGE, CREATE ON SCHEMA public TO river;
     END
 {{- end }}

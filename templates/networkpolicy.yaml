@@ -90,6 +90,9 @@ spec:
     - podSelector:
         matchLabels:
           app.kubernetes.io/name: kratos-cleanup
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: create-river-user
 {{- end }}
 {{- if .Values.observability.serviceMonitor.enabled }}
 ---
