@@ -193,7 +193,7 @@ api:
           memory: 256Mi
   intoto:
     # Name of the secret holding the EC (prime256v1) private key (data key
-    # "privateKey") used to sign In-Toto attestations.
+    # "privateKey") used to sign In-Toto attestations and SLSA build provenance.
     # Leave empty (default) to have the chart generate and manage the key in a
     # secret named "ec-private-key"; the generated key is preserved across upgrades.
     # Set it to the name of a secret you created yourself to bring your own key — the
@@ -203,6 +203,19 @@ api:
     # openssl ecparam -name prime256v1 -genkey -noout -out private.ec.key
     # kubectl create secret generic ec-private-key --from-file=privateKey=private.ec.key -n devguard
     existingPrivateKeySecretName: ""
+  # SLSA build provenance signing: CI jobs send their provenance together with their OIDC workload
+  # identity token, DevGuard verifies the token and signs the provenance with the identity of the job.
+  slsa:
+    # OIDC issuers whose CI workload identity tokens are accepted (e.g. https://gitlab.opencode.de).
+    # Leave empty to accept every https issuer - the issuer is recorded in the signed provenance
+    # and verifiers have to check it.
+    trustedIssuers: []
+    # Audience the workload identity tokens have to be issued for. Defaults to the public api url
+    # (web.devguardApiUrlPublicInternet) and must match devguard_api_url of the CI components.
+    oidcAudience: ""
+    # Rekor transparency log to upload the signed build provenance to (e.g. https://rekor.sigstore.dev).
+    # Leave empty to not upload it.
+    rekorUrl: ""
   # GitHub App Integration Settings
   github:
     enabled: true

@@ -312,9 +312,29 @@ export const schema = {
       intoto: {
         existingPrivateKeySecretName: f("", {
           comment:
-            'Name of the secret holding the EC (prime256v1) private key (data key\n"privateKey") used to sign In-Toto attestations.\nLeave empty (default) to have the chart generate and manage the key in a\nsecret named "ec-private-key"; the generated key is preserved across upgrades.\nSet it to the name of a secret you created yourself to bring your own key — the\nchart then only references that secret and generates nothing. This is also how\nto run the chart where the helm "lookup" function is unavailable (e.g. ArgoCD).\nThat secret must contain a data key "privateKey"; create one with:\nopenssl ecparam -name prime256v1 -genkey -noout -out private.ec.key\nkubectl create secret generic ec-private-key --from-file=privateKey=private.ec.key -n devguard',
+            'Name of the secret holding the EC (prime256v1) private key (data key\n"privateKey") used to sign In-Toto attestations and SLSA build provenance.\nLeave empty (default) to have the chart generate and manage the key in a\nsecret named "ec-private-key"; the generated key is preserved across upgrades.\nSet it to the name of a secret you created yourself to bring your own key — the\nchart then only references that secret and generates nothing. This is also how\nto run the chart where the helm "lookup" function is unavailable (e.g. ArgoCD).\nThat secret must contain a data key "privateKey"; create one with:\nopenssl ecparam -name prime256v1 -genkey -noout -out private.ec.key\nkubectl create secret generic ec-private-key --from-file=privateKey=private.ec.key -n devguard',
         }),
       },
+      slsa: f(
+        {
+          trustedIssuers: f([], {
+            comment:
+              "OIDC issuers whose CI workload identity tokens are accepted (e.g. https://gitlab.opencode.de).\nLeave empty to accept every https issuer - the issuer is recorded in the signed provenance\nand verifiers have to check it.",
+          }),
+          oidcAudience: f("", {
+            comment:
+              "Audience the workload identity tokens have to be issued for. Defaults to the public api url\n(web.devguardApiUrlPublicInternet) and must match devguard_api_url of the CI components.",
+          }),
+          rekorUrl: f("", {
+            comment:
+              "Rekor transparency log to upload the signed build provenance to (e.g. https://rekor.sigstore.dev).\nLeave empty to not upload it.",
+          }),
+        },
+        {
+          comment:
+            "SLSA build provenance signing: CI jobs send their provenance together with their OIDC workload\nidentity token, DevGuard verifies the token and signs the provenance with the identity of the job.",
+        },
+      ),
       github: f(
         {
           enabled: true,

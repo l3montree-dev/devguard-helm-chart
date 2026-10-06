@@ -287,6 +287,20 @@ spec:
         {{- end }}
           - name: APP_SIDE_ENCRYPTION_KEY_PATH
             value: /encryption/key
+          - name: SLSA_PRIVATE_KEY_PATH
+            value: /slsa-private-key.pem
+        {{- with .Values.api.slsa.trustedIssuers }}
+          - name: SLSA_OIDC_TRUSTED_ISSUERS
+            value: {{ join "," . | quote }}
+        {{- end }}
+        {{- with .Values.api.slsa.oidcAudience }}
+          - name: SLSA_OIDC_AUDIENCE
+            value: {{ . | quote }}
+        {{- end }}
+        {{- with .Values.api.slsa.rekorUrl }}
+          - name: SLSA_REKOR_URL
+            value: {{ . | quote }}
+        {{- end }}
           - name: TRACES_SAMPLE_RATE
             value: {{ .Values.api.tracing.sampleRate | quote }}
         {{- if .Values.api.tracing.enabled }}
@@ -317,7 +331,7 @@ spec:
           - mountPath: /github-app-private-key
             name: github-app-private-key
             subPath: privateKey
-          - mountPath: /intoto-private-key.pem
+          - mountPath: /slsa-private-key.pem
             name: intoto-private-key
             subPath: privateKey
           {{- if .Values.api.csaf.existingCsafSecretName }}
