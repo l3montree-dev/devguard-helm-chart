@@ -98,7 +98,7 @@ api:
   debug:
     profile: false # set to "true" to enable pprof profiling endpoints on /debug/pprof
   replicaCount: 1
-  ciComponentBase: https://gitlab.com/l3montree/devguard/-/raw/v1.15.0
+  ciComponentBase: https://gitlab.com/l3montree/devguard/-/raw/v1.16.0
   pdfGenerationApi: ""
   resources:
     limits:
@@ -137,12 +137,12 @@ api:
     aggregatorName: "" # e.g. "Example GmbH"
     aggregatorContactDetails: "" # e.g. "csaf@example.com"
   image:
-    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard:v1.15.0)
+    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard:v1.16.0)
     # or an object with repository/tag/digest/pullPolicy.
     repository: ghcr.io/l3montree-dev/devguard
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: v1.15.0
+    tag: v1.16.0
   imagePullSecrets: []
   errorTracking:
     # https://<your-error-tracking-dsn>
@@ -294,15 +294,15 @@ web:
       cpu: 100m
       memory: 128Mi
   image:
-    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard-web:v1.15.0)
+    # Accepts either a full image string (e.g. ghcr.io/l3montree-dev/devguard-web:v1.16.0)
     # or an object with repository/tag/digest/pullPolicy.
     repository: ghcr.io/l3montree-dev/devguard-web
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: v1.15.0
+    tag: v1.16.0
   imagePullSecrets: []
 
-  ciComponentBase: https://gitlab.com/l3montree/devguard/-/raw/v1.15.0
+  ciComponentBase: https://gitlab.com/l3montree/devguard/-/raw/v1.16.0
   devguardApiUrl: http://devguard-api-service:8080
   devguardApiUrlPublicInternet: ""
   privacyPolicyLink: ""
