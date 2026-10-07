@@ -85,6 +85,15 @@ spec:
               name: db-secret
         - name: POSTGRES_USER
           value: devguard
+        - name: RIVER_POSTGRES_DB
+          value: river
+        - name: RIVER_POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: river-db-secret
+        - name: RIVER_POSTGRES_USER
+          value: river
         - name: KRATOS_PASSWORD
           valueFrom:
             secretKeyRef:

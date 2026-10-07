@@ -507,6 +507,13 @@ postgresql:
   # If set to "true", the user will be responsible to provide a secret for the kratos database.
   # This is useful for situations where the helm "lookup" function cannot be used (e.g. ArgoCD)
   # Requirements for that secret:
+  # - the secret name must match "river-db-secret"
+  # - a data entry named "password" with the corresponding password for the "river" database user as value
+  useExistingRiverDatabaseSecret: false
+
+  # If set to "true", the user will be responsible to provide a secret for the kratos database.
+  # This is useful for situations where the helm "lookup" function cannot be used (e.g. ArgoCD)
+  # Requirements for that secret:
   # - the secret name must match "kratos-db-secret"
   # - a data entry named "password" with the corresponding password for the "kratos" database user as value
   useExistingKratosDatabaseSecret: false
