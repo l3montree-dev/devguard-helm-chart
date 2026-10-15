@@ -203,6 +203,23 @@ api:
     # openssl ecparam -name prime256v1 -genkey -noout -out private.ec.key
     # kubectl create secret generic ec-private-key --from-file=privateKey=private.ec.key -n devguard
     existingPrivateKeySecretName: ""
+  # River UI - a dashboard for the background job queue of the API.
+  # It is not exposed, reach it with:
+  # kubectl port-forward service/devguard-riverui-service 8080:8080
+  # It can cancel, retry and delete jobs - only grant port-forward access to operators.
+  riverUI:
+    enabled: false
+    image:
+      repository: ghcr.io/riverqueue/riverui
+      tag: 0.21.0@sha256:3f59206a0f152ae50a45bb49e3646de2126c878f9daa4781f42ba311f141599d
+      pullPolicy: IfNotPresent
+    resources:
+      limits:
+        cpu: 200m
+        memory: 256Mi
+      requests:
+        cpu: 10m
+        memory: 32Mi
   # GitHub App Integration Settings
   github:
     enabled: true

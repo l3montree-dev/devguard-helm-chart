@@ -315,6 +315,24 @@ export const schema = {
             'Name of the secret holding the EC (prime256v1) private key (data key\n"privateKey") used to sign In-Toto attestations.\nLeave empty (default) to have the chart generate and manage the key in a\nsecret named "ec-private-key"; the generated key is preserved across upgrades.\nSet it to the name of a secret you created yourself to bring your own key — the\nchart then only references that secret and generates nothing. This is also how\nto run the chart where the helm "lookup" function is unavailable (e.g. ArgoCD).\nThat secret must contain a data key "privateKey"; create one with:\nopenssl ecparam -name prime256v1 -genkey -noout -out private.ec.key\nkubectl create secret generic ec-private-key --from-file=privateKey=private.ec.key -n devguard',
         }),
       },
+      riverUI: f(
+        {
+          enabled: false,
+          image: {
+            repository: dependencies.riverUI.repo,
+            tag: dependencies.riverUI.tag,
+            pullPolicy: "IfNotPresent",
+          },
+          resources: {
+            limits: { cpu: "200m", memory: "256Mi" },
+            requests: { cpu: "10m", memory: "32Mi" },
+          },
+        },
+        {
+          comment:
+            "River UI - a dashboard for the background job queue of the API.\nIt is not exposed, reach it with:\nkubectl port-forward service/devguard-riverui-service 8080:8080\nIt can cancel, retry and delete jobs - only grant port-forward access to operators.",
+        },
+      ),
       github: f(
         {
           enabled: true,

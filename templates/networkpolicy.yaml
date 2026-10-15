@@ -90,6 +90,11 @@ spec:
     - podSelector:
         matchLabels:
           app.kubernetes.io/name: kratos-cleanup
+    {{- if .Values.api.riverUI.enabled }}
+    - podSelector:
+        matchLabels:
+          app: devguard-riverui
+    {{- end }}
 {{- end }}
 {{- if .Values.observability.serviceMonitor.enabled }}
 ---

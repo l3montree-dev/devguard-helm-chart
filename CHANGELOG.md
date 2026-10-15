@@ -4,6 +4,12 @@ All notable changes to the DevGuard Helm chart are documented here.
 
 For API and web frontend changes see the [main DevGuard CHANGELOG](https://github.com/l3montree-dev/devguard/blob/main/CHANGELOG.md).
 
+## [Unreleased]
+
+### Added
+
+- `api.riverUI.enabled` (default `false`) deploys [River UI](https://github.com/riverqueue/riverui), a dashboard for the API's background job queue. It is not exposed through an ingress; reach it with `kubectl port-forward service/devguard-riverui-service 8080:8080`. It connects with the `devguard` database user from `db-secret` and is added to the `devguard-postgresql-ingress` NetworkPolicy.
+
 ## [v1.16.0] — 2026-10-07
 
 ### Changed

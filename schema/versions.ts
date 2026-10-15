@@ -58,6 +58,10 @@ export const dependencies = {
     repo: "busybox",
     tag: "1.37.0@sha256:1487d0af5f52b4ba31c7e465126ee2123fe3f2305d638e7827681e7cf6c83d5e",
   },
+  riverUI: {
+    repo: "ghcr.io/riverqueue/riverui",
+    tag: "0.21.0@sha256:3f59206a0f152ae50a45bb49e3646de2126c878f9daa4781f42ba311f141599d",
+  },
   postgresExporter: {
     repo: "prometheuscommunity/postgres-exporter",
     tag: "v0.19.1",
