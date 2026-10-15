@@ -10,6 +10,14 @@ For API and web frontend changes see the [main DevGuard CHANGELOG](https://githu
 
 - `api.riverUI.enabled` (default `false`) deploys [River UI](https://github.com/riverqueue/riverui), a dashboard for the API's background job queue. It is not exposed through an ingress; reach it with `kubectl port-forward service/devguard-riverui-service 8080:8080`. It connects with the `devguard` database user from `db-secret` and is added to the `devguard-postgresql-ingress` NetworkPolicy.
 
+---
+
+## [v1.16.1] — 2026-10-11
+
+### Changed
+
+- Bumped default DevGuard image versions: `devguard` to `v1.16.1` and `devguard-web` to `v1.16.1`
+
 ## [v1.16.0] — 2026-10-07
 
 ### Changed
