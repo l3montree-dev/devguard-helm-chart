@@ -36,7 +36,7 @@ spec:
         {{- end }}
       secretName: {{ .secretName }}
     {{- end }}
-  {{- else if .Values.api.ingress.tls }}
+  {{- else if and .Values.api.ingress.tls (not .Values.api.ingress.tlsExternal) }}
   tls:
     - hosts:
         - {{ include "devguard.apiHost" . | quote }}

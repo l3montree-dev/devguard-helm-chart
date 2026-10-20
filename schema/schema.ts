@@ -380,6 +380,10 @@ export const schema = {
           comment:
             'Name of the kubernetes.io/tls secret holding the certificate for the host\nabove. Leave empty to default to "devguard-api-tls" (e.g. as the target\nsecret of a cert-manager Certificate).',
         }),
+        tlsExternal: f(false, {
+          comment:
+            "Set to true if TLS is terminated outside the cluster (e.g. by a load balancer\nwith a wildcard certificate). Requires tls=true: URLs still use https://, but\nno tls block is rendered, so no TLS secret is needed in the namespace.",
+        }),
       }, { blankBefore: true }),
       podAnnotations: f({}, { blankBefore: true }),
       podLabels: {},
@@ -487,6 +491,10 @@ export const schema = {
         tlsSecretName: f("", {
           comment:
             'Name of the kubernetes.io/tls secret holding the certificate for the host\nabove. Leave empty to default to "devguard-web-tls" (e.g. as the target\nsecret of a cert-manager Certificate).',
+        }),
+        tlsExternal: f(false, {
+          comment:
+            "Set to true if TLS is terminated outside the cluster (e.g. by a load balancer\nwith a wildcard certificate). Requires tls=true: URLs still use https://, but\nno tls block is rendered, so no TLS secret is needed in the namespace.",
         }),
       }, { blankBefore: true }),
       podAnnotations: f({}, { blankBefore: true }),
