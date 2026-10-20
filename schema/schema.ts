@@ -447,6 +447,7 @@ export const schema = {
       termsOfUseLink: "",
       imprintLink: "",
       accountDeletionMail: "",
+      githubAppName: "",
       themeJsUrl: f("", {
         comment: "Custom Theme URLs (leave empty to use default theme)",
       }),

@@ -330,6 +330,7 @@ web:
   termsOfUseLink: ""
   imprintLink: ""
   accountDeletionMail: ""
+  githubAppName: ""
   # Custom Theme URLs (leave empty to use default theme)
   themeJsUrl: ""
   themeCssUrl: ""
