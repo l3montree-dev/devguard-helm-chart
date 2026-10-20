@@ -260,6 +260,10 @@ api:
     # above. Leave empty to default to "devguard-api-tls" (e.g. as the target
     # secret of a cert-manager Certificate).
     tlsSecretName: ""
+    # Set to true if TLS is terminated outside the cluster (e.g. by a load balancer
+    # with a wildcard certificate). Requires tls=true: URLs still use https://, but
+    # no tls block is rendered, so no TLS secret is needed in the namespace.
+    tlsExternal: false
 
   podAnnotations: {}
   podLabels: {}
@@ -376,6 +380,10 @@ web:
     # above. Leave empty to default to "devguard-web-tls" (e.g. as the target
     # secret of a cert-manager Certificate).
     tlsSecretName: ""
+    # Set to true if TLS is terminated outside the cluster (e.g. by a load balancer
+    # with a wildcard certificate). Requires tls=true: URLs still use https://, but
+    # no tls block is rendered, so no TLS secret is needed in the namespace.
+    tlsExternal: false
 
   podAnnotations: {}
   podLabels: {}
