@@ -9,6 +9,7 @@ For API and web frontend changes see the [main DevGuard CHANGELOG](https://githu
 ### Added
 
 - `api.riverUI.enabled` (default `false`) deploys [River UI](https://github.com/riverqueue/riverui), a dashboard for the API's background job queue. It is not exposed through an ingress; reach it with `kubectl port-forward service/devguard-riverui-service 8080:8080`. It connects with the `devguard` database user from `db-secret` and is added to the `devguard-postgresql-ingress` NetworkPolicy.
+- Chart packages are now signed with OpenPGP: every release ships a `.tgz.prov` provenance file — as a GitHub release asset, next to the package in the GitHub Pages repository, and as a provenance layer in GHCR — and the public key is published at `https://l3montree-dev.github.io/devguard-helm-chart/signing-key.asc`. Verify with `helm pull devguard/devguard --verify --keyring ./signing-key.gpg` (see `DISTRIBUTION.md` → "Chart signing"). Versions released earlier stay unsigned. No chart templates or values changed.
 
 ---
 

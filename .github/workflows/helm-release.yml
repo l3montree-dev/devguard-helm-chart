@@ -15,6 +15,12 @@ on:
 
 env:
   REGISTRY: ghcr.io
+  # Public half of the chart signing key, committed to the repo. helm-pages.yml
+  # publishes it next to index.yaml so users can run `helm verify` themselves.
+  PUBLIC_KEY: .github/pages/signing-key.asc
+  # Where that key ends up once helm-pages.yml has run. Announced to users via
+  # the `artifacthub.io/signKey` annotation.
+  SIGN_KEY_URL: https://l3montree-dev.github.io/devguard-helm-chart/signing-key.asc
 
 jobs:
   release:
@@ -41,6 +47,81 @@ jobs:
       with:
         version: '3.19.0'
 
+    # Signing produces a `<chart>.tgz.prov` provenance file next to the package.
+    # That file is what `helm verify` checks and what Artifact Hub looks for to
+    # show the "signed" badge (it probes `<chart-url>.prov` for HTTP repos and
+    # the provenance layer for OCI ones).
+    #
+    # Helm signs with a legacy binary keyring, which gpg >= 2.1 no longer keeps
+    # on disk, so the exported keyring is stored base64-encoded in the
+    # GPG_KEYRING_BASE64 secret. See DISTRIBUTION.md → "Chart signing".
+    - name: Prepare chart signing key
+      id: signing
+      env:
+        GPG_KEYRING_BASE64: ${{ secrets.GPG_KEYRING_BASE64 }}
+        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+      run: |
+        set -euo pipefail
+
+        MISSING=""
+        [ -n "$GPG_KEYRING_BASE64" ] || MISSING="the GPG_KEYRING_BASE64 secret"
+        [ -f "$PUBLIC_KEY" ] || MISSING="${MISSING:+$MISSING and }$PUBLIC_KEY"
+
+        if [ -n "$MISSING" ]; then
+          # Never ship a tagged release unsigned — that is the one users install.
+          if [ "$GITHUB_REF" != "${GITHUB_REF#refs/tags/}" ]; then
+            echo "::error::Missing $MISSING — refusing to publish an unsigned tagged release."
+            exit 1
+          fi
+          echo "::warning::Missing $MISSING — packaging without a provenance file."
+          echo "sign=false" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+
+        printf '%s' "$GPG_KEYRING_BASE64" | base64 -d > "$RUNNER_TEMP/secring.gpg"
+        # Trailing newline on purpose: helm reads the first line of this file, and
+        # an entirely empty file makes it error out instead of using no passphrase.
+        printf '%s\n' "$GPG_PASSPHRASE" > "$RUNNER_TEMP/passphrase"
+        chmod 600 "$RUNNER_TEMP/secring.gpg" "$RUNNER_TEMP/passphrase"
+
+        # Fingerprint and user ID come from the key that actually signs, not from
+        # the committed public key, which may hold older keys too (see
+        # DISTRIBUTION.md → "Rotation").
+        SECRET_KEY=$(gpg --batch --with-colons --show-keys "$RUNNER_TEMP/secring.gpg" || true)
+        FINGERPRINT=$(awk -F: '/^fpr:/ { print $10; exit }' <<< "$SECRET_KEY")
+        KEY_UID=$(awk -F: '/^uid:/ { print $10; exit }' <<< "$SECRET_KEY")
+        if [ -z "$FINGERPRINT" ] || [ -z "$KEY_UID" ]; then
+          echo "::error::Could not read a fingerprint and user ID from the GPG_KEYRING_BASE64 secret"
+          exit 1
+        fi
+
+        # Users verify against the committed public key, so the signing key has to
+        # be in it — otherwise the release would carry a provenance file nobody
+        # can verify.
+        PUBLIC_ENTRY=$(gpg --batch --with-colons --show-keys "$PUBLIC_KEY" \
+          | awk -F: -v fpr="$FINGERPRINT" '/^pub:/ { expires = $7 } /^fpr:/ && $10 == fpr { print "expires=" expires; exit }')
+        if [ -z "$PUBLIC_ENTRY" ]; then
+          echo "::error::Signing key $FINGERPRINT is not in $PUBLIC_KEY — commit its public half, see DISTRIBUTION.md → \"Chart signing\"."
+          exit 1
+        fi
+
+        # Helm 4 rejects every chart signed with an expired key — even the ones
+        # signed while it was still valid — and the Helm 3 used here does not
+        # check expiry at all. So only a key without an expiry date may sign.
+        # See DISTRIBUTION.md → "Key expiry".
+        EXPIRES=${PUBLIC_ENTRY#expires=}
+        if [ -n "$EXPIRES" ]; then
+          echo "::error::Signing key $FINGERPRINT has an expiry date ($(date -u -d "@$EXPIRES" +%F)) — refusing to sign. Remove it, see DISTRIBUTION.md → \"Key expiry\"."
+          exit 1
+        fi
+
+        echo "Signing as: $KEY_UID ($FINGERPRINT)"
+        {
+          echo "sign=true"
+          echo "fingerprint=$FINGERPRINT"
+          echo "key_uid=$KEY_UID"
+        } >> "$GITHUB_OUTPUT"
+
     - name: Log in to GitHub Container Registry
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -64,12 +145,37 @@ jobs:
         echo "version=$VERSION" >> $GITHUB_OUTPUT
         echo "Releasing version: $VERSION"
 
+    # Purely informational on Artifact Hub — the "signed" badge comes from the
+    # provenance file, not from this annotation. What it buys is a discoverable
+    # key: without it nobody knows what to verify the signature against.
+    - name: Annotate Chart.yaml with the signing key
+      if: steps.signing.outputs.sign == 'true'
+      env:
+        FINGERPRINT: ${{ steps.signing.outputs.fingerprint }}
+      run: |
+        set -euo pipefail
+        SIGN_KEY=$(printf 'fingerprint: %s\nurl: %s\n' "$FINGERPRINT" "$SIGN_KEY_URL")
+        SIGN_KEY="$SIGN_KEY" yq -i '.annotations["artifacthub.io/signKey"] = strenv(SIGN_KEY)' Chart.yaml
+        yq '.annotations' Chart.yaml
+
     - name: Package Helm Chart
       env:
         VERSION: ${{ steps.version.outputs.version }}
+        SIGN: ${{ steps.signing.outputs.sign }}
+        KEY_UID: ${{ steps.signing.outputs.key_uid }}
       run: |
+        set -euo pipefail
         helm dependency update
-        helm package . --version "$VERSION" --destination ./charts/
+        if [ "$SIGN" = "true" ]; then
+          # Also writes ./charts/devguard-$VERSION.tgz.prov
+          helm package . --version "$VERSION" --destination ./charts/ \
+            --sign --key "$KEY_UID" \
+            --keyring "$RUNNER_TEMP/secring.gpg" \
+            --passphrase-file "$RUNNER_TEMP/passphrase"
+        else
+          helm package . --version "$VERSION" --destination ./charts/
+        fi
+        ls -l ./charts/
 
     - name: Push Helm Chart to GitHub Container Registry
       env:
@@ -77,6 +183,8 @@ jobs:
       run: |
         CHART_PACKAGE="devguard-$VERSION.tgz"
         echo "Pushing chart: $CHART_PACKAGE to oci://$REGISTRY/$GITHUB_REPOSITORY"
+        # helm push uploads $CHART_PACKAGE.prov as an OCI provenance layer
+        # automatically whenever it sits next to the package.
         helm push "./charts/$CHART_PACKAGE" "oci://$REGISTRY/$GITHUB_REPOSITORY"
 
     - name: Get minor version
@@ -110,6 +218,16 @@ jobs:
           helm pull oci://ghcr.io/${{ github.repository }}/devguard --version ${{ steps.version.outputs.version }}
           ```
 
+          ## Verify
+
+          The chart package is signed; `devguard-${{ steps.version.outputs.version }}.tgz.prov` is attached below. To pull the chart and check its signature in one step:
+
+          ```bash
+          curl -sLO ${{ env.SIGN_KEY_URL }}
+          gpg --dearmor < signing-key.asc > signing-key.gpg
+          helm pull oci://ghcr.io/${{ github.repository }}/devguard --version ${{ steps.version.outputs.version }} --verify --keyring ./signing-key.gpg
+          ```
+
           ---
 
           ## Versioning
@@ -132,7 +250,13 @@ jobs:
           *-rc*|*-alpha*|*-beta*) PRERELEASE="--prerelease" ;;
         esac
 
-        gh release create "$TAG" charts/*.tgz \
+        # The .prov file has to be a release asset too: helm-pages.yml rebuilds
+        # the HTTP repository from the release assets, and Artifact Hub only
+        # sees a chart as signed if <chart-url>.prov is served next to it.
+        shopt -s nullglob
+        ASSETS=(charts/*.tgz charts/*.tgz.prov)
+
+        gh release create "$TAG" "${ASSETS[@]}" \
           --title "$TAG" \
           --notes-file "$RUNNER_TEMP/release-notes.md" \
           --generate-notes \
