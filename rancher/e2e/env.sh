@@ -10,9 +10,18 @@ E2E_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 : "${CATTLE_BOOTSTRAP_PASSWORD:=devguard-ci-bootstrap-pw}"
 : "${RANCHER_ADMIN_PASSWORD:=devguard-ci-admin-pw}"
 
-: "${CHART_REPO_GIT:=https://github.com/l3montree-dev/rancher-partner-charts.git}"
-: "${CHART_REPO_BRANCH:=main-source}"
-: "${CHART_REPO_NAME:=devguard-partner-charts}"
+# Empty = use the official partner-charts repo that Rancher pre-installs as
+# ClusterRepo "rancher-partner-charts" (https://github.com/rancher/partner-charts,
+# branch main). Set it to register a separate ClusterRepo instead, e.g. the
+# fork https://github.com/l3montree-dev/rancher-partner-charts.git with
+# CHART_REPO_BRANCH=main-source to test a version before it is merged upstream.
+: "${CHART_REPO_GIT:=}"
+: "${CHART_REPO_BRANCH:=main}"
+if [[ -z $CHART_REPO_GIT ]]; then
+  : "${CHART_REPO_NAME:=rancher-partner-charts}"
+else
+  : "${CHART_REPO_NAME:=devguard-partner-charts}"
+fi
 : "${CHART_NAME:=devguard}"
 # Empty = install the latest version found in the repo index.
 : "${CHART_VERSION:=}"

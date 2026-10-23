@@ -1,11 +1,11 @@
 name: Rancher catalog test
 
 # Full end-to-end test of the DevGuard chart through Rancher: starts
-# rancher/rancher in Docker on the runner, registers the partner-charts repo
-# as a ClusterRepo, installs the chart via Rancher's catalog API (the same
-# code path the UI uses) and health-checks the deployment. All logic lives in
-# rancher/e2e/ so the identical scripts can be run locally — see
-# rancher/e2e/README.md.
+# rancher/rancher in Docker on the runner, uses the official partner-charts
+# ClusterRepo (or registers a custom one via repo_git), installs the chart
+# via Rancher's catalog API (the same code path the UI uses) and
+# health-checks the deployment. All logic lives in rancher/e2e/ so the
+# identical scripts can be run locally — see rancher/e2e/README.md.
 
 on:
   workflow_dispatch:
@@ -14,10 +14,14 @@ on:
         description: Chart version to install (empty = latest in the repo index)
         required: false
         default: ''
-      repo_branch:
-        description: partner-charts branch for the ClusterRepo
+      repo_git:
+        description: partner-charts git repo (empty = official rancher/partner-charts, pre-installed in Rancher)
         required: false
-        default: main-source
+        default: ''
+      repo_branch:
+        description: partner-charts branch (only used with repo_git, e.g. main-source for the l3montree fork)
+        required: false
+        default: main
 
 permissions:
   contents: read
@@ -39,6 +43,7 @@ jobs:
       - name: Run Rancher catalog e2e test
         env:
           CHART_VERSION: ${{ inputs.chart_version }}
+          CHART_REPO_GIT: ${{ inputs.repo_git }}
           CHART_REPO_BRANCH: ${{ inputs.repo_branch }}
         run: bash rancher/e2e/run-all.sh
 
