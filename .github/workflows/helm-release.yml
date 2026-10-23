@@ -97,6 +97,17 @@ jobs:
           exit 1
         fi
 
+        # Helm 4 rejects every chart signed with an expired key — even the ones
+        # signed while it was still valid — and the Helm 3 used here does not
+        # check expiry at all. So only a key without an expiry date may sign.
+        # See DISTRIBUTION.md → "Key expiry".
+        EXPIRES=$(gpg --batch --with-colons --show-keys "$PUBLIC_KEY" \
+          | awk -F: -v fpr="$FINGERPRINT" '/^pub:/ { expires = $7 } /^fpr:/ && $10 == fpr { print expires; exit }')
+        if [ -n "$EXPIRES" ]; then
+          echo "::error::Signing key $FINGERPRINT has an expiry date ($(date -u -d "@$EXPIRES" +%F)) — refusing to sign. Remove it, see DISTRIBUTION.md → \"Key expiry\"."
+          exit 1
+        fi
+
         echo "Signing as: $KEY_UID ($FINGERPRINT)"
         {
           echo "sign=true"

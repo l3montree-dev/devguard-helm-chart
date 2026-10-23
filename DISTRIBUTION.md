@@ -78,10 +78,10 @@ annotation does not affect the badge, it only tells users which key to verify ag
 
 ### One-time setup
 
-1. Create a signing key (no expiry is fine for a chart signing key, but rotation is easier with one):
+1. Create a signing key **without an expiry date** (see [Key expiry](#key-expiry) for why):
 
    ```bash
-   gpg --quick-generate-key "DevGuard Chart Signing <info@l3montree.com>" rsa4096 sign 2y
+   gpg --quick-generate-key "DevGuard Chart Signing <info@l3montree.com>" rsa4096 sign never
    ```
 
 2. Commit the public half — it is both the verification key for users and the source
@@ -131,7 +131,8 @@ provenance file automatically and uploads it as an OCI layer.
 
 A **tagged** release fails hard if the keyring secret or the public key is missing —
 the versions users actually install must never go out unsigned. Pushes to `main`
-(the `0.0.0-main` package) only warn and publish unsigned.
+(the `0.0.0-main` package) only warn and publish unsigned. Every run — `main` included —
+fails if the committed key has an expiry date (see [Key expiry](#key-expiry)).
 
 ### Verifying as a user
 
@@ -155,6 +156,27 @@ committed public key and the packages already released fails the deployment rath
 than silently publishing unverifiable provenance files. Keep the old public key
 appended to `signing-key.asc` (it is a keyring — it can hold several keys) so
 previously released versions stay verifiable.
+
+### Key expiry
+
+The signing key must not have an expiry date. Helm 4 rejects *every* chart signed with
+an expired key — including those signed while the key was still valid — so an expiry
+date would eventually make all released charts unverifiable. It adds little security
+either: whoever holds the private key can extend the expiry themselves, so a leaked
+key has to be replaced (see [Rotation](#rotation)) regardless.
+
+Helm 3, which CI uses, does not check expiry at all. The release workflow therefore
+refuses to sign with a key that has an expiry date: every run fails until it is removed.
+
+To remove the expiry from an existing key — the fingerprint stays the same, and charts
+signed earlier become verifiable again even if the key had already expired:
+
+```bash
+gpg --quick-set-expire <fingerprint> never
+```
+
+Then commit the re-exported public key and update `GPG_KEYRING_BASE64` (steps 2–4 of
+the one-time setup).
 
 > Signing is not wired into `.gitlab-ci.yml`. The GitLab pipeline is a mirror and is
 > not indexed by Artifact Hub; adding it needs the same two variables in GitLab CI/CD.
