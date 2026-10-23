@@ -1,9 +1,11 @@
 # Rancher catalog e2e test
 
 End-to-end test of the DevGuard chart through a real Rancher: starts
-`rancher/rancher` in Docker (see [../compose.yml](../compose.yml)), registers
-the [partner-charts repo](https://github.com/l3montree-dev/rancher-partner-charts)
-as a `ClusterRepo`, installs the chart via **Rancher's catalog API** (the same
+`rancher/rancher` in Docker (see [../compose.yml](../compose.yml)), uses the
+official [partner-charts repo](https://github.com/rancher/partner-charts) that
+Rancher pre-installs as `ClusterRepo` `rancher-partner-charts` (or registers a
+custom one, see [Chart repository](#chart-repository)), installs the chart via
+**Rancher's catalog API** (the same
 code path the UI uses, spawning a helm-operation pod) and verifies that all
 pods become healthy and the `/health` endpoints return 200 — both through the
 chart's Ingress resources and directly against the services.
@@ -21,7 +23,7 @@ manual `workflow_dispatch`) is a thin wrapper around these scripts.
 | `02-wait-rancher.sh`    | wait for `/healthz`                                                                                                                  |
 | `03-bootstrap.sh`       | login, set admin password + `server-url`, generate kubeconfig for the `local` cluster, wait for cluster + rancher-webhook            |
 | `04-cluster-prereqs.sh` | install local-path-provisioner + ingress-nginx (the embedded k3s disables traefik/servicelb/local-storage)                           |
-| `05-clusterrepo.sh`     | create the `ClusterRepo`, wait for condition `Downloaded`, resolve the chart version from the index                                  |
+| `05-clusterrepo.sh`     | use the built-in `ClusterRepo` (or create a custom one), wait for condition `Downloaded`, resolve the chart version from the index   |
 | `06-install.sh`         | pre-create namespace + dummy secrets, `POST ?action=install`, follow the helm-operation pod, wait for the App to be `deployed`       |
 | `07-smoke.sh`           | rollout status for all workloads, curl `/api/v1/health` (API) and `/api/health` (web) via ingress (Host header) and via the services |
 | `08-uninstall.sh`       | uninstall through the catalog API (skip with `SKIP_UNINSTALL=1`)                                                                     |
@@ -29,7 +31,28 @@ manual `workflow_dispatch`) is a thin wrapper around these scripts.
 | `99-down.sh`            | tear down container + state                                                                                                          |
 
 Configuration lives in `env.sh`; every variable can be overridden via the
-environment, e.g. `CHART_VERSION`, `CHART_REPO_BRANCH`, `RANCHER_URL`.
+environment, e.g. `CHART_VERSION`, `CHART_REPO_GIT`, `RANCHER_URL`.
+
+## Chart repository
+
+By default the test installs from the official
+[rancher/partner-charts](https://github.com/rancher/partner-charts) repo
+(branch `main`) — the `rancher-partner-charts` ClusterRepo Rancher creates on
+startup, i.e. exactly what users see under Apps → Charts. No extra repo is
+registered.
+
+To test a version that is not merged upstream yet, point `CHART_REPO_GIT` at
+another git repo; it is then registered as a separate ClusterRepo
+(`devguard-partner-charts`) and `CHART_REPO_BRANCH` selects the branch
+(default `main`):
+
+```bash
+CHART_REPO_GIT=https://github.com/l3montree-dev/rancher-partner-charts.git \
+  CHART_REPO_BRANCH=main-source bash ./rancher/e2e/run-all.sh
+```
+
+In GitHub Actions the same is available as the `repo_git` / `repo_branch`
+inputs of the workflow.
 
 ## Running locally
 

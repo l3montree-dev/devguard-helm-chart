@@ -1,13 +1,20 @@
 #!/usr/bin/env bash
-# Register the partner-charts git repo as a ClusterRepo and wait until Rancher
-# has cloned and indexed it, then resolve/verify the chart version to install.
+# Use the pre-installed official partner-charts ClusterRepo (or register a
+# custom git repo, see CHART_REPO_GIT in env.sh) and wait until Rancher has
+# cloned and indexed it, then resolve/verify the chart version to install.
 set -euo pipefail
 cd "$(dirname "$0")"
 source ./env.sh
 source ./lib.sh
 
-log "creating ClusterRepo $CHART_REPO_NAME -> $CHART_REPO_GIT ($CHART_REPO_BRANCH)"
-kubectl apply -f - <<EOF
+if [[ -z $CHART_REPO_GIT ]]; then
+  # Rancher creates this repo itself on startup (pkg/data/dashboard/repo.go).
+  log "using pre-installed ClusterRepo $CHART_REPO_NAME"
+  repo_exists() { kubectl get "clusterrepos.catalog.cattle.io/$CHART_REPO_NAME"; }
+  wait_for 300 "ClusterRepo $CHART_REPO_NAME created by Rancher" repo_exists
+else
+  log "creating ClusterRepo $CHART_REPO_NAME -> $CHART_REPO_GIT ($CHART_REPO_BRANCH)"
+  kubectl apply -f - <<EOF
 apiVersion: catalog.cattle.io/v1
 kind: ClusterRepo
 metadata:
@@ -16,10 +23,12 @@ spec:
   gitRepo: ${CHART_REPO_GIT}
   gitBranch: ${CHART_REPO_BRANCH}
 EOF
+fi
 
 # The clone is large (assets/ + .git), allow plenty of time.
 kubectl wait "clusterrepos.catalog.cattle.io/$CHART_REPO_NAME" --for=condition=Downloaded --timeout=600s
-kubectl get "clusterrepos.catalog.cattle.io/$CHART_REPO_NAME" -o jsonpath='commit: {.status.commit}{"\n"}'
+kubectl get "clusterrepos.catalog.cattle.io/$CHART_REPO_NAME" \
+  -o jsonpath='repo: {.spec.gitRepo} ({.spec.gitBranch}), commit: {.status.commit}{"\n"}'
 
 INDEX=$(rapi GET "/v1/catalog.cattle.io.clusterrepos/$CHART_REPO_NAME?link=index")
 
