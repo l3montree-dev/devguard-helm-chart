@@ -23,7 +23,7 @@ manual `workflow_dispatch`) is a thin wrapper around these scripts.
 | `02-wait-rancher.sh`    | wait for `/healthz`                                                                                                                  |
 | `03-bootstrap.sh`       | login, set admin password + `server-url`, generate kubeconfig for the `local` cluster, wait for cluster + rancher-webhook            |
 | `04-cluster-prereqs.sh` | install local-path-provisioner + ingress-nginx (the embedded k3s disables traefik/servicelb/local-storage)                           |
-| `05-clusterrepo.sh`     | use the built-in `ClusterRepo` (or create a custom one), wait for condition `Downloaded`, resolve the chart version from the index   |
+| `05-clusterrepo.sh`     | refresh the built-in `ClusterRepo` (or create a custom one), wait until `Downloaded`, resolve the chart version from the index       |
 | `06-install.sh`         | pre-create namespace + dummy secrets, `POST ?action=install`, follow the helm-operation pod, wait for the App to be `deployed`       |
 | `07-smoke.sh`           | rollout status for all workloads, curl `/api/v1/health` (API) and `/api/health` (web) via ingress (Host header) and via the services |
 | `08-uninstall.sh`       | uninstall through the catalog API (skip with `SKIP_UNINSTALL=1`)                                                                     |
@@ -39,7 +39,9 @@ By default the test installs from the official
 [rancher/partner-charts](https://github.com/rancher/partner-charts) repo
 (branch `main`) — the `rancher-partner-charts` ClusterRepo Rancher creates on
 startup, i.e. exactly what users see under Apps → Charts. No extra repo is
-registered.
+registered. Rancher first indexes the copy bundled in the `rancher/rancher`
+image, which can be months old, so the test forces a refresh from upstream
+(`spec.forceUpdate`, like "Refresh" in the UI) before resolving the chart.
 
 To test a version that is not merged upstream yet, point `CHART_REPO_GIT` at
 another git repo; it is then registered as a separate ClusterRepo

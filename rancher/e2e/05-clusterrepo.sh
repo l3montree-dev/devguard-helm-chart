@@ -1,17 +1,25 @@
 #!/usr/bin/env bash
-# Use the pre-installed official partner-charts ClusterRepo (or register a
-# custom git repo, see CHART_REPO_GIT in env.sh) and wait until Rancher has
-# cloned and indexed it, then resolve/verify the chart version to install.
+# Refresh the pre-installed official partner-charts ClusterRepo (or register
+# a custom git repo, see CHART_REPO_GIT in env.sh) and wait until Rancher has
+# fetched and indexed it, then resolve/verify the chart version to install.
 set -euo pipefail
 cd "$(dirname "$0")"
 source ./env.sh
 source ./lib.sh
 
 if [[ -z $CHART_REPO_GIT ]]; then
-  # Rancher creates this repo itself on startup (pkg/data/dashboard/repo.go).
+  # Rancher creates this repo itself on startup (pkg/data/dashboard/repo.go),
+  # but builds the first index from the snapshot bundled in the rancher image
+  # (which can predate the chart) and only fetches upstream on the next
+  # refresh, by default after an hour. So wait for that first index, then
+  # force a refresh — the same as "Refresh" in the UI.
   log "using pre-installed ClusterRepo $CHART_REPO_NAME"
   repo_exists() { kubectl get "clusterrepos.catalog.cattle.io/$CHART_REPO_NAME"; }
   wait_for 300 "ClusterRepo $CHART_REPO_NAME created by Rancher" repo_exists
+  kubectl wait "clusterrepos.catalog.cattle.io/$CHART_REPO_NAME" --for=condition=Downloaded --timeout=600s
+  log "bundled commit: $(kubectl get "clusterrepos.catalog.cattle.io/$CHART_REPO_NAME" -o jsonpath='{.status.commit}'), forcing refresh from upstream"
+  kubectl patch "clusterrepos.catalog.cattle.io/$CHART_REPO_NAME" --type merge \
+    -p "{\"spec\":{\"forceUpdate\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}}"
 else
   log "creating ClusterRepo $CHART_REPO_NAME -> $CHART_REPO_GIT ($CHART_REPO_BRANCH)"
   kubectl apply -f - <<EOF
@@ -25,8 +33,15 @@ spec:
 EOF
 fi
 
-# The clone is large (assets/ + .git), allow plenty of time.
-kubectl wait "clusterrepos.catalog.cattle.io/$CHART_REPO_NAME" --for=condition=Downloaded --timeout=600s
+# Wait until Rancher has processed the current spec (including a forced
+# refresh) and the download succeeded. The clone is large (assets/ + .git),
+# allow plenty of time.
+repo_synced() {
+  kubectl get "clusterrepos.catalog.cattle.io/$CHART_REPO_NAME" -o json | jq -e '
+    .status.observedGeneration == .metadata.generation and
+    any(.status.conditions[]?; .type == "Downloaded" and .status == "True")'
+}
+wait_for 600 "ClusterRepo $CHART_REPO_NAME downloaded" repo_synced
 kubectl get "clusterrepos.catalog.cattle.io/$CHART_REPO_NAME" \
   -o jsonpath='repo: {.spec.gitRepo} ({.spec.gitBranch}), commit: {.status.commit}{"\n"}'
 
