@@ -220,12 +220,12 @@ jobs:
 
           ## Verify
 
-          The chart package is signed; `devguard-${{ steps.version.outputs.version }}.tgz.prov` is attached below.
+          The chart package is signed; `devguard-${{ steps.version.outputs.version }}.tgz.prov` is attached below. To pull the chart and check its signature in one step:
 
           ```bash
           curl -sLO ${{ env.SIGN_KEY_URL }}
           gpg --dearmor < signing-key.asc > signing-key.gpg
-          helm verify devguard-${{ steps.version.outputs.version }}.tgz --keyring ./signing-key.gpg
+          helm pull oci://ghcr.io/${{ github.repository }}/devguard --version ${{ steps.version.outputs.version }} --verify --keyring ./signing-key.gpg
           ```
 
           ---

@@ -138,13 +138,16 @@ fails if the signing key is not in the committed public key or has an expiry dat
 curl -sLO https://l3montree-dev.github.io/devguard-helm-chart/signing-key.asc
 gpg --dearmor < signing-key.asc > signing-key.gpg
 
-helm pull devguard/devguard --prov          # HTTP repository
-helm pull oci://ghcr.io/l3montree-dev/devguard-helm-chart/devguard --prov   # OCI
-
-helm verify devguard-*.tgz --keyring ./signing-key.gpg
+# HTTP repository
+helm pull devguard/devguard --verify --keyring ./signing-key.gpg
+# OCI
+helm pull oci://ghcr.io/l3montree-dev/devguard-helm-chart/devguard --verify --keyring ./signing-key.gpg
 ```
 
-`helm install --verify` does the same check inline, provided the keyring is in place.
+`--verify` downloads the `.prov` file alongside the package and fails unless the
+signature checks out. `helm install` and `helm upgrade` take the same two flags.
+Versions released before chart signing was introduced have no provenance file, so
+`--verify` fails for them.
 
 ### Rotation
 

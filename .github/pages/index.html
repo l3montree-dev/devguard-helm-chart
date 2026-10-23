@@ -48,8 +48,7 @@ helm install devguard devguard/devguard</code></pre>
     </p>
 <pre><code>curl -sLO __BASE_URL__/signing-key.asc
 gpg --dearmor &lt; signing-key.asc &gt; signing-key.gpg
-helm pull devguard/devguard --prov
-helm verify devguard-*.tgz --keyring ./signing-key.gpg</code></pre>
+helm pull devguard/devguard --verify --keyring ./signing-key.gpg</code></pre>
     <p>
       <a href="__BASE_URL__/index.yaml">index.yaml</a> ·
       <a href="__BASE_URL__/signing-key.asc">signing key</a> ·
