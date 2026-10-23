@@ -105,14 +105,19 @@ annotation does not affect the badge, it only tells users which key to verify ag
    | `GPG_KEYRING_BASE64` | output of step 3 |
    | `GPG_PASSPHRASE` | passphrase of the key (leave unset if the key has none) |
 
-5. Verify the round trip locally before tagging a release:
+5. Verify the round trip locally before tagging a release, from the repository root.
+   Everything goes into a temporary directory, which is removed at the end because it
+   holds the exported private key:
 
    ```bash
-   gpg --export-secret-keys "DevGuard Chart Signing" > /tmp/secring.gpg
-   gpg --dearmor < .github/pages/signing-key.asc > /tmp/pubring.gpg
+   TMP=$(mktemp -d)
+   gpg --export-secret-keys "DevGuard Chart Signing" > "$TMP/secring.gpg"
+   gpg --dearmor < .github/pages/signing-key.asc > "$TMP/pubring.gpg"
 
-   helm package . --sign --key "DevGuard Chart Signing" --keyring /tmp/secring.gpg
-   helm verify devguard-*.tgz --keyring /tmp/pubring.gpg
+   helm package . --destination "$TMP" --sign --key "DevGuard Chart Signing" --keyring "$TMP/secring.gpg"
+   helm verify "$TMP"/devguard-*.tgz --keyring "$TMP/pubring.gpg"
+
+   rm -rf "$TMP"
    ```
 
    Both `--keyring` flags need the *binary* keyring format — Helm reads it with
