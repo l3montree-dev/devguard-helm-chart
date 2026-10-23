@@ -84,8 +84,8 @@ annotation does not affect the badge, it only tells users which key to verify ag
    gpg --quick-generate-key "DevGuard Chart Signing <info@l3montree.com>" rsa4096 sign never
    ```
 
-2. Commit the public half — it is both the verification key for users and the source
-   of the fingerprint and user ID that CI uses:
+2. Commit the public half — it is the key users verify against, and CI refuses to sign
+   with a key that is not in it:
 
    ```bash
    gpg --armor --export "DevGuard Chart Signing" > .github/pages/signing-key.asc
@@ -105,9 +105,6 @@ annotation does not affect the badge, it only tells users which key to verify ag
    | `GPG_KEYRING_BASE64` | output of step 3 |
    | `GPG_PASSPHRASE` | passphrase of the key (leave unset if the key has none) |
 
-   Optionally set the `GPG_KEY_UID` **variable** if Helm's `--key` should match
-   something other than the first user ID of the committed public key.
-
 5. Verify the round trip locally before tagging a release:
 
    ```bash
@@ -123,16 +120,17 @@ annotation does not affect the badge, it only tells users which key to verify ag
 
 ### What the release workflow does
 
-`helm-release.yml` restores the keyring, injects `artifacthub.io/signKey`
+`helm-release.yml` restores the keyring, checks that the signing key is in the
+committed public key and has no expiry date, injects `artifacthub.io/signKey`
 (fingerprint plus the Pages URL of the public key) into `Chart.yaml`, packages with
-`--sign`, verifies the result against the committed public key, and attaches both
-the `.tgz` and the `.tgz.prov` to the GitHub release. `helm push` picks up the
-provenance file automatically and uploads it as an OCI layer.
+`--sign`, and attaches both the `.tgz` and the `.tgz.prov` to the GitHub release.
+`helm push` picks up the provenance file automatically and uploads it as an OCI layer.
 
 A **tagged** release fails hard if the keyring secret or the public key is missing —
 the versions users actually install must never go out unsigned. Pushes to `main`
 (the `0.0.0-main` package) only warn and publish unsigned. Every run — `main` included —
-fails if the committed key has an expiry date (see [Key expiry](#key-expiry)).
+fails if the signing key is not in the committed public key or has an expiry date
+(see [Key expiry](#key-expiry)).
 
 ### Verifying as a user
 

@@ -60,9 +60,6 @@ jobs:
       env:
         GPG_KEYRING_BASE64: ${{ secrets.GPG_KEYRING_BASE64 }}
         GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        # Optional escape hatch: Helm matches --key against the full OpenPGP
-        # user ID, which is normally derived from the public key below.
-        KEY_UID_OVERRIDE: ${{ vars.GPG_KEY_UID }}
       run: |
         set -euo pipefail
 
@@ -87,13 +84,24 @@ jobs:
         printf '%s\n' "$GPG_PASSPHRASE" > "$RUNNER_TEMP/passphrase"
         chmod 600 "$RUNNER_TEMP/secring.gpg" "$RUNNER_TEMP/passphrase"
 
-        # `helm verify` wants the same binary format for the public keyring.
-        gpg --dearmor < "$PUBLIC_KEY" > "$RUNNER_TEMP/pubring.gpg"
-
-        FINGERPRINT=$(gpg --batch --with-colons --show-keys "$PUBLIC_KEY" | awk -F: '/^fpr:/ { print $10; exit }')
-        KEY_UID=${KEY_UID_OVERRIDE:-$(gpg --batch --with-colons --show-keys "$PUBLIC_KEY" | awk -F: '/^uid:/ { print $10; exit }')}
+        # Fingerprint and user ID come from the key that actually signs, not from
+        # the committed public key, which may hold older keys too (see
+        # DISTRIBUTION.md → "Rotation").
+        SECRET_KEY=$(gpg --batch --with-colons --show-keys "$RUNNER_TEMP/secring.gpg" || true)
+        FINGERPRINT=$(awk -F: '/^fpr:/ { print $10; exit }' <<< "$SECRET_KEY")
+        KEY_UID=$(awk -F: '/^uid:/ { print $10; exit }' <<< "$SECRET_KEY")
         if [ -z "$FINGERPRINT" ] || [ -z "$KEY_UID" ]; then
-          echo "::error::Could not read a fingerprint and user ID from $PUBLIC_KEY"
+          echo "::error::Could not read a fingerprint and user ID from the GPG_KEYRING_BASE64 secret"
+          exit 1
+        fi
+
+        # Users verify against the committed public key, so the signing key has to
+        # be in it — otherwise the release would carry a provenance file nobody
+        # can verify.
+        PUBLIC_ENTRY=$(gpg --batch --with-colons --show-keys "$PUBLIC_KEY" \
+          | awk -F: -v fpr="$FINGERPRINT" '/^pub:/ { expires = $7 } /^fpr:/ && $10 == fpr { print "expires=" expires; exit }')
+        if [ -z "$PUBLIC_ENTRY" ]; then
+          echo "::error::Signing key $FINGERPRINT is not in $PUBLIC_KEY — commit its public half, see DISTRIBUTION.md → \"Chart signing\"."
           exit 1
         fi
 
@@ -101,8 +109,7 @@ jobs:
         # signed while it was still valid — and the Helm 3 used here does not
         # check expiry at all. So only a key without an expiry date may sign.
         # See DISTRIBUTION.md → "Key expiry".
-        EXPIRES=$(gpg --batch --with-colons --show-keys "$PUBLIC_KEY" \
-          | awk -F: -v fpr="$FINGERPRINT" '/^pub:/ { expires = $7 } /^fpr:/ && $10 == fpr { print expires; exit }')
+        EXPIRES=${PUBLIC_ENTRY#expires=}
         if [ -n "$EXPIRES" ]; then
           echo "::error::Signing key $FINGERPRINT has an expiry date ($(date -u -d "@$EXPIRES" +%F)) — refusing to sign. Remove it, see DISTRIBUTION.md → \"Key expiry\"."
           exit 1
@@ -169,16 +176,6 @@ jobs:
           helm package . --version "$VERSION" --destination ./charts/
         fi
         ls -l ./charts/
-
-    # Catches a keyring whose public half is not the committed one — otherwise
-    # the release would carry a provenance file nobody can verify.
-    - name: Verify chart signature
-      if: steps.signing.outputs.sign == 'true'
-      env:
-        VERSION: ${{ steps.version.outputs.version }}
-      run: |
-        set -euo pipefail
-        helm verify "./charts/devguard-$VERSION.tgz" --keyring "$RUNNER_TEMP/pubring.gpg"
 
     - name: Push Helm Chart to GitHub Container Registry
       env:
