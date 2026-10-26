@@ -4,6 +4,18 @@ All notable changes to the DevGuard Helm chart are documented here.
 
 For API and web frontend changes see the [main DevGuard CHANGELOG](https://github.com/l3montree-dev/devguard/blob/main/CHANGELOG.md).
 
+## [v1.17.0] — 2026-10-26
+
+### Added
+
+- `api.slsa` configures SLSA build provenance signing (`POST /slsa/build-provenance/`): `trustedIssuers` (`SLSA_OIDC_TRUSTED_ISSUERS`, empty accepts every https issuer), `oidcAudience` (`SLSA_OIDC_AUDIENCE`, defaults to the public API URL and must match `devguard_api_url` of the CI components) and `rekorUrl` (`SLSA_REKOR_URL`, empty skips the transparency log upload). Provenance is signed with the existing `api.intoto` EC key (`ec-private-key`), which is now mounted at `/slsa-private-key.pem` and passed as `SLSA_PRIVATE_KEY_PATH`; no new secret is needed.
+
+### Changed
+
+- The manual `Rancher catalog test` workflow now installs DevGuard from the official, pre-installed `partner-charts` ClusterRepo (forcing a refresh of it first) instead of adding its own; a custom ClusterRepo can still be used. See `rancher/e2e/README.md`. No chart templates or values changed.
+
+---
+
 ## [v1.16.2] — 2026-10-23
 
 ### Added
