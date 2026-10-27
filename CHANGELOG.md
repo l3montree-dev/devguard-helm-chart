@@ -4,6 +4,16 @@ All notable changes to the DevGuard Helm chart are documented here.
 
 For API and web frontend changes see the [main DevGuard CHANGELOG](https://github.com/l3montree-dev/devguard/blob/main/CHANGELOG.md).
 
+## [v1.17.1] — 2026-10-27
+
+### Fixed
+
+- The `verify-image-signatures` Kyverno policy (`kyvernoPolicy.enabled`) rejected the v1.17.0 images: `devguard-scanner` v1.17.0 sets the SLSA provenance `runDetails.builder.id` to `https://devguard.org` (previously `devguard.org`), so the `Equals devguard.org` condition failed. The condition now accepts both `devguard.org` and `https://devguard.org`.
+- The policy only matched tagged image references (`devguard:*`, `devguard-web:*`, `devguard/postgresql:*`), so images pinned by digest only (`image.digest` renders `repository@sha256:…` without a tag) were never verified. `devguard@*`, `devguard-web@*` and `devguard/postgresql@*` are now matched as well, which means digest-pinned deployments are now subject to the same signature and SLSA provenance checks.
+- The DevGuard-built kratos image (`ghcr.io/l3montree-dev/devguard/kratos`, the chart default) was not covered by the policy at all: the existing rule only matches the upstream `oryd/kratos` images. A new `verify-devguard-kratos-image` rule verifies its signature with the DevGuard key, for tagged and digest-pinned references.
+
+---
+
 ## [v1.17.0] — 2026-10-26
 
 ### Added
