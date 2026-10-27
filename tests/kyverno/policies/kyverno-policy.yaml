@@ -40,40 +40,38 @@ spec:
                     rekor:
                       ignoreTlog: true
           attestations:
+            # SLSA build provenance signed by the devguard instance the images are built with (api.main.devguard.org,
+            # GET /api/v1/slsa/public-key/) - it signs only after verifying the OIDC identity of the CI job
             - predicateType: https://slsa.dev/provenance/v1
               attestors:
                 - entries:
                     - keys:
                         publicKeys: |-
                           -----BEGIN PUBLIC KEY-----
-                          MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEicBpp8o3W6m993d4Z49WKtwsAOrp
-                          DBobQ3+l2FTWqPqYpnjVtV3w9si91eR3ygYGP7mDoM01sdAmc2TvbOVygA==
+                          MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAECmDcJed2NqihRrcSmaL6vvWyDgDn
+                          ijwu724jYHwL+YZRyjt6hlmZDuOsNruao2csBEHs1X1z56G5iXuzgmKO8w==
                           -----END PUBLIC KEY-----
                         rekor:
                           ignoreTlog: true
               conditions:
                 - all:
-                    - key: "{{ predicate.runDetails.builder.id }}"
+                    # built by the trusted reusable workflow - the build jobs never get the token which signs
+                    - key: "{{ runDetails.builder.id }}"
                       operator: AnyIn
                       value:
-                        # releases before v1.17.0 use the bare host, later ones the uri form
-                        - "devguard.org"
-                        - "https://devguard.org"
-                    - key: "{{ predicate.buildDefinition.externalParameters.remotes }}"
+                        - "https://github.com/l3montree-dev/devguard-ci-components/.github/workflows/full-nix.yml@refs/heads/main"
+                        - "https://github.com/l3montree-dev/devguard-ci-components/.github/workflows/full-nix.yml@refs/tags/*"
+                    - key: "{{ buildDefinition.externalParameters.workflow.repository }}"
                       operator: AnyIn
                       value:
                         - "https://github.com/l3montree-dev/devguard"
                         - "https://github.com/l3montree-dev/devguard-web"
-                    # personal email addresses from maintainers - those are
-                    # hardcoded because we don't want to allow any other maintainers to sign the images
-                    # numeric GitHub user IDs in noreply emails are permanent even if username changes
-                    - key: "{{ predicate.buildDefinition.externalParameters.authoremail }}"
+                    # only the protected main branch and release tags are deployed
+                    - key: "{{ buildDefinition.externalParameters.workflow.ref }}"
                       operator: AnyIn
                       value:
-                        - "bastin.tim@gmail.com"
-                        - "38261809+timbastin@users.noreply.github.com"
-                        - "66557440+seb-kw@users.noreply.github.com"
-                        - "sebastian.kawelke@l3montree.com"
+                        - "refs/heads/main"
+                        - "refs/tags/v*"
     - name: verify-devguard-postgresql-image
       match:
         any:
