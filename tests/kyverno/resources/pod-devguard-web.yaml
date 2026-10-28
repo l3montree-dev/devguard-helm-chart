@@ -6,4 +6,4 @@ metadata:
 spec:
   containers:
     - name: devguard-web
-      image: ghcr.io/l3montree-dev/devguard-web:main-01c6e761-1773761560
+      image: ghcr.io/l3montree-dev/devguard-web:v1.17.2

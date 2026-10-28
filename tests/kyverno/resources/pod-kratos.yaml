@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kratos-test
+  namespace: default
+spec:
+  containers:
+    - name: kratos
+      image: ghcr.io/l3montree-dev/devguard/kratos:v26.2.0-v1.17.2

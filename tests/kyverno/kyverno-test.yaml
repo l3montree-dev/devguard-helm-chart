@@ -8,6 +8,7 @@ resources:
   - resources/pod-devguard.yaml
   - resources/pod-devguard-web.yaml
   - resources/pod-postgresql.yaml
+  - resources/pod-kratos.yaml
 results:
   - policy: verify-image-signatures
     rule: verify-devguard-images
@@ -22,8 +23,14 @@ results:
     kind: Pod
     result: pass
   - policy: verify-image-signatures
-    rule: verify-devguard-postgresql-image
+    rule: verify-devguard-images
     resources:
       - postgresql-test
+    kind: Pod
+    result: pass
+  - policy: verify-image-signatures
+    rule: verify-devguard-images
+    resources:
+      - kratos-test
     kind: Pod
     result: pass

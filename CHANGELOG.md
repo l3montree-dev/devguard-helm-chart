@@ -4,6 +4,23 @@ All notable changes to the DevGuard Helm chart are documented here.
 
 For API and web frontend changes see the [main DevGuard CHANGELOG](https://github.com/l3montree-dev/devguard/blob/main/CHANGELOG.md).
 
+## [v1.17.2] — 2026-10-28
+
+### Changed
+
+- The SLSA provenance check of the `verify-image-signatures` Kyverno policy (`kyvernoPolicy.enabled`) now verifies against the public key of the DevGuard instance that signs the provenance (`GET /api/v1/slsa/public-key/`), which only signs after verifying the OIDC identity of the CI job. The conditions were rewritten to match the new provenance:
+  - `runDetails.builder.id` must be the trusted reusable workflow `devguard-ci-components/.github/workflows/full-nix.yml` on `refs/heads/main` or a release tag. This replaces the `devguard.org` / `https://devguard.org` builder id match from v1.17.1.
+  - `buildDefinition.externalParameters.workflow.repository` must be `https://github.com/l3montree-dev/devguard` or `https://github.com/l3montree-dev/devguard-web` (replaces `externalParameters.remotes`).
+  - `buildDefinition.externalParameters.workflow.ref` must be `refs/heads/main` or `refs/tags/v*`.
+- The maintainer email allowlist (`externalParameters.authoremail`) was removed from the policy; trust is now based on the signing workflow and its source ref.
+- The `verify-devguard-postgresql-image` and `verify-devguard-kratos-image` rules were merged into `verify-devguard-images`, so all DevGuard-built images (devguard, devguard-web, postgresql, kratos) are verified with the same cosign key and SLSA provenance conditions. postgresql and kratos now also have their provenance checked.
+
+### Breaking
+
+- Images built before the new provenance format (older tags of `devguard`, `devguard-web`, `devguard/postgresql` and `devguard/kratos`) no longer pass the policy. With `kyvernoPolicy.enabled`, use the chart's default image versions (or newer) or disable the policy.
+
+---
+
 ## [v1.17.1] — 2026-10-27
 
 ### Fixed

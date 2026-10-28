@@ -97,21 +97,21 @@ kyvernoPolicy:
   validationFailureAction: Enforce # or Audit
 ```
 
-The policy enforces three rules on all Pods in the namespace:
+The policy enforces these rules on all Pods in the namespace:
 
-| Rule                          | Image                                   | Verification                                   |
-| ----------------------------- | --------------------------------------- | ---------------------------------------------- |
-| `verify-devguard-images`      | `ghcr.io/l3montree-dev/devguard*`       | Cosign signature + SLSA provenance attestation |
-| `verify-kratos-image`         | `oryd/kratos*`                          | Cosign signature                               |
-| `verify-otel-collector-image` | `otel/opentelemetry-collector-contrib*` | Keyless signature (GitHub Actions OIDC)        |
+| Rule                              | Image                                              | Verification                                   |
+| --------------------------------- | -------------------------------------------------- | ---------------------------------------------- |
+| `verify-devguard-images`          | `ghcr.io/l3montree-dev/devguard`, `devguard-web`, `devguard/postgresql`, `devguard/kratos` | Cosign signature + SLSA provenance attestation |
+| `verify-kratos-image`             | `oryd/kratos*`                                     | Cosign signature                               |
+| `verify-otel-collector-image`     | `otel/opentelemetry-collector-contrib*`            | Keyless signature (GitHub Actions OIDC)        |
 
 ### SLSA provenance checks
 
-For DevGuard images, the policy additionally verifies the SLSA provenance attestation and checks that:
+For DevGuard-built images (devguard, devguard-web, postgresql, kratos), the policy additionally verifies the SLSA provenance attestation, signed by the DevGuard instance that built them, and checks that:
 
-- The builder ID is `devguard.org`
-- The image was built from `https://github.com/l3montree-dev/devguard`
-- The commit was authored by a known maintainer
+- The builder ID is the trusted `devguard-ci-components` `full-nix.yml` reusable workflow (`refs/heads/main` or a release tag)
+- The image was built from `https://github.com/l3montree-dev/devguard` or `https://github.com/l3montree-dev/devguard-web`
+- The workflow ref is `refs/heads/main` or a `refs/tags/v*` release tag
 
 ### Testing
 

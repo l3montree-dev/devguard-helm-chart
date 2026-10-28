@@ -30,6 +30,10 @@ spec:
             - "ghcr.io/l3montree-dev/devguard@*"
             - "ghcr.io/l3montree-dev/devguard-web:*"
             - "ghcr.io/l3montree-dev/devguard-web@*"
+            - "ghcr.io/l3montree-dev/devguard/postgresql:*"
+            - "ghcr.io/l3montree-dev/devguard/postgresql@*"
+            - "ghcr.io/l3montree-dev/devguard/kratos:*"
+            - "ghcr.io/l3montree-dev/devguard/kratos@*"
           mutateDigest: false
           verifyDigest: false
           attestors:
@@ -75,50 +79,6 @@ spec:
                       value:
                         - "refs/heads/main"
                         - "refs/tags/v*"
-    - name: verify-devguard-postgresql-image
-      match:
-        any:
-          - resources:
-              kinds:
-                - Pod
-      verifyImages:
-        - imageReferences:
-            - "ghcr.io/l3montree-dev/devguard/postgresql:*"
-            - "ghcr.io/l3montree-dev/devguard/postgresql@*"
-          mutateDigest: false
-          verifyDigest: false
-          attestors:
-            - entries:
-                - keys:
-                    publicKeys: |-
-                      -----BEGIN PUBLIC KEY-----
-                      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEicBpp8o3W6m993d4Z49WKtwsAOrp
-                      DBobQ3+l2FTWqPqYpnjVtV3w9si91eR3ygYGP7mDoM01sdAmc2TvbOVygA==
-                      -----END PUBLIC KEY-----
-                    rekor:
-                      ignoreTlog: true
-    - name: verify-devguard-kratos-image
-      match:
-        any:
-          - resources:
-              kinds:
-                - Pod
-      verifyImages:
-        - imageReferences:
-            - "ghcr.io/l3montree-dev/devguard/kratos:*"
-            - "ghcr.io/l3montree-dev/devguard/kratos@*"
-          mutateDigest: false
-          verifyDigest: false
-          attestors:
-            - entries:
-                - keys:
-                    publicKeys: |-
-                      -----BEGIN PUBLIC KEY-----
-                      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEicBpp8o3W6m993d4Z49WKtwsAOrp
-                      DBobQ3+l2FTWqPqYpnjVtV3w9si91eR3ygYGP7mDoM01sdAmc2TvbOVygA==
-                      -----END PUBLIC KEY-----
-                    rekor:
-                      ignoreTlog: true
     - name: verify-kratos-image
       match:
         any:
