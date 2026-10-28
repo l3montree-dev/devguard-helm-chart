@@ -3,6 +3,8 @@ import { parse } from "yaml";
 
 const apiOrg = "e1f24270-6e68-4571-9168-9c151c639c97";
 const webOrg = "169319b7-8170-469f-9e31-f87b6054e507";
+const kratosOrg = "e373b090-c82e-4eca-a95f-a5993b872eda";
+const postgresqlOrg = "6d0af4fc-f4c4-429d-9889-6ef932a40713";
 
 const artifacts: Record<
   string,
@@ -13,7 +15,7 @@ const artifacts: Record<
   // .gitlab-ci.yml and --upstream-version in
   // .github/workflows/devguard-scanner.yaml.
   kratos: {
-    org: apiOrg,
+    org: kratosOrg,
     name: "kratos",
     repo: "ghcr.io/l3montree-dev/devguard/kratos",
     upstreamVersion: "v26.2.0",
@@ -29,7 +31,7 @@ const artifacts: Record<
     repo: "ghcr.io/l3montree-dev/devguard-web",
   },
   postgresql: {
-    org: apiOrg,
+    org: postgresqlOrg,
     name: "postgresql",
     repo: "ghcr.io/l3montree-dev/devguard/postgresql",
     upstreamVersion: "16.15",
