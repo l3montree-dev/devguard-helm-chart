@@ -70,7 +70,7 @@ jobs:
           args: >-
             -c "devguard-scanner curl -X POST -H 'Content-Type: application/json'
             -d $(cat .github/sbom-artifact.json)
-            $DEVGUARD_API_URL/api/v1/organizations/$DEVGUARD_ASSET_NAME/refs/$(echo $GITHUB_REF_NAME | tr . -)/artifacts/"
+            $DEVGUARD_API_URL/api/v1/organizations/$DEVGUARD_ASSET_NAME/refs/$(devguard-scanner slug $GITHUB_REF_NAME)/artifacts/"
         env:
           DEVGUARD_TOKEN: ${{ secrets.DEVGUARD_TOKEN }}
  
