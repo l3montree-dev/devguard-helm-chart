@@ -64,13 +64,13 @@ jobs:
 
       - name: Create artifact from SBOM URLs
         uses: docker://ghcr.io/l3montree-dev/devguard/scanner:main
-        continue-on-error: true
+        continue-on-error: false
         with:
           entrypoint: /bin/sh
           args: >-
             -c "devguard-scanner curl -X POST -H 'Content-Type: application/json'
             -d $(cat .github/sbom-artifact.json)
-            $DEVGUARD_API_URL/api/v1/organizations/$DEVGUARD_ASSET_NAME/refs/${{ github.ref_name }}/artifacts/"
+            $DEVGUARD_API_URL/api/v1/organizations/$DEVGUARD_ASSET_NAME/refs/$(devguard-scanner slug $GITHUB_REF_NAME)/artifacts/"
         env:
           DEVGUARD_TOKEN: ${{ secrets.DEVGUARD_TOKEN }}
  
