@@ -89,10 +89,15 @@ spec:
             value: 1024MiB
           - name: DEPENDENCY_PROXY_CACHE_MAX_SIZE_MB
             value: {{ .Values.api.dependencyProxyCache.maxSizeMb | quote }}
+          - name: APP_SIDE_ENCRYPTION_KEY_PATH
+            value: /encryption/key
           command: ["devguard-cli", "migrate"]
           volumeMounts:
           - mountPath: /tmp
             name: tmp-dir
+          - mountPath: /encryption
+            name: encryption-key
+            readOnly: true
         - name: "devguard-encryption-migration"
           securityContext:
             seccompProfile:
