@@ -4,6 +4,15 @@ All notable changes to the DevGuard Helm chart are documented here.
 
 For API and web frontend changes see the [main DevGuard CHANGELOG](https://github.com/l3montree-dev/devguard/blob/main/CHANGELOG.md).
 
+## [v1.18.0] — 2026-11-05
+
+### Fixed
+
+- The `devguard-migrate` init container (`devguard-cli migrate`) now receives `APP_SIDE_ENCRYPTION_KEY_PATH=/encryption/key` and mounts the `encryption-key` volume read-only at `/encryption`, the same way the encryption migration container does. Without it, migrations that touch encrypted columns could not access the app-side encryption key.
+- The SBOM artifact upload in the `devguard-scanner` workflow now fails the job on error and encodes the ref name in the request URL, and the kratos and postgresql SBOM artifacts are uploaded to their own DevGuard organizations instead of the API's organization. This only affects the chart's own release pipeline, not the rendered manifests.
+
+---
+
 ## [v1.17.2] — 2026-10-28
 
 ### Changed
