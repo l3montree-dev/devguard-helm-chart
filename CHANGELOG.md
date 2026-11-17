@@ -4,6 +4,15 @@ All notable changes to the DevGuard Helm chart are documented here.
 
 For API and web frontend changes see the [main DevGuard CHANGELOG](https://github.com/l3montree-dev/devguard/blob/main/CHANGELOG.md).
 
+## [v1.19.0] — 2026-11-17
+
+### Changed
+
+- The chart is released as v1.19.0 to stay in sync with DevGuard v1.19: all components share the same minor version (see [VERSIONING.md](https://github.com/l3montree-dev/devguard/blob/main/VERSIONING.md)). The default image tags (`api.image.tag`, `web.image.tag`) follow the chart `appVersion`, which is now `v1.19.0`.
+- DevGuard v1.19.0 runs database migrations on startup (single `uuid` primary keys for asset versions and artifacts, the new `vuln_state_intervals` table, removal of duplicated license risk events). They are applied automatically by the `devguard-migrate` init container; back up the database before upgrading. See the [main DevGuard CHANGELOG](https://github.com/l3montree-dev/devguard/blob/main/CHANGELOG.md) for details.
+
+---
+
 ## [v1.18.0] — 2026-11-05
 
 ### Fixed
