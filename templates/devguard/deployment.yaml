@@ -91,6 +91,10 @@ spec:
             value: {{ .Values.api.dependencyProxyCache.maxSizeMb | quote }}
           - name: APP_SIDE_ENCRYPTION_KEY_PATH
             value: /encryption/key
+          {{- range $key, $val := .Values.api.additionalEnvs }}
+          - name: {{ $key }}
+            value: {{ tpl $val $ | quote }}
+          {{- end }}
           command: ["devguard-cli", "migrate"]
           volumeMounts:
           - mountPath: /tmp
