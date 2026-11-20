@@ -63,4 +63,11 @@ data:
     lc_numeric = 'en_US.UTF-8'
     lc_time = 'en_US.UTF-8'
     default_text_search_config = 'pg_catalog.english'
+    {{- with .Values.postgresql.config.extraConfig }}
+
+    # -----------------------------
+    # Extra configuration (postgresql.config.extraConfig)
+    # -----------------------------
+{{ . | indent 4 }}
+    {{- end }}
 {{- end }}

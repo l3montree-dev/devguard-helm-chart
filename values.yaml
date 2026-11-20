@@ -485,6 +485,12 @@ postgresql:
     maxParallelWorkers: "4"
     # Log statements running at least this long. -1 disables. Goes to stderr, which `kubectl logs` on this container already captures.
     logMinDurationStatement: 2s
+    # Additional postgresql.conf lines, appended last - so they also override the settings above
+    # (e.g. max_parallel_workers_per_gather, which is otherwise fixed at 2).
+    # extraConfig: |
+    #   hash_mem_multiplier = 1.0
+    #   autovacuum_work_mem = 256MB
+    extraConfig: ""
   # Shared memory size for /dev/shm. Should be at least as large as sharedBuffers.
   # Kubernetes caps /dev/shm at 64Mi by default — this overrides that limit.
   shm:

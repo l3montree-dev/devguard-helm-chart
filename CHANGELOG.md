@@ -4,6 +4,14 @@ All notable changes to the DevGuard Helm chart are documented here.
 
 For API and web frontend changes see the [main DevGuard CHANGELOG](https://github.com/l3montree-dev/devguard/blob/main/CHANGELOG.md).
 
+## [v1.19.1] - 2026-11-20
+
+### Added
+
+- `postgresql.config.extraConfig` (default empty): additional `postgresql.conf` lines for the bundled PostgreSQL. They are appended after the generated settings, so they can also override settings the chart otherwise fixes, such as `max_parallel_workers_per_gather`. Use it to bound memory, e.g. `hash_mem_multiplier` or `autovacuum_work_mem` (which otherwise defaults to `maintenanceWorkMem` for each of the three autovacuum workers).
+
+---
+
 ## [v1.19.0] — 2026-11-17
 
 ### Changed

@@ -635,6 +635,10 @@ export const schema = {
           comment:
             "Log statements running at least this long. -1 disables. Goes to stderr, which `kubectl logs` on this container already captures.",
         }),
+        extraConfig: f("", {
+          comment:
+            "Additional postgresql.conf lines, appended last - so they also override the settings above\n(e.g. max_parallel_workers_per_gather, which is otherwise fixed at 2).\nextraConfig: |\n  hash_mem_multiplier = 1.0\n  autovacuum_work_mem = 256MB",
+        }),
       },
       shm: f(
         { sizeLimit: "2Gi" },
