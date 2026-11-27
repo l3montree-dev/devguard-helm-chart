@@ -4,6 +4,18 @@ All notable changes to the DevGuard Helm chart are documented here.
 
 For API and web frontend changes see the [main DevGuard CHANGELOG](https://github.com/l3montree-dev/devguard/blob/main/CHANGELOG.md).
 
+## [v1.20.1] — 2026-11-27
+
+### Added
+
+- `postgresql.priorityClassName` (default empty): sets `priorityClassName` on the bundled PostgreSQL StatefulSet's pods, so the database can be scheduled ahead of (or protected from preemption by) less critical workloads. Leave it empty to keep the cluster's default priority.
+
+### Fixed
+
+- The `devguard-migrate` init container now receives the entries from `api.additionalEnvs`, like the main API container already did. Previously, settings passed this way (for example database or encryption options) were missing during migrations. Thanks to @greinjo ([#59](https://github.com/l3montree-dev/devguard-helm-chart/pull/59)).
+
+---
+
 ## [v1.20.0] — 2026-11-25
 
 ### Changed

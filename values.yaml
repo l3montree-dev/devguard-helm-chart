@@ -417,6 +417,9 @@ postgresql:
   # Deploy the bundled PostgreSQL StatefulSet, Service, PVC and init job.
   # Set to false to use an external database — configure postgresql.external below.
   enabled: true
+  # PriorityClass for the bundled PostgreSQL pod. Leave empty to use the
+  # cluster's default priority.
+  priorityClassName: ""
 
   # Connection settings used by the API, Kratos and the Kratos cleanup job when
   # enabled=false. Host is required in that case.

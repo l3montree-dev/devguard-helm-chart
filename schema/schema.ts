@@ -541,6 +541,10 @@ export const schema = {
         comment:
           "Deploy the bundled PostgreSQL StatefulSet, Service, PVC and init job.\nSet to false to use an external database — configure postgresql.external below.",
       }),
+      priorityClassName: f("", {
+        comment:
+          "PriorityClass for the bundled PostgreSQL pod. Leave empty to use the\ncluster's default priority.",
+      }),
       external: f(
         {
           host: "",
