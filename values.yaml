@@ -21,6 +21,8 @@ kratos:
     enabled: false
   verificationAfterSignUp:
     enabled: true
+    # Forces email verification after sign up and on login, and shows an unverified-email banner in the web UI
+    required: false
   oidc:
     enabled: false
     # - id: github
@@ -319,6 +321,11 @@ api:
 web:
   # needs to match the setting in the kratos.yaml
   registrationEnabled: true
+  altcha:
+    # Proof-of-work challenge (ALTCHA) on login, registration, recovery and verification
+    enabled: false
+    # Existing secret with the ALTCHA HMAC secret (key: hmacSecret). If empty, the chart generates one.
+    existingSecretName: ""
   replicaCount: 1
   resources:
     limits:

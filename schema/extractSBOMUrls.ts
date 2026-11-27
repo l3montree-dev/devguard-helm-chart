@@ -6,10 +6,7 @@ const webOrg = "169319b7-8170-469f-9e31-f87b6054e507";
 const kratosOrg = "e373b090-c82e-4eca-a95f-a5993b872eda";
 const postgresqlOrg = "6d0af4fc-f4c4-429d-9889-6ef932a40713";
 
-const artifacts: Record<
-  string,
-  { org: string; name: string; repo: string; upstreamVersion?: string }
-> = {
+const artifacts: Record<string, { org: string; name: string; repo: string }> = {
   // kratos/postgresql OCI tags carry an upstream-version prefix (e.g.
   // "16.15-v1.13.3-amd64") - see upstream_version in devguard's
   // .gitlab-ci.yml and --upstream-version in
@@ -18,7 +15,6 @@ const artifacts: Record<
     org: kratosOrg,
     name: "kratos",
     repo: "ghcr.io/l3montree-dev/devguard/kratos",
-    upstreamVersion: "v26.2.0",
   },
   api: {
     org: apiOrg,
@@ -34,7 +30,6 @@ const artifacts: Record<
     org: postgresqlOrg,
     name: "postgresql",
     repo: "ghcr.io/l3montree-dev/devguard/postgresql",
-    upstreamVersion: "16.15",
   },
 };
 
@@ -46,16 +41,26 @@ async function readTagsFromRepo(repoRoot: string) {
   const webTag = values.web.image.tag as string;
 
   return {
-    kratos: apiTag,
-    api: apiTag,
-    web: webTag,
-    postgresql: apiTag,
+    tags: {
+      kratos: apiTag,
+      api: apiTag,
+      web: webTag,
+      postgresql: apiTag,
+    },
+    upstreamVersions: {
+      kratos: values.kratos.image.tag as string,
+      postgresql: values.postgresql.image.tag as string,
+    },
   };
 }
 
-export function buildSBOMUrls(tags: Record<keyof typeof artifacts, string>) {
-  return Object.entries(artifacts).map(([key, { org, name, repo, upstreamVersion }]) => {
+export function buildSBOMUrls(
+  tags: Record<keyof typeof artifacts, string>,
+  upstreamVersions: Partial<Record<keyof typeof artifacts, string>> = {},
+) {
+  return Object.entries(artifacts).map(([key, { org, name, repo }]) => {
     const tag = tags[key as keyof typeof artifacts];
+    const upstreamVersion = upstreamVersions[key as keyof typeof artifacts];
     const ociTag = upstreamVersion ? `${upstreamVersion}-${tag}` : tag;
     const purl = `pkg:oci/${name}?repository_url=${repo}&arch=amd64&tag=${ociTag}-amd64`;
     return {
@@ -66,10 +71,12 @@ export function buildSBOMUrls(tags: Record<keyof typeof artifacts, string>) {
 }
 
 export async function buildSBOMArtifact(repoRoot: string) {
-  const tags = await readTagsFromRepo(repoRoot);
+  const { tags, upstreamVersions } = await readTagsFromRepo(repoRoot);
   return {
     artifactName: "pkg:oci/devguard-helm-chart",
-    informationSources: buildSBOMUrls(tags).map(({ url }) => ({ url })),
+    informationSources: buildSBOMUrls(tags, upstreamVersions).map(({ url }) => ({
+      url,
+    })),
   };
 }
 

@@ -86,7 +86,13 @@ export const schema = {
         }),
       },
       totp: { enabled: false },
-      verificationAfterSignUp: { enabled: true },
+      verificationAfterSignUp: {
+        enabled: true,
+        required: f(false, {
+          comment:
+            "Forces email verification after sign up and on login, and shows an unverified-email banner in the web UI",
+        }),
+      },
       oidc: {
         enabled: false,
         // The commented example below documents the provider shape; it renders
@@ -441,6 +447,16 @@ export const schema = {
       registrationEnabled: f(true, {
         comment: "needs to match the setting in the kratos.yaml",
       }),
+      altcha: {
+        enabled: f(false, {
+          comment:
+            "Proof-of-work challenge (ALTCHA) on login, registration, recovery and verification",
+        }),
+        existingSecretName: f("", {
+          comment:
+            "Existing secret with the ALTCHA HMAC secret (key: hmacSecret). If empty, the chart generates one.",
+        }),
+      },
       replicaCount: 1,
       resources: {
         limits: { cpu: "0.5", memory: "1024Mi" },
